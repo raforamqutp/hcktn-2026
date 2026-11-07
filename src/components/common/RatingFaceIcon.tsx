@@ -6,144 +6,133 @@ interface RatingFaceIconProps {
   size?: 'sm' | 'md' | 'lg';
   active?: boolean;
   showLabel?: boolean;
+  isDarkTheme?: boolean;
 }
-
-const PIXEL_CIRCLE = [
-  'M6 1H14V2H16V3H17V4H18V6H19V14H18V16H17V17H16V18H14V19H6V18H4V17H3V16H2V14H1V6H2V4H3V3H4V2H6V1Z',
-  'M6 2H14V3H16V4H17V6H18V14H17V16H16V17H14V18H6V17H4V16H3V14H2V6H3V4H4V3H6V2Z',
-];
 
 export const RatingFaceIcon: React.FC<RatingFaceIconProps> = ({
   sentiment,
   size = 'md',
   active = false,
   showLabel = false,
+  isDarkTheme = false,
 }) => {
-  const dimensions = size === 'sm' ? 34 : size === 'lg' ? 54 : 42;
+  const pixelSize = size === 'sm' ? 32 : size === 'lg' ? 48 : 38;
 
-  const config = {
-    happy: {
-      label: 'FELIZ',
-      title: 'Feliz',
-      color: '#22FF66',
-      innerFill: 'rgba(16, 78, 38, 0.55)',
-      glow: active
-        ? 'drop-shadow(0 0 8px rgba(34, 255, 102, 0.9))'
-        : 'drop-shadow(0 0 5px rgba(34, 255, 102, 0.55))',
-      ringClass: active
-        ? 'ring-1 ring-emerald-400/80 bg-[#0c1410]'
-        : 'bg-[#0b0e14]/90 hover:bg-[#0c1410]',
-      textClass: 'text-[#34FF74]',
+  const configs = {
+    light: {
+      happy: {
+        label: 'BIEN',
+        title: 'Buen servicio',
+        bg: active ? 'bg-emerald-200 ring-2 ring-emerald-600' : 'bg-emerald-100/90 hover:bg-emerald-200/90 border border-emerald-300',
+        stroke: '#059669',
+        fill: '#047857',
+        textClass: 'text-emerald-900',
+      },
+      neutral: {
+        label: 'REGULAR',
+        title: 'Servicio regular',
+        bg: active ? 'bg-amber-200 ring-2 ring-amber-600' : 'bg-amber-100/90 hover:bg-amber-200/90 border border-amber-300',
+        stroke: '#d97706',
+        fill: '#b45309',
+        textClass: 'text-amber-900',
+      },
+      angry: {
+        label: 'A MEJORAR',
+        title: 'A mejorar',
+        bg: active ? 'bg-rose-200 ring-2 ring-rose-600' : 'bg-rose-100/90 hover:bg-rose-200/90 border border-rose-300',
+        stroke: '#e11d48',
+        fill: '#be123c',
+        textClass: 'text-rose-900',
+      },
     },
-    neutral: {
-      label: 'NEUTRAL',
-      title: 'Neutral',
-      color: '#FFC425',
-      innerFill: 'rgba(82, 58, 10, 0.55)',
-      glow: active
-        ? 'drop-shadow(0 0 8px rgba(255, 196, 37, 0.9))'
-        : 'drop-shadow(0 0 5px rgba(255, 196, 37, 0.55))',
-      ringClass: active
-        ? 'ring-1 ring-amber-400/80 bg-[#16120a]'
-        : 'bg-[#0b0e14]/90 hover:bg-[#16120a]',
-      textClass: 'text-[#FFC425]',
+    dark: {
+      happy: {
+        label: 'BIEN',
+        title: 'Buen servicio',
+        bg: active ? 'bg-emerald-950 ring-2 ring-emerald-400' : 'bg-slate-900/90 hover:bg-emerald-950/60 border border-emerald-800/60',
+        stroke: '#34d399',
+        fill: '#10b981',
+        textClass: 'text-emerald-400',
+      },
+      neutral: {
+        label: 'REGULAR',
+        title: 'Servicio regular',
+        bg: active ? 'bg-amber-950 ring-2 ring-amber-400' : 'bg-slate-900/90 hover:bg-amber-950/60 border border-amber-800/60',
+        stroke: '#fbbf24',
+        fill: '#f59e0b',
+        textClass: 'text-amber-400',
+      },
+      angry: {
+        label: 'A MEJORAR',
+        title: 'A mejorar',
+        bg: active ? 'bg-rose-950 ring-2 ring-rose-400' : 'bg-slate-900/90 hover:bg-rose-950/60 border border-rose-800/60',
+        stroke: '#fb7185',
+        fill: '#f43f5e',
+        textClass: 'text-rose-400',
+      },
     },
-    angry: {
-      label: 'ENOJADO',
-      title: 'Enojado',
-      color: '#FF2E4C',
-      innerFill: 'rgba(88, 14, 26, 0.55)',
-      glow: active
-        ? 'drop-shadow(0 0 8px rgba(255, 46, 76, 0.9))'
-        : 'drop-shadow(0 0 5px rgba(255, 46, 76, 0.55))',
-      ringClass: active
-        ? 'ring-1 ring-rose-500/80 bg-[#180b0e]'
-        : 'bg-[#0b0e14]/90 hover:bg-[#180b0e]',
-      textClass: 'text-[#FF3B56]',
-    },
-  }[sentiment];
+  };
+
+  const currentTheme = isDarkTheme ? configs.dark : configs.light;
+  const config = currentTheme[sentiment];
 
   return (
     <div className="inline-flex flex-col items-center gap-1 select-none">
       <div
-        className={`dark-surface inline-flex items-center justify-center rounded-2xl p-1.5 transition-all duration-150 ${config.ringClass} ${
-          active ? 'scale-105' : 'opacity-85 hover:opacity-100'
+        className={`inline-flex items-center justify-center rounded-xl p-1 transition-all duration-150 shadow-2xs ${config.bg} ${
+          active ? 'scale-105' : 'hover:scale-102'
         }`}
       >
         <svg
           role="img"
           aria-label={config.title}
-          width={dimensions}
-          height={dimensions}
-          viewBox="0 0 20 20"
+          width={pixelSize}
+          height={pixelSize}
+          viewBox="0 0 24 24"
           fill="none"
-          shapeRendering="crispEdges"
-          style={{ filter: config.glow }}
+          stroke={config.stroke}
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
           <title>{config.title}</title>
-          <path d={PIXEL_CIRCLE[1]} fill={config.innerFill} />
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d={`${PIXEL_CIRCLE[0]} ${PIXEL_CIRCLE[1]}`}
-            fill={config.color}
-          />
+          {/* Circular Face */}
+          <circle cx="12" cy="12" r="10" />
 
           {sentiment === 'happy' && (
-            <g fill={config.color}>
-              <rect x="6" y="7" width="2" height="1" />
-              <rect x="5" y="8" width="1" height="2" />
-              <rect x="8" y="8" width="1" height="2" />
-
-              <rect x="12" y="7" width="2" height="1" />
-              <rect x="11" y="8" width="1" height="2" />
-              <rect x="14" y="8" width="1" height="2" />
-
-              <rect x="6" y="12" width="8" height="1" />
-              <rect x="6" y="13" width="1" height="1" />
-              <rect x="13" y="13" width="1" height="1" />
-              <rect x="7" y="14" width="1" height="1" />
-              <rect x="12" y="14" width="1" height="1" />
-              <rect x="8" y="15" width="4" height="1" />
-            </g>
+            <>
+              {/* Happy Eyes */}
+              <circle cx="8.5" cy="9.5" r="1.5" fill={config.fill} stroke="none" />
+              <circle cx="15.5" cy="9.5" r="1.5" fill={config.fill} stroke="none" />
+              {/* Friendly Smile */}
+              <path d="M7.5 14c1.2 2 3.1 3 4.5 3s3.3-1 4.5-3" strokeWidth="2.3" />
+            </>
           )}
 
           {sentiment === 'neutral' && (
-            <g fill={config.color}>
-              <rect x="7" y="7" width="1" height="1" />
-              <rect x="6" y="8" width="3" height="2" />
-
-              <rect x="12" y="7" width="1" height="1" />
-              <rect x="11" y="8" width="3" height="2" />
-
-              <rect x="6" y="13" width="8" height="1" />
-            </g>
+            <>
+              {/* Neutral Eyes */}
+              <circle cx="8.5" cy="9.5" r="1.5" fill={config.fill} stroke="none" />
+              <circle cx="15.5" cy="9.5" r="1.5" fill={config.fill} stroke="none" />
+              {/* Straight Line Mouth */}
+              <line x1="8" y1="15" x2="16" y2="15" strokeWidth="2.3" />
+            </>
           )}
 
           {sentiment === 'angry' && (
-            <g fill={config.color}>
-              <rect x="5" y="6" width="1" height="1" />
-              <rect x="6" y="7" width="2" height="1" />
-              <rect x="8" y="8" width="1" height="1" />
-
-              <rect x="14" y="6" width="1" height="1" />
-              <rect x="12" y="7" width="2" height="1" />
-              <rect x="11" y="8" width="1" height="1" />
-
-              <rect x="6" y="9" width="2" height="2" />
-              <rect x="12" y="9" width="2" height="2" />
-
-              <rect x="8" y="13" width="4" height="1" />
-              <rect x="7" y="14" width="1" height="1" />
-              <rect x="12" y="14" width="1" height="1" />
-              <rect x="6" y="15" width="1" height="1" />
-              <rect x="13" y="15" width="1" height="1" />
-            </g>
+            <>
+              {/* Eyes */}
+              <circle cx="8.5" cy="10" r="1.5" fill={config.fill} stroke="none" />
+              <circle cx="15.5" cy="10" r="1.5" fill={config.fill} stroke="none" />
+              {/* Serious / Sad Mouth */}
+              <path d="M8 16c1.2-1.8 2.8-2.5 4-2.5s2.8.7 4 2.5" strokeWidth="2.3" />
+            </>
           )}
         </svg>
       </div>
+
       {showLabel && (
-        <span className={`font-mono text-[9px] font-bold tracking-widest ${config.textClass}`}>
+        <span className={`text-[10px] font-black tracking-tight ${config.textClass}`}>
           {config.label}
         </span>
       )}

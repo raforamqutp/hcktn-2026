@@ -24,120 +24,156 @@ export const FavorsView: React.FC = () => {
   });
 
   return (
-    <section aria-label="Favores y rutas compartidas" className="space-y-3.5">
-      <div className="space-y-2.5">
-        <div
-          className={`grid grid-cols-3 rounded-2xl p-1 ${
-            isEmergency ? 'bg-slate-900 border border-slate-800' : 'bg-slate-200/75'
-          }`}
-        >
-          {[
-            { id: 'all', label: 'Todos' },
-            { id: 'ofrezco', label: 'Ofrecen' },
-            { id: 'solicito', label: 'Necesitan' },
-          ].map((dir) => {
-            const active = directionFilter === dir.id;
-            return (
-              <button
-                key={dir.id}
-                type="button"
-                onClick={() => setDirectionFilter(dir.id as 'all' | 'ofrezco' | 'solicito')}
-                className={`rounded-xl py-1.5 text-xs font-semibold transition ${
-                  active
-                    ? isEmergency
-                      ? 'bg-slate-800 text-white shadow-xs'
-                      : 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-500'
-                }`}
-              >
-                {dir.label}
-              </button>
-            );
-          })}
+    <section aria-label="Favores y rutas compartidas" className="space-y-4">
+      {/* Header & Filter Controls */}
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2
+              className={`text-2xl md:text-3xl font-black tracking-tight ${
+                isEmergency ? 'text-white' : 'text-slate-950'
+              }`}
+            >
+              Favores y Red Solidaria
+            </h2>
+            <p
+              className={`text-xs md:text-sm font-semibold mt-0.5 ${
+                isEmergency ? 'text-slate-300' : 'text-slate-700'
+              }`}
+            >
+              Préstamo de herramientas, asientos de pool escolar y ayuda recíproca entre vecinos
+            </p>
+          </div>
         </div>
 
-        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pb-0.5">
-          {FAVOR_CATEGORIES.map((cat) => {
-            const active = categoryFilter === cat.id;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setCategoryFilter(cat.id)}
-                className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
-                  active
-                    ? isEmergency
-                      ? 'bg-white text-slate-950'
-                      : 'bg-slate-900 text-white'
-                    : isEmergency
-                    ? 'bg-slate-900 text-slate-300 border border-slate-800'
-                    : 'bg-white text-slate-600 border border-slate-200/70'
-                }`}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+          <div
+            className={`grid grid-cols-3 rounded-2xl p-1 max-w-xs border-2 ${
+              isEmergency ? 'bg-slate-900 border-slate-700' : 'bg-slate-100 border-slate-300'
+            }`}
+          >
+            {[
+              { id: 'all', label: 'Todos' },
+              { id: 'ofrezco', label: 'Ofrecen' },
+              { id: 'solicito', label: 'Necesitan' },
+            ].map((dir) => {
+              const active = directionFilter === dir.id;
+              return (
+                <button
+                  key={dir.id}
+                  type="button"
+                  onClick={() => setDirectionFilter(dir.id as 'all' | 'ofrezco' | 'solicito')}
+                  className={`rounded-xl py-2 text-xs font-black transition active:scale-95 ${
+                    active
+                      ? isEmergency
+                        ? 'bg-slate-800 text-white shadow-xs'
+                        : 'bg-white text-slate-950 shadow-xs ring-1 ring-slate-300'
+                      : 'text-slate-700 hover:text-slate-950'
+                  }`}
+                >
+                  {dir.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pb-0.5">
+            {FAVOR_CATEGORIES.map((cat) => {
+              const active = categoryFilter === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setCategoryFilter(cat.id)}
+                  className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-bold transition active:scale-95 ${
+                    active
+                      ? isEmergency
+                        ? 'bg-white text-slate-950 shadow-xs'
+                        : 'bg-slate-950 text-white shadow-xs'
+                      : isEmergency
+                      ? 'bg-slate-900 text-slate-200 border border-slate-700 hover:bg-slate-800'
+                      : 'bg-white text-slate-800 border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      <div className="space-y-3">
+      {/* Grilla de Tarjetas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.map((fav) => (
           <article
             key={fav.id}
-            className={`rounded-3xl p-4 transition ${
+            className={`rounded-3xl p-5 transition-all flex flex-col justify-between ${
               isEmergency
-                ? 'bg-[#121826] border border-slate-800 text-slate-100'
-                : 'bg-white border border-slate-200/60 text-slate-900 shadow-xs'
+                ? 'bg-[#121826] border-2 border-slate-800 text-slate-100 shadow-md shadow-red-950/10'
+                : 'bg-white border-2 border-slate-200/90 text-slate-950 shadow-xs hover:border-slate-300 hover:shadow-md'
             }`}
           >
-            <div className="flex items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                    fav.direction === 'ofrezco'
-                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-                      : 'bg-amber-500/15 text-amber-800 dark:text-amber-300'
-                  }`}
-                >
-                  {fav.direction === 'ofrezco' ? 'Ofrece' : 'Necesita'}
-                </span>
-                <span className="tabular inline-flex items-center gap-1 text-slate-500">
-                  <Footprints className="h-3.5 w-3.5" aria-hidden="true" />A{' '}
-                  {fav.location.walkingMinutes} min ({fav.location.distanceMeters}m)
-                </span>
+            <div>
+              <div className="flex items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`rounded-full px-3 py-0.5 text-[11px] font-black border ${
+                      fav.direction === 'ofrezco'
+                        ? 'bg-emerald-100 border-emerald-300 text-emerald-950'
+                        : 'bg-amber-100 border-amber-300 text-amber-950'
+                    }`}
+                  >
+                    {fav.direction === 'ofrezco' ? 'Vecino ofrece' : 'Vecino necesita'}
+                  </span>
+                  <span className="tabular inline-flex items-center gap-1 font-bold text-slate-700">
+                    <Footprints className="h-4 w-4 text-emerald-700" aria-hidden="true" />A{' '}
+                    {fav.location.walkingMinutes} min ({fav.location.distanceMeters}m)
+                  </span>
+                </div>
+
+                <span className="text-[11px] font-semibold text-slate-500">{fav.createdAt}</span>
               </div>
 
-              <span className="text-[11px] text-slate-400">{fav.createdAt}</span>
-            </div>
-
-            <h3 className="heading-tight mt-2 text-[16px] font-bold leading-snug">{fav.title}</h3>
-            <p className={`mt-0.5 text-xs ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
-              {fav.authorName}
-            </p>
-
-            <p
-              className={`readable-prose mt-2 text-[13px] leading-relaxed ${
-                isEmergency ? 'text-slate-300' : 'text-slate-600'
-              }`}
-            >
-              {fav.description}
-            </p>
-
-            {fav.exchangeNote && (
+              <h3 className="heading-tight mt-2.5 text-[18px] font-black leading-snug text-slate-950 dark:text-white">
+                {fav.title}
+              </h3>
               <p
-                className={`mt-2.5 rounded-2xl px-3 py-2 text-xs ${
-                  isEmergency ? 'bg-slate-900 text-slate-300' : 'bg-slate-50 text-slate-600'
+                className={`mt-0.5 text-xs font-semibold ${
+                  isEmergency ? 'text-slate-300' : 'text-slate-600'
                 }`}
               >
-                <span className="font-semibold">Acuerdo:</span> {fav.exchangeNote}
+                {fav.authorName} · {fav.location.reference}
               </p>
-            )}
 
-            <div className="mt-3 flex items-center justify-between gap-2 pt-1">
-              <div className="min-w-0 flex-1 text-xs text-slate-500">
-                <p className="flex items-center gap-1 truncate">
-                  <MapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden="true" />
+              <p
+                className={`readable-prose mt-2.5 text-xs font-normal leading-relaxed ${
+                  isEmergency ? 'text-slate-200' : 'text-slate-800'
+                }`}
+              >
+                {fav.description}
+              </p>
+
+              {fav.exchangeNote && (
+                <div
+                  className={`mt-3 rounded-2xl p-2.5 text-xs border ${
+                    isEmergency
+                      ? 'bg-slate-900 border-slate-700 text-slate-200'
+                      : 'bg-slate-50 border-slate-200 text-slate-900'
+                  }`}
+                >
+                  <p className="font-bold text-slate-950">
+                    Acuerdo vecinal:{' '}
+                    <span className="font-normal text-slate-800">{fav.exchangeNote}</span>
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1 text-xs text-slate-600">
+                <p className="flex items-center gap-1.5 truncate font-semibold text-xs">
+                  <MapPin className="h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />
                   <span className="truncate">
                     {fav.safeMeetingPoint || fav.location.reference}
                   </span>
@@ -148,24 +184,24 @@ export const FavorsView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => markFavorStatus(fav.id, 'en_curso')}
-                  className="inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-2xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white transition active:scale-95"
+                  className="inline-flex min-h-[42px] shrink-0 items-center gap-1.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-xs font-black text-white transition active:scale-95 shadow-xs"
                 >
-                  <HandHeart className="h-3.5 w-3.5" aria-hidden="true" />
+                  <HandHeart className="h-4 w-4" aria-hidden="true" />
                   <span>
                     {fav.category === 'movilidad_pool'
                       ? 'Unirme al pool'
                       : fav.direction === 'ofrezco'
                       ? 'Pedir prestado'
-                      : 'Apoyar'}
+                      : 'Ofrecer apoyo'}
                   </span>
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => markFavorStatus(fav.id, 'completado')}
-                  className="inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-2xl bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white"
+                  className="inline-flex min-h-[42px] shrink-0 items-center gap-1.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-xs font-black text-white transition active:scale-95 shadow-xs"
                 >
-                  <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                   <span>En coordinación ({fav.helpedByCount})</span>
                 </button>
               )}

@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { createNeighborhoodPoint } from '../../services/geoService';
@@ -207,38 +207,38 @@ export const QuickPublishSheet: React.FC = () => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="publish-sheet-title"
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 backdrop-blur-xs animate-fade-in"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-xs animate-fade-in"
       onClick={closePublishModal}
     >
       <form
         onSubmit={handlePublish}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-[430px] rounded-t-[28px] bg-[#F2F2F7] p-5 pb-8 text-slate-900 shadow-2xl animate-sheet"
+        className="w-full max-w-[500px] rounded-t-[28px] sm:rounded-3xl bg-[#F8FAFC] p-5 pb-8 sm:p-6 text-slate-900 shadow-2xl animate-sheet sm:animate-scale-in max-h-[92vh] overflow-y-auto no-scrollbar border border-slate-200/60"
       >
-        <div className="mx-auto mb-3 h-1.5 w-9 rounded-full bg-slate-300" />
+        <div className="mx-auto mb-3 h-1.5 w-9 rounded-full bg-slate-300 sm:hidden" />
 
-        <div className="flex items-center justify-between pb-3">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <button
             type="button"
             onClick={closePublishModal}
-            className="text-sm font-medium text-slate-500 hover:text-slate-800"
+            className="text-sm font-medium text-slate-500 hover:text-slate-800 transition"
           >
             Cancelar
           </button>
-          <h2 id="publish-sheet-title" className="text-base font-bold">
-            Nueva publicación
+          <h2 id="publish-sheet-title" className="text-base font-bold text-slate-900">
+            Nueva publicación vecinal
           </h2>
           <button
-            type="submit"
-            className={`text-sm font-bold ${
-              intent === 'emergency' ? 'text-red-600' : 'text-emerald-600'
-            }`}
+            type="button"
+            onClick={closePublishModal}
+            aria-label="Cerrar modal"
+            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-600 transition"
           >
-            Publicar
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="mt-1 space-y-3.5">
+        <div className="mt-3 space-y-3.5">
           <div className="grid grid-cols-3 rounded-2xl bg-slate-200/80 p-1">
             {[
               { id: 'service', label: 'Oficio o venta' },
@@ -251,8 +251,8 @@ export const QuickPublishSheet: React.FC = () => {
                   key={tab.id}
                   type="button"
                   onClick={() => handleSelectIntent(tab.id as 'service' | 'favor' | 'emergency')}
-                  className={`rounded-xl py-2 text-xs font-semibold transition ${
-                    active ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
+                  className={`rounded-xl py-2 text-xs font-bold transition active:scale-95 ${
+                    active ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   {tab.label}
@@ -263,7 +263,7 @@ export const QuickPublishSheet: React.FC = () => {
 
           <div>
             <p className="px-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              Opciones rápidas
+              Plantillas rápidas
             </p>
             <div className="no-scrollbar mt-1.5 flex gap-1.5 overflow-x-auto pb-1">
               {TEMPLATES[intent].map((tpl) => (
@@ -271,10 +271,10 @@ export const QuickPublishSheet: React.FC = () => {
                   key={tpl.label}
                   type="button"
                   onClick={() => handleSelectTemplate(tpl)}
-                  className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition active:scale-95 ${
                     selectedTemplate?.label === tpl.label
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-white text-slate-700 border border-slate-200/80'
+                      ? 'bg-slate-900 text-white shadow-xs'
+                      : 'bg-white text-slate-700 border border-slate-200/80 hover:bg-slate-50'
                   }`}
                 >
                   {tpl.label}
@@ -283,10 +283,10 @@ export const QuickPublishSheet: React.FC = () => {
             </div>
           </div>
 
-          <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-xs">
+          <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-xs border border-slate-200/60">
             <div className="p-3">
               <label htmlFor="pub-title" className="block text-[11px] font-medium text-slate-400">
-                ¿Qué ofreces o necesitas?
+                Título del anuncio
               </label>
               <input
                 id="pub-title"
@@ -332,7 +332,7 @@ export const QuickPublishSheet: React.FC = () => {
           </div>
 
           {intent === 'service' && (
-            <div className="flex items-center justify-between rounded-2xl bg-white px-3.5 py-2.5 shadow-xs">
+            <div className="flex items-center justify-between rounded-2xl bg-white px-3.5 py-2.5 shadow-xs border border-slate-200/60">
               <span className="text-xs font-medium text-slate-500">Formas de pago</span>
               <div className="flex items-center gap-1.5">
                 {[
@@ -347,7 +347,7 @@ export const QuickPublishSheet: React.FC = () => {
                       type="button"
                       onClick={() => togglePayment(pm.id as PaymentMethod)}
                       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold transition ${
-                        active ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'
+                        active ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                       }`}
                     >
                       {active && <Check className="h-3 w-3" aria-hidden="true" />}
@@ -362,10 +362,10 @@ export const QuickPublishSheet: React.FC = () => {
           <button
             type="submit"
             className={`w-full min-h-[48px] rounded-2xl py-3 text-sm font-bold text-white shadow-md transition active:scale-98 ${
-              intent === 'emergency' ? 'bg-red-600' : 'bg-emerald-600'
+              intent === 'emergency' ? 'bg-red-600 hover:bg-red-700' : 'bg-emerald-600 hover:bg-emerald-700'
             }`}
           >
-            {intent === 'emergency' ? 'Enviar alerta al barrio' : 'Publicar ahora'}
+            {intent === 'emergency' ? 'Enviar alerta al barrio' : 'Publicar anuncio ahora'}
           </button>
         </div>
       </form>

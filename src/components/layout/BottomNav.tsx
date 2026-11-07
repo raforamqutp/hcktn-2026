@@ -32,14 +32,14 @@ export const BottomNav: React.FC = () => {
   ];
 
   return (
-    <div className="pointer-events-none fixed bottom-0 left-0 right-0 z-30 mx-auto max-w-[430px] px-4 pb-4">
+    <div className="md:hidden pointer-events-none fixed bottom-0 left-0 right-0 z-30 mx-auto max-w-[430px] px-4 pb-4">
       <div className="flex items-center gap-2.5">
         <nav
-          aria-label="Navegación principal"
+          aria-label="Navegación principal móvil"
           className={`pointer-events-auto flex flex-1 items-center justify-around rounded-full border p-1.5 shadow-lg backdrop-blur-xl transition-colors ${
             isEmergency
               ? 'dark-surface bg-[#111726]/90 border-slate-800 text-slate-300'
-              : 'bg-white/85 border-slate-200/80 text-slate-500'
+              : 'bg-white/90 border-slate-200/80 text-slate-500 shadow-md'
           }`}
         >
           {navItems.map((item) => {

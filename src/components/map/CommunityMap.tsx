@@ -23,39 +23,69 @@ const BOUNDS: L.LatLngBoundsExpression = [
   [NEIGHBORHOOD_CENTER.lat + 0.012, NEIGHBORHOOD_CENTER.lng + 0.012],
 ];
 
-export const CommunityMap: React.FC = () => {
+interface CommunityMapProps {
+  compact?: boolean;
+  heightClassName?: string;
+}
+
+export const CommunityMap: React.FC<CommunityMapProps> = ({
+  compact = false,
+  heightClassName,
+}) => {
   const { mode, isOnline, services, favors, emergencyItems, joinEmergencyResponse } = useApp();
   const isEmergency = mode === 'emergency';
 
+  const defaultHeight = compact
+    ? 'h-[240px] sm:h-[260px]'
+    : 'h-[460px] md:h-[620px] lg:h-[700px]';
+
+  const containerHeight = heightClassName || defaultHeight;
+
   return (
     <div
-      className={`overflow-hidden rounded-3xl border shadow-xs ${
-        isEmergency ? 'border-slate-800 bg-[#121826]' : 'border-slate-200/70 bg-white'
+      className={`overflow-hidden rounded-2xl md:rounded-3xl border-2 transition-all ${
+        isEmergency
+          ? 'border-slate-700 bg-[#121826] shadow-lg shadow-red-950/20'
+          : 'border-slate-200 bg-white shadow-xs'
       }`}
     >
       <div
-        className={`flex items-center justify-between gap-2 px-4 py-2.5 text-xs ${
-          isEmergency ? 'border-b border-slate-800 text-slate-300' : 'border-b border-slate-100 text-slate-600'
+        className={`flex items-center justify-between gap-2 px-4 py-2.5 text-xs border-b-2 ${
+          isEmergency
+            ? 'border-slate-700 text-slate-200 bg-slate-900'
+            : 'border-slate-200 text-slate-950 bg-slate-100'
         }`}
       >
-        <span className="font-semibold">A menos de 10 min a pie</span>
-        <div className="flex items-center gap-3 text-[11px]">
+        <div className="flex items-center gap-2">
+          <span className="font-black text-slate-950 dark:text-white">
+            {compact ? 'Radar del Barrio' : 'Mapa Comunitario Interactivo'}
+          </span>
+          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
+            (&lt; 10 min a pie)
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3 text-xs">
           {!isEmergency ? (
             <>
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-emerald-600" /> Servicios
+              <span className="inline-flex items-center gap-1.5 font-bold text-emerald-950">
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-600" />
+                <span>Servicios ({services.length})</span>
               </span>
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-indigo-600" /> Favores
+              <span className="inline-flex items-center gap-1.5 font-bold text-indigo-950">
+                <span className="h-2.5 w-2.5 rounded-full bg-indigo-600" />
+                <span>Favores ({favors.length})</span>
               </span>
             </>
           ) : (
             <>
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-red-600" /> Urgencias
+              <span className="inline-flex items-center gap-1.5 font-black text-red-500">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-600 animate-ping" />
+                Urgencias ({emergencyItems.filter((i) => i.urgency === 'critica').length})
               </span>
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-amber-500" /> Recursos
+              <span className="inline-flex items-center gap-1.5 font-bold text-amber-500">
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                Puntos de apoyo
               </span>
             </>
           )}
@@ -63,12 +93,12 @@ export const CommunityMap: React.FC = () => {
       </div>
 
       {!isOnline && (
-        <div className="bg-amber-500/90 px-3 py-1.5 text-center text-[11px] font-semibold text-slate-950">
-          Sin conexión · Mostrando mapa guardado del barrio
+        <div className="bg-amber-400 px-3 py-1.5 text-center text-xs font-black text-slate-950">
+          Sin conexión a internet · Mostrando coordenadas guardadas en caché
         </div>
       )}
 
-      <div className="h-[460px] w-full">
+      <div className={`${containerHeight} w-full relative`}>
         <MapContainer
           center={[NEIGHBORHOOD_CENTER.lat, NEIGHBORHOOD_CENTER.lng]}
           zoom={16}
@@ -87,9 +117,10 @@ export const CommunityMap: React.FC = () => {
             icon={createCustomPin('#0f172a', 'TÚ')}
           >
             <Popup>
-              <div className="text-xs">
-                <p className="font-bold text-slate-900">Tu ubicación</p>
+              <div className="p-1 text-xs space-y-1">
+                <p className="font-bold text-slate-900">Tu punto vecinal</p>
                 <p className="text-slate-600">{NEIGHBORHOOD_CENTER.name}</p>
+                <p className="text-[10px] text-emerald-600 font-medium">Ubicación verificada</p>
               </div>
             </Popup>
           </Marker>
@@ -108,6 +139,11 @@ export const CommunityMap: React.FC = () => {
                       {srv.providerName} · {srv.location.walkingMinutes} min a pie
                     </p>
                     <p className="font-semibold text-emerald-700">{srv.priceRange}</p>
+                    {srv.paymentMethods.includes('trueque') && (
+                      <span className="inline-block rounded bg-amber-100 text-amber-800 px-1.5 py-0.5 text-[10px] font-medium">
+                        Acepta trueque
+                      </span>
+                    )}
                   </div>
                 </Popup>
               </Marker>
@@ -125,6 +161,9 @@ export const CommunityMap: React.FC = () => {
                     <p className="font-bold text-slate-900">{fav.title}</p>
                     <p className="text-slate-600">
                       {fav.authorName} · {fav.location.walkingMinutes} min a pie
+                    </p>
+                    <p className="text-[11px] font-medium text-indigo-700">
+                      {fav.direction === 'ofrezco' ? 'Vecino ofrece ayuda' : 'Vecino necesita apoyo'}
                     </p>
                   </div>
                 </Popup>
@@ -160,13 +199,13 @@ export const CommunityMap: React.FC = () => {
                         </p>
                         {emg.isSensitiveProtected && (
                           <p className="text-[10px] text-slate-500">
-                            Zona aproximada por privacidad
+                            Zona aproximada por protección de privacidad
                           </p>
                         )}
                         <button
                           type="button"
                           onClick={() => joinEmergencyResponse(emg.id)}
-                          className="w-full rounded-lg bg-red-600 px-2 py-1 text-center font-semibold text-white"
+                          className="w-full rounded-lg bg-red-600 px-2 py-1 text-center font-semibold text-white transition hover:bg-red-700"
                         >
                           Voy a ayudar ({emg.responders.length})
                         </button>

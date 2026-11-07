@@ -63,37 +63,37 @@ export const RegisterDniModal: React.FC = () => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="dni-modal-title"
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 backdrop-blur-xs animate-fade-in"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-xs animate-fade-in"
       onClick={() => setIsAuthModalOpen(false)}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-[430px] rounded-t-[28px] bg-[#F2F2F7] p-5 pb-8 text-slate-900 shadow-2xl animate-sheet"
+        className="w-full max-w-[440px] rounded-t-[28px] sm:rounded-3xl bg-[#F8FAFC] p-5 pb-8 sm:p-6 text-slate-900 shadow-2xl animate-sheet sm:animate-scale-in max-h-[92vh] overflow-y-auto no-scrollbar border border-slate-200/60"
       >
-        <div className="mx-auto mb-3 h-1.5 w-9 rounded-full bg-slate-300" />
+        <div className="mx-auto mb-3 h-1.5 w-9 rounded-full bg-slate-300 sm:hidden" />
 
         <div className="flex items-center justify-between pb-3">
-          <h2 id="dni-modal-title" className="text-lg font-bold tracking-tight">
+          <h2 id="dni-modal-title" className="text-lg font-bold tracking-tight text-slate-900">
             Identificación vecinal
           </h2>
           <button
             type="button"
             onClick={() => setIsAuthModalOpen(false)}
-            aria-label="Cerrar"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200/80 text-slate-600"
+            aria-label="Cerrar modal"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-600 transition"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
 
         <p className="text-xs text-slate-500">
-          Ingresa tu DNI para validar tu nombre con tu vecindario.
+          Ingresa tu DNI para validar tu identidad y reputación con tus vecinos de la cuadra.
         </p>
 
         {minorBlockedError && (
           <div
             role="alert"
-            className="mt-3 space-y-2.5 rounded-2xl border border-red-300 bg-red-50 p-3.5 text-xs text-red-950"
+            className="mt-3 space-y-2.5 rounded-2xl border border-red-300 bg-red-50 p-3.5 text-xs text-red-950 animate-fade-in"
           >
             <div className="flex items-start gap-2">
               <ShieldAlert className="h-5 w-5 shrink-0 text-red-600" aria-hidden="true" />
@@ -105,10 +105,10 @@ export const RegisterDniModal: React.FC = () => {
             <button
               type="button"
               onClick={triggerEmergencyBypass}
-              className="flex w-full min-h-[42px] items-center justify-center gap-1.5 rounded-xl bg-red-600 px-3 py-2 text-xs font-bold text-white"
+              className="flex w-full min-h-[42px] items-center justify-center gap-1.5 rounded-xl bg-red-600 hover:bg-red-700 px-3 py-2 text-xs font-bold text-white transition active:scale-95"
             >
               <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-              <span>Reportar una emergencia ahora</span>
+              <span>Reportar una emergencia de todas formas</span>
             </button>
           </div>
         )}
@@ -116,14 +116,14 @@ export const RegisterDniModal: React.FC = () => {
         {generalError && (
           <p
             role="alert"
-            className="mt-3 rounded-2xl bg-amber-50 p-3 text-xs font-medium text-amber-900"
+            className="mt-3 rounded-2xl bg-amber-50 border border-amber-200 p-3 text-xs font-semibold text-amber-900 animate-fade-in"
           >
             {generalError}
           </p>
         )}
 
         <form onSubmit={handleValidate} className="mt-3 space-y-3">
-          <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-xs">
+          <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-xs border border-slate-200/60">
             <div className="p-3">
               <label htmlFor="dni-input" className="block text-[11px] font-medium text-slate-400">
                 Número de DNI
@@ -157,27 +157,27 @@ export const RegisterDniModal: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 px-1">
-            <span className="text-[11px] text-slate-400">Autocompletar:</span>
+          <div className="flex items-center gap-1.5 px-1 flex-wrap">
+            <span className="text-[11px] text-slate-400">DNI Demo:</span>
             <button
               type="button"
               onClick={() => {
                 setDni('70448548');
                 setPassword('vecinos2026');
               }}
-              className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-medium text-slate-600 shadow-2xs"
+              className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition"
             >
-              70448548
+              70448548 (Rafael)
             </button>
             <button
               type="button"
               onClick={() => {
-                setDni('73477590');
+                setDni('72393204');
                 setPassword('vecinos2026');
               }}
-              className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-medium text-slate-600 shadow-2xs"
+              className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition"
             >
-              73477590
+              72393204 (Bryan)
             </button>
             <button
               type="button"
@@ -185,29 +185,29 @@ export const RegisterDniModal: React.FC = () => {
                 setDni('81234567');
                 setPassword('vecinos2026');
               }}
-              className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-medium text-slate-600 shadow-2xs"
+              className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-medium text-red-600 border border-red-200 hover:bg-red-50 transition"
             >
               81234567 (Menor)
             </button>
           </div>
 
-          <label className="flex cursor-pointer items-center gap-2.5 rounded-2xl bg-white p-3 text-xs font-medium text-slate-700 shadow-xs">
+          <label className="flex cursor-pointer items-center gap-2.5 rounded-2xl bg-white p-3 text-xs font-medium text-slate-700 shadow-xs border border-slate-200/60">
             <input
               type="checkbox"
               checked={swornAdult}
               onChange={(e) => setSwornAdult(e.target.checked)}
-              className="h-4 w-4 rounded text-emerald-600"
+              className="h-4 w-4 rounded text-emerald-600 focus:ring-emerald-500"
             />
-            <span>Declaro ser mayor de 18 años y residir en el barrio.</span>
+            <span>Declaro ser mayor de 18 años y residir en la cuadra.</span>
           </label>
 
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-md transition active:scale-98"
+            className="flex w-full min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 py-3 text-sm font-bold text-white shadow-md transition active:scale-95"
           >
             <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-            <span>{loading ? 'Validando...' : 'Continuar'}</span>
+            <span>{loading ? 'Validando con Reniec...' : 'Confirmar identificación'}</span>
           </button>
         </form>
       </div>

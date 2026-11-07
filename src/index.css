@@ -1,21 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: light dark;
-  --surface-dark: #0b0f19;
+  color-scheme: light;
+  --surface-dark: #090d16;
   --text-dark: #f8fafc;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.15);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
+::selection {
+  background-color: #059669;
+  color: #ffffff;
+}
+
 .dark-surface {
-  color-scheme: only dark;
+  color-scheme: dark;
   background-color: var(--surface-dark);
   color: var(--text-dark);
 }
 
+/* Custom modern scrollbars */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -24,19 +31,34 @@
   scrollbar-width: none;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.45);
+}
+
 .tabular {
   font-variant-numeric: tabular-nums;
 }
 
 .heading-tight {
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 .readable-prose {
   max-width: 65ch;
 }
 
-/* Emil Kowalski: Tactile feedback on touch/press */
+/* Emil Kowalski: Tactile feedback on touch & press */
 button, [role="button"], a {
   -webkit-tap-highlight-color: transparent;
 }
@@ -45,10 +67,10 @@ button, [role="button"], a {
   transition: transform 140ms var(--ease-out), opacity 140ms var(--ease-out);
 }
 .pressable:active {
-  transform: scale(0.965);
+  transform: scale(0.97);
 }
 
-/* Sheet & Modal physics: smooth entrance from bottom or center */
+/* Sheet & Modal physics */
 @keyframes sheetIn {
   from {
     transform: translateY(100%);
@@ -64,6 +86,21 @@ button, [role="button"], a {
   animation: sheetIn 280ms var(--ease-drawer) forwards;
 }
 
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 200ms var(--ease-out) forwards;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -71,7 +108,7 @@ button, [role="button"], a {
   }
   to {
     opacity: 1;
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(4px);
   }
 }
 
@@ -92,7 +129,7 @@ button, [role="button"], a {
 }
 
 :where(a:any-link, button, input, select, textarea):focus-visible {
-  outline: 2px solid #10b981;
+  outline: 2px solid #059669;
   outline-offset: 2px;
 }
 
