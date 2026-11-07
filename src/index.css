@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light dark;
+  --surface-dark: #0b0f19;
+  --text-dark: #f8fafc;
+}
+
+.dark-surface {
+  color-scheme: only dark;
+  background-color: var(--surface-dark);
+  color: var(--text-dark);
+}
+
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+:where(a:any-link, button, input, select, textarea):focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+.leaflet-container {
+  font-family: inherit;
+  z-index: 10;
+}
