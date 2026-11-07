@@ -116,17 +116,25 @@ export const DesktopCompanionPanel: React.FC = () => {
 
         {/* Lista descriptiva y humana */}
         <div className="space-y-2 text-xs">
-          <div className="flex items-center gap-2.5 p-2 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
-            <Users className="h-4 w-4 text-emerald-700 shrink-0" />
-            <span className="font-bold text-slate-900">
-              <strong className="text-emerald-950 font-black">18 vecinos activos</strong> en tu radio de 500m
+          <div className={`flex items-center gap-2.5 p-2 rounded-2xl border ${
+            isEmergency
+              ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200'
+              : 'bg-emerald-50/70 border-emerald-200/80 text-slate-900'
+          }`}>
+            <Users className="h-4 w-4 text-emerald-600 shrink-0" />
+            <span className="font-bold">
+              <strong className={`font-black ${isEmergency ? 'text-emerald-100' : 'text-emerald-950'}`}>18 vecinos activos</strong> en tu radio de 500m
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5 p-2 rounded-2xl bg-indigo-50/70 border border-indigo-200/80">
-            <HeartHandshake className="h-4 w-4 text-indigo-700 shrink-0" />
-            <span className="font-bold text-slate-900">
-              <strong className="text-indigo-950 font-black">{activeBartersCount} trueques disponibles</strong> (¡sin dinero!)
+          <div className={`flex items-center gap-2.5 p-2 rounded-2xl border ${
+            isEmergency
+              ? 'bg-indigo-950/40 border-indigo-800 text-indigo-200'
+              : 'bg-indigo-50/70 border-indigo-200/80 text-slate-900'
+          }`}>
+            <HeartHandshake className="h-4 w-4 text-indigo-500 shrink-0" />
+            <span className="font-bold">
+              <strong className={`font-black ${isEmergency ? 'text-indigo-100' : 'text-indigo-950'}`}>{activeBartersCount} trueques disponibles</strong> (¡sin dinero!)
             </span>
           </div>
         </div>
@@ -167,7 +175,7 @@ export const DesktopCompanionPanel: React.FC = () => {
               <p className="text-sm font-black leading-tight text-white">
                 Publicar algo en el barrio
               </p>
-              <p className="text-xs text-emerald-100 font-semibold mt-0.5">
+              <p className={`text-xs font-semibold mt-0.5 ${isEmergency ? 'text-red-100' : 'text-emerald-100'}`}>
                 Ofrece comida, presta una herramienta o pide ayuda
               </p>
             </div>
@@ -184,7 +192,7 @@ export const DesktopCompanionPanel: React.FC = () => {
             : 'bg-slate-100/90 border-slate-300 text-slate-950'
         }`}
       >
-        <p className="font-black text-slate-950 flex items-center gap-2">
+        <p className={`font-black flex items-center gap-2 ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
           <PhoneCall className="h-4 w-4 text-emerald-700" />
           Teléfonos de Auxilio Rápido (Yanahuara)
         </p>

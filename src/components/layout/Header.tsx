@@ -116,7 +116,7 @@ export const Header: React.FC = () => {
                 V
               </div>
               <div>
-                <span className="text-xl font-black tracking-tight leading-none text-slate-950 dark:text-white">
+                <span className={`text-xl font-black tracking-tight leading-none ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
                   VecinOS
                 </span>
                 <span className="block text-xs font-black text-emerald-700 leading-tight">
@@ -266,7 +266,7 @@ export const Header: React.FC = () => {
         <div className="flex md:hidden items-center justify-between gap-2 px-4 py-3">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-[20px] font-black tracking-tight text-slate-950 dark:text-white">VecinOS</span>
+              <span className={`text-[20px] font-black tracking-tight ${isEmergency ? 'text-white' : 'text-slate-950'}`}>VecinOS</span>
               {!isOnline && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 border border-amber-300 px-2 py-0.5 text-[11px] font-bold text-amber-950">
                   <WifiOff className="h-3 w-3" aria-hidden="true" />
@@ -274,7 +274,7 @@ export const Header: React.FC = () => {
                 </span>
               )}
             </div>
-            <p className="flex items-center gap-1 truncate text-xs font-bold text-slate-700 dark:text-slate-300">
+            <p className={`flex items-center gap-1 truncate text-xs font-bold ${isEmergency ? 'text-slate-300' : 'text-slate-700'}`}>
               <MapPin className="h-3.5 w-3.5 shrink-0 text-emerald-700" aria-hidden="true" />
               <span className="truncate">{currentUser.neighborhood}</span>
             </p>

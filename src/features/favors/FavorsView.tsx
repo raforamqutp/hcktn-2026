@@ -372,7 +372,7 @@ export const FavorsView: React.FC = () => {
           }`}
         >
           <HandHeart className="mx-auto h-12 w-12 text-slate-400 mb-3" />
-          <h3 className="text-lg font-black text-slate-950 dark:text-white">
+          <h3 className={`text-lg font-black ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
             No se encontraron favores o rutas con estos filtros
           </h3>
           <p className="text-xs font-medium mt-1 max-w-md mx-auto">
@@ -472,7 +472,9 @@ export const FavorsView: React.FC = () => {
 
                 {/* Distancia a pie */}
                 <div className="mt-2 flex items-center gap-1.5 text-xs">
-                  <span className="tabular inline-flex items-center gap-1 font-black text-emerald-800 dark:text-emerald-400">
+                  <span className={`tabular inline-flex items-center gap-1 font-black ${
+                    isEmergency ? 'text-emerald-400' : 'text-emerald-800'
+                  }`}>
                     <Footprints className="h-4 w-4 text-emerald-600" aria-hidden="true" />
                     A {fav.location.walkingMinutes} min a pie ({fav.location.distanceMeters}m)
                   </span>
@@ -480,7 +482,9 @@ export const FavorsView: React.FC = () => {
 
                 {/* Título */}
                 <h3
-                  className={`heading-tight mt-2 text-[18px] md:text-[19px] font-black leading-snug text-slate-950 dark:text-white ${
+                  className={`heading-tight mt-2 text-[18px] md:text-[19px] font-black leading-snug ${
+                    isEmergency ? 'text-white' : 'text-slate-950'
+                  } ${
                     isSeniorMode ? 'text-[20px] md:text-[22px]' : ''
                   }`}
                 >
@@ -515,12 +519,12 @@ export const FavorsView: React.FC = () => {
                       : 'bg-emerald-50/80 border-emerald-200/90 text-emerald-950'
                   }`}
                 >
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-400" />
+                  <ShieldCheck className={`h-4 w-4 shrink-0 ${isEmergency ? 'text-emerald-400' : 'text-emerald-700'}`} />
                   <div className="min-w-0 flex-1 text-xs">
-                    <p className="font-bold text-emerald-950 dark:text-emerald-300 leading-tight">
+                    <p className={`font-bold leading-tight ${isEmergency ? 'text-emerald-300' : 'text-emerald-950'}`}>
                       Punto Seguro de Encuentro:
                     </p>
-                    <p className="truncate font-semibold text-emerald-900 dark:text-emerald-200 mt-0.5">
+                    <p className={`truncate font-semibold mt-0.5 ${isEmergency ? 'text-emerald-200' : 'text-emerald-900'}`}>
                       {fav.safeMeetingPoint || 'Garita de Vigilancia / Parque Central'}
                     </p>
                   </div>
@@ -535,9 +539,9 @@ export const FavorsView: React.FC = () => {
                         : 'bg-slate-50 border-slate-200 text-slate-900'
                     }`}
                   >
-                    <p className="font-bold text-slate-950 dark:text-white">
+                    <p className={`font-bold ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
                       Condición o acuerdo vecinal:{' '}
-                      <span className="font-normal text-slate-800 dark:text-slate-300">
+                      <span className={`font-normal ${isEmergency ? 'text-slate-300' : 'text-slate-800'}`}>
                         {fav.exchangeNote}
                       </span>
                     </p>
@@ -547,7 +551,7 @@ export const FavorsView: React.FC = () => {
 
               {/* Pie de Tarjeta y Acción Interactiva */}
               <div className="mt-4 pt-3 border-t border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="min-w-0 text-xs text-slate-600 dark:text-slate-400">
+                <div className={`min-w-0 text-xs ${isEmergency ? 'text-slate-400' : 'text-slate-600'}`}>
                   <p className="flex items-center gap-1.5 truncate font-semibold">
                     <MapPin className="h-4 w-4 shrink-0 text-indigo-600" aria-hidden="true" />
                     <span className="truncate">{fav.location.reference}</span>
@@ -593,7 +597,11 @@ export const FavorsView: React.FC = () => {
                   )}
 
                   {fav.status === 'completado' && (
-                    <span className="inline-flex min-h-[42px] items-center gap-1.5 rounded-2xl bg-slate-100 border border-slate-300 px-3.5 py-2 text-xs font-black text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
+                    <span className={`inline-flex min-h-[42px] items-center gap-1.5 rounded-2xl border px-3.5 py-2 text-xs font-black ${
+                      isEmergency
+                        ? 'bg-slate-800 text-slate-300 border-slate-700'
+                        : 'bg-slate-100 text-slate-700 border-slate-300'
+                    }`}>
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                       <span>Completado</span>
                     </span>

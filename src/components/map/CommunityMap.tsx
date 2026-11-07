@@ -57,10 +57,10 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
         }`}
       >
         <div className="flex items-center gap-2">
-          <span className="font-black text-slate-950 dark:text-white">
+          <span className={`font-black ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
             {compact ? 'Radar del Barrio' : 'Mapa Comunitario Interactivo'}
           </span>
-          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
+          <span className={`text-[11px] font-bold ${isEmergency ? 'text-slate-400' : 'text-slate-600'}`}>
             (&lt; 10 min a pie)
           </span>
         </div>

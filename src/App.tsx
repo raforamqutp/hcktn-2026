@@ -46,7 +46,7 @@ const MainShell: React.FC = () => {
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h2 className="text-xl md:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+                <h2 className={`text-xl md:text-2xl font-black tracking-tight ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
                   Mapa del Barrio en Tiempo Real
                 </h2>
                 <p className="text-xs md:text-sm text-slate-500">

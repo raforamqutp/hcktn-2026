@@ -172,7 +172,7 @@ export const QuickPublishSheet: React.FC = () => {
 
   if (!isPublishOpen) return null;
 
-  // CLIC 1: SELECCIONAR INTENCIÓN
+  // Paso 1: Seleccionar intención
   const handleSelectIntent = (nextIntent: 'service' | 'favor' | 'emergency') => {
     setIntent(nextIntent);
     const tpl = TEMPLATES[nextIntent][0];
@@ -183,7 +183,7 @@ export const QuickPublishSheet: React.FC = () => {
     setSafeMeetingPoint(tpl.safeMeetingPoint || 'Parque Central Los Perales');
   };
 
-  // CLIC 2: SELECCIONAR PLANTILLA INTELIGENTE
+  // Paso 2: Seleccionar plantilla inteligente
   const handleSelectTemplate = (tpl: QuickTemplate) => {
     setSelectedTemplate(tpl);
     setTitle(tpl.title);
@@ -294,12 +294,10 @@ export const QuickPublishSheet: React.FC = () => {
         </div>
 
         <div className="mt-4 space-y-4">
-          {/* ======================================================== */}
-          {/* CLIC 1: INTENCIÓN (3 BOTONES AMPLIOS Y ACCESIBLES)       */}
-          {/* ======================================================== */}
+          {/* PASO 1: INTENCIÓN */}
           <div>
             <span className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5">
-              Clic 1: ¿Qué deseas compartir o solicitar?
+              1. ¿Qué deseas compartir o solicitar?
             </span>
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -352,16 +350,14 @@ export const QuickPublishSheet: React.FC = () => {
             </div>
           </div>
 
-          {/* ======================================================== */}
-          {/* CLIC 2: PLANTILLAS INTELIGENTES CON AUTOCOMPLETADO       */}
-          {/* ======================================================== */}
+          {/* PASO 2: PLANTILLAS INTELIGENTES */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <span className="block text-[11px] font-black uppercase tracking-wider text-slate-500">
-                Clic 2: Elige una plantilla inteligente (autocompleta todo)
+                2. Plantillas rápidas sugeridas
               </span>
               <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
-                1 toque llena los datos
+                Autocompleta en 1 toque
               </span>
             </div>
 
@@ -490,12 +486,10 @@ export const QuickPublishSheet: React.FC = () => {
             </div>
           )}
 
-          {/* ======================================================== */}
-          {/* CLIC 3: CONFIRMAR Y PUBLICAR (BOTÓN GRANDE min-h-[52px]) */}
-          {/* ======================================================== */}
+          {/* PASO 3: CONFIRMAR Y PUBLICAR */}
           <div>
             <span className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5">
-              Clic 3: Confirmación
+              3. Confirmar y publicar
             </span>
             <button
               type="submit"

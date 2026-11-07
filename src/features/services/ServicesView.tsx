@@ -306,7 +306,7 @@ export const ServicesView: React.FC = () => {
                 </div>
 
                 {/* Título y Proveedor */}
-                <h3 className="heading-tight mt-2.5 text-[18px] font-black leading-snug text-slate-950 dark:text-white">
+                <h3 className={`heading-tight mt-2.5 text-[18px] font-black leading-snug ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
                   {srv.tradeTitle}
                 </h3>
                 <p
@@ -371,9 +371,9 @@ export const ServicesView: React.FC = () => {
                         : 'bg-indigo-50/70 text-indigo-950 border-indigo-200/80'
                     }`}
                   >
-                    <p className="font-bold text-indigo-900 dark:text-indigo-300">
+                    <p className={`font-bold ${isEmergency ? 'text-indigo-300' : 'text-indigo-900'}`}>
                       Acepta trueque:{' '}
-                      <span className="font-normal text-indigo-950 dark:text-indigo-200">
+                      <span className={`font-normal ${isEmergency ? 'text-indigo-200' : 'text-indigo-950'}`}>
                         {srv.barterInterest}
                       </span>
                     </p>
@@ -419,7 +419,7 @@ export const ServicesView: React.FC = () => {
                       </p>
                     </div>
 
-                    {/* Caritas Amigables de Alto Contraste con efecto Neon */}
+                    {/* Caritas Amigables de Alto Contraste */}
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
@@ -434,7 +434,11 @@ export const ServicesView: React.FC = () => {
                           showLabel
                           isDarkTheme={isEmergency}
                         />
-                        <span className="text-xs font-black text-emerald-800 dark:text-emerald-400 tabular">
+                        <span
+                          className={`text-xs font-black tabular ${
+                            isEmergency ? 'text-emerald-400' : 'text-emerald-800'
+                          }`}
+                        >
                           {srv.happyCount}
                         </span>
                       </button>
@@ -452,7 +456,11 @@ export const ServicesView: React.FC = () => {
                           showLabel
                           isDarkTheme={isEmergency}
                         />
-                        <span className="text-xs font-black text-amber-800 dark:text-amber-400 tabular">
+                        <span
+                          className={`text-xs font-black tabular ${
+                            isEmergency ? 'text-amber-400' : 'text-amber-800'
+                          }`}
+                        >
                           {srv.neutralCount}
                         </span>
                       </button>
@@ -470,7 +478,11 @@ export const ServicesView: React.FC = () => {
                           showLabel
                           isDarkTheme={isEmergency}
                         />
-                        <span className="text-xs font-black text-rose-800 dark:text-rose-400 tabular">
+                        <span
+                          className={`text-xs font-black tabular ${
+                            isEmergency ? 'text-rose-400' : 'text-rose-800'
+                          }`}
+                        >
                           {srv.angryCount}
                         </span>
                       </button>
@@ -479,7 +491,11 @@ export const ServicesView: React.FC = () => {
 
                   {/* Feedback explícito de peso por antigüedad tras votar */}
                   {fb && (
-                    <div className="mt-2.5 flex items-center gap-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 px-3 py-1.5 text-[11px] text-emerald-950 dark:text-emerald-200 font-bold animate-scale-in">
+                    <div className={`mt-2.5 flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[11px] font-bold animate-scale-in ${
+                      isEmergency
+                        ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-200'
+                        : 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                    }`}>
                       <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                       <span>
                         Voto registrado con peso <span className="underline">{fb.weight}x</span> [
@@ -502,7 +518,9 @@ export const ServicesView: React.FC = () => {
                       onClick={() =>
                         setExpandedReviewsId(isReviewsOpen ? null : srv.id)
                       }
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 transition"
+                      className={`inline-flex items-center gap-1 text-[11px] font-bold transition ${
+                        isEmergency ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                      }`}
                     >
                       <MessageSquare className="h-3 w-3" />
                       <span>
@@ -526,12 +544,14 @@ export const ServicesView: React.FC = () => {
                         {srv.ratings.map((r, idx) => (
                           <div
                             key={idx}
-                            className="border-b border-slate-200/60 dark:border-slate-800 pb-2 last:border-b-0 last:pb-0"
+                            className={`pb-2 last:border-b-0 last:pb-0 border-b ${
+                              isEmergency ? 'border-slate-800' : 'border-slate-200/60'
+                            }`}
                           >
                             <div className="flex items-center justify-between gap-1 text-[11px]">
-                              <span className="font-bold text-slate-900 dark:text-slate-100">
+                              <span className={`font-bold ${isEmergency ? 'text-slate-100' : 'text-slate-900'}`}>
                                 {r.userName}{' '}
-                                <span className="font-normal text-slate-500 dark:text-slate-400">
+                                <span className={`font-normal ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
                                   ({r.weightApplied}x peso)
                                 </span>
                               </span>
@@ -553,14 +573,16 @@ export const ServicesView: React.FC = () => {
                             </div>
 
                             {r.comment && (
-                              <p className="mt-1 text-slate-700 dark:text-slate-300 text-[11px]">
+                              <p className={`mt-1 text-[11px] ${isEmergency ? 'text-slate-300' : 'text-slate-700'}`}>
                                 "{r.comment}"
                               </p>
                             )}
 
                             {/* Derecho a réplica del proveedor */}
                             {r.providerReply && (
-                              <div className="mt-1.5 ml-3 flex items-start gap-1 rounded-xl bg-slate-100 dark:bg-slate-800 p-2 text-[11px] text-slate-800 dark:text-slate-200">
+                              <div className={`mt-1.5 ml-3 flex items-start gap-1 rounded-xl p-2 text-[11px] ${
+                                isEmergency ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-800'
+                              }`}>
                                 <CornerDownRight className="h-3 w-3 mt-0.5 text-indigo-500 shrink-0" />
                                 <div>
                                   <strong className="font-bold">
@@ -579,7 +601,11 @@ export const ServicesView: React.FC = () => {
 
                 {/* Notificación de propuesta enviada */}
                 {proposalSentNotice === srv.id && (
-                  <div className="flex items-center gap-2 rounded-2xl bg-indigo-500/15 border border-indigo-500/40 p-2.5 text-xs font-bold text-indigo-900 dark:text-indigo-200 animate-scale-in">
+                  <div className={`flex items-center gap-2 rounded-2xl p-2.5 text-xs font-bold border animate-scale-in ${
+                    isEmergency
+                      ? 'bg-indigo-950/70 border-indigo-500/40 text-indigo-200'
+                      : 'bg-indigo-50 border-indigo-200 text-indigo-950'
+                  }`}>
                     <Sparkles className="h-4 w-4 text-indigo-600 shrink-0" />
                     <span>¡Propuesta de trueque enviada al vecino con éxito!</span>
                   </div>
@@ -646,7 +672,7 @@ export const ServicesView: React.FC = () => {
                     title={isReported ? 'Anuncio reportado' : 'Reportar publicación'}
                     className={`flex h-10 w-10 items-center justify-center rounded-full transition ${
                       isReported
-                        ? 'text-red-600 bg-red-100 dark:bg-red-950/80'
+                        ? isEmergency ? 'text-red-300 bg-red-950/80' : 'text-red-700 bg-red-100'
                         : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
                     }`}
                   >
@@ -664,10 +690,10 @@ export const ServicesView: React.FC = () => {
                     }`}
                   >
                     <div>
-                      <p className="text-xs font-black text-indigo-950 dark:text-indigo-200">
+                      <p className={`text-xs font-black ${isEmergency ? 'text-indigo-200' : 'text-indigo-950'}`}>
                         ¿Qué favor, producto o habilidad ofreces a cambio?
                       </p>
-                      <p className="text-[11px] text-indigo-800/80 dark:text-indigo-300 mt-0.5">
+                      <p className={`text-[11px] mt-0.5 ${isEmergency ? 'text-indigo-300' : 'text-indigo-800'}`}>
                         Elige una propuesta rápida o escribe una personalizada:
                       </p>
                     </div>

@@ -143,7 +143,9 @@ export const EmergencyView: React.FC = () => {
                       <span className="rounded-full bg-red-600 px-3 py-0.5 text-[11px] font-black uppercase text-white tracking-wider">
                         {item.urgency === 'critica' ? 'Urgente' : 'Prioritario'}
                       </span>
-                      <span className="tabular inline-flex items-center gap-1 font-bold text-slate-700 dark:text-slate-300">
+                      <span className={`tabular inline-flex items-center gap-1 font-bold ${
+                        isEmergency ? 'text-slate-300' : 'text-slate-700'
+                      }`}>
                         <Footprints className="h-4 w-4 text-red-600" aria-hidden="true" />A{' '}
                         {item.location.walkingMinutes} min ({item.location.distanceMeters}m)
                       </span>
@@ -151,10 +153,14 @@ export const EmergencyView: React.FC = () => {
                     <span className="text-[11px] font-semibold text-slate-500">{item.createdAt}</span>
                   </div>
 
-                  <h3 className="heading-tight mt-2.5 text-[18px] font-black leading-snug text-slate-950 dark:text-white">
+                  <h3 className={`heading-tight mt-2.5 text-[18px] font-black leading-snug ${
+                    isEmergency ? 'text-white' : 'text-slate-950'
+                  }`}>
                     {item.title}
                   </h3>
-                  <p className="mt-0.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                  <p className={`mt-0.5 text-xs font-semibold ${
+                    isEmergency ? 'text-slate-300' : 'text-slate-600'
+                  }`}>
                     {item.authorName}
                   </p>
 
@@ -194,7 +200,9 @@ export const EmergencyView: React.FC = () => {
                           : item.location.reference}
                       </span>
                     </p>
-                    <p className="mt-1.5 flex items-center gap-1.5 font-black text-emerald-800 dark:text-emerald-400">
+                    <p className={`mt-1.5 flex items-center gap-1.5 font-black ${
+                      isEmergency ? 'text-emerald-400' : 'text-emerald-800'
+                    }`}>
                       <Users className="h-4 w-4 shrink-0" aria-hidden="true" />
                       <span>
                         {item.responders.length} vecinos acudiendo ({item.responders.join(', ')})
@@ -203,7 +211,9 @@ export const EmergencyView: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2">
+                <div className={`mt-4 pt-3 border-t flex items-center gap-2 ${
+                  isEmergency ? 'border-slate-800' : 'border-slate-200'
+                }`}>
                   <button
                     type="button"
                     onClick={() => joinEmergencyResponse(item.id)}
@@ -242,16 +252,22 @@ export const EmergencyView: React.FC = () => {
                   <span className="rounded-full bg-teal-700 px-3 py-0.5 text-[11px] font-black text-white">
                     Punto de Apoyo Activo
                   </span>
-                  <span className="tabular inline-flex items-center gap-1 font-bold text-slate-700 dark:text-slate-300">
+                  <span className={`tabular inline-flex items-center gap-1 font-bold ${
+                    isEmergency ? 'text-slate-300' : 'text-slate-700'
+                  }`}>
                     <Footprints className="h-4 w-4 text-teal-700" aria-hidden="true" />A{' '}
                     {item.location.walkingMinutes} min ({item.location.distanceMeters}m)
                   </span>
                 </div>
 
-                <h3 className="heading-tight mt-2.5 text-[18px] font-black leading-snug text-slate-950 dark:text-white">
+                <h3 className={`heading-tight mt-2.5 text-[18px] font-black leading-snug ${
+                  isEmergency ? 'text-white' : 'text-slate-950'
+                }`}>
                   {item.title}
                 </h3>
-                <p className="mt-0.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                <p className={`mt-0.5 text-xs font-semibold ${
+                  isEmergency ? 'text-slate-300' : 'text-slate-600'
+                }`}>
                   {item.authorName} · {item.location.reference}
                 </p>
 
@@ -275,8 +291,12 @@ export const EmergencyView: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+              <div className={`mt-4 pt-3 border-t flex items-center justify-between gap-2 ${
+                isEmergency ? 'border-slate-800' : 'border-slate-200'
+              }`}>
+                <span className={`text-xs font-bold ${
+                  isEmergency ? 'text-slate-300' : 'text-slate-700'
+                }`}>
                   {item.responders.length} voluntarios en el punto
                 </span>
                 <button
