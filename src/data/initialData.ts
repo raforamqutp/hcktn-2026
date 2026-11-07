@@ -249,6 +249,40 @@ export const INITIAL_FAVORS: CommunityFavor[] = [
     location: createNeighborhoodPoint(0.0015, 0.0014, 'Urb. Los Perales Mz I Lote 12'),
     syncStatus: 'synced',
   },
+  {
+    id: 'fav-4',
+    authorName: 'Rosa Valdivia (Vecina Mz. B)',
+    authorTier: 'activo',
+    direction: 'solicito',
+    category: 'movilidad_pool',
+    title: 'Busco compartir Pool Escolar de retorno 2:30 p.m. desde Colegios Yanahuara',
+    description:
+      'Mamá de familia busca coordinar con vecinos retorno escolar seguro para niño de 3er grado. Aporte solidario para combustible o turnos alternados.',
+    exchangeNote: 'Compartir gastos de combustible o cuidar niños en la tarde',
+    safeMeetingPoint: 'Parque Central Los Perales',
+    createdAt: 'Hace 3 horas',
+    status: 'disponible',
+    helpedByCount: 2,
+    location: createNeighborhoodPoint(0.0006, -0.0011, 'Calle Los Perales Mz B Lote 5'),
+    syncStatus: 'synced',
+  },
+  {
+    id: 'fav-5',
+    authorName: 'Gustavo Mendoza',
+    authorTier: 'referente',
+    direction: 'ofrezco',
+    category: 'donacion_material',
+    title: 'Donación de libros escolares y útiles para primaria',
+    description:
+      'Cuentos infantiles, libros de consulta y cuadernos sin usar en excelente estado para familias o niños de la cuadra que los necesiten.',
+    exchangeNote: 'Entrega 100% gratuita y solidaria para vecinos',
+    safeMeetingPoint: 'Caseta de Seguridad o Parque Central',
+    createdAt: 'Hace 4 horas',
+    status: 'disponible',
+    helpedByCount: 5,
+    location: createNeighborhoodPoint(-0.0009, 0.0007, 'Urb. Los Perales Mz E Lote 3'),
+    syncStatus: 'synced',
+  },
 ];
 
 export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
