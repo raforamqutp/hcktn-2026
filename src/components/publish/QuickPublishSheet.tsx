@@ -1,4 +1,4 @@
-import { AlertOctagon, Check, HeartHandshake, Wrench, X } from 'lucide-react';
+import { Check } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { createNeighborhoodPoint } from '../../services/geoService';
@@ -20,74 +20,74 @@ interface QuickTemplate {
 const TEMPLATES: Record<'service' | 'favor' | 'emergency', QuickTemplate[]> = {
   service: [
     {
-      label: 'Lasaña / Postres caseros',
-      title: 'Porciones de Lasaña Casera y Postres del Día',
-      description: 'Recién horneados en casa para vecinos de la manzana.',
+      label: 'Lasaña / comida casera',
+      title: 'Porciones de lasaña casera y postres del día',
+      description: 'Recién preparados en casa para vecinos de la cuadra.',
       serviceCategory: 'gastronomia_vecinal',
-      priceRange: 'S/ 14 porción',
-      barterInterest: 'Acepto trueque por insumos de cocina o clases particulares.',
+      priceRange: 'S/ 14',
+      barterInterest: 'Insumos de cocina o clases particulares.',
     },
     {
-      label: 'Cerrajería / Gasfitería rápida',
-      title: 'Servicio de Cerrajería y Gasfitería de Urgencia',
-      description: 'Atención inmediata a menos de 5 minutos caminando.',
+      label: 'Cerrajería / gasfitería',
+      title: 'Servicio de cerrajería y gasfitería a domicilio',
+      description: 'Atención rápida a menos de 5 minutos caminando.',
       serviceCategory: 'oficio_hogar',
       priceRange: 'Desde S/ 20',
-      barterInterest: 'Acepto pago en efectivo, Yape o trueque por materiales.',
+      barterInterest: 'Materiales o herramientas.',
     },
     {
-      label: 'Clases de Matemáticas',
-      title: 'Nivelación en Matemáticas y Física a domicilio',
-      description: 'Refuerzo escolar paciente y garantizado en el barrio.',
+      label: 'Clases de matemáticas',
+      title: 'Nivelación en matemáticas y física',
+      description: 'Refuerzo escolar paciente en el barrio.',
       serviceCategory: 'educacion_clases',
       priceRange: 'S/ 18 / hora',
-      barterInterest: 'Acepto intercambio por almuerzo casero o revisión de PC.',
+      barterInterest: 'Almuerzo casero o revisión de laptop.',
     },
   ],
   favor: [
     {
-      label: 'Presto Muletas / Silla',
-      title: 'Presto par de muletas ortopédicas sin costo',
+      label: 'Presto muletas',
+      title: 'Presto par de muletas regulables sin costo',
       description: 'Disponibles para vecino lesionado que las necesite temporalmente.',
       favorCategory: 'prestamo_salud_herramienta',
       direction: 'ofrezco',
     },
     {
-      label: 'Hago Pool Escolar al Colegio',
-      title: 'Pool Escolar matutino (2 asientos disponibles)',
-      description: 'Salgo 7:10 a.m. rumbo a zona de colegios para compartir ruta entre vecinos.',
+      label: 'Pool escolar',
+      title: 'Pool escolar matutino (2 asientos disponibles)',
+      description: 'Salgo 7:10 a.m. rumbo a zona de colegios para compartir ruta.',
       favorCategory: 'movilidad_pool',
       direction: 'ofrezco',
     },
     {
-      label: 'Presto Taladro / Escalera',
-      title: 'Presto taladro percutor y caja de herramientas',
-      description: 'Para arreglos puntuales en casa dentro de la cuadra.',
+      label: 'Presto taladro',
+      title: 'Presto taladro y caja de herramientas',
+      description: 'Para arreglos puntuales en casa dentro de la manzana.',
       favorCategory: 'prestamo_salud_herramienta',
       direction: 'ofrezco',
     },
   ],
   emergency: [
     {
-      label: 'Necesito Baldes / Sacos (Lluvia)',
-      title: 'Urgente: Necesitamos baldes y sacos terreros por filtración de lluvia',
-      description: 'Ingreso de agua en vivienda del pasaje, requerimos apoyo inmediato.',
+      label: 'Faltan baldes / sacos',
+      title: 'Necesitamos baldes y sacos por filtración de lluvia',
+      description: 'Ingreso de agua en el pasaje, requerimos apoyo inmediato.',
       edanCategory: 'inundacion_lluvia',
-      tags: ['Baldes', 'Sacos Terreros', 'El Niño'],
+      tags: ['Baldes', 'Sacos terreros'],
     },
     {
-      label: 'Adulto Mayor / Insulina S.O.S.',
-      title: 'Adulto mayor vulnerable requiere conservar insulina / soporte médico',
-      description: 'Requerimos hielo/batería o asistencia de enfermería en la manzana.',
+      label: 'Conservar insulina',
+      title: 'Adulto mayor necesita conservar insulina por corte de luz',
+      description: 'Requerimos hielo o batería portátil en la manzana.',
       edanCategory: 'salud_vida',
-      tags: ['Insulina', 'Adulto Mayor', 'Primeros Auxilios'],
+      tags: ['Insulina', 'Adulto mayor'],
     },
     {
-      label: 'Comparto Agua / Generador',
-      title: 'Punto vecinal con agua potable y carga de baterías de emergencia',
-      description: 'Compartimos agua almacenada y electricidad para celulares.',
+      label: 'Comparto agua / carga',
+      title: 'Punto vecinal con agua potable y carga de celulares',
+      description: 'Compartimos agua almacenada y electricidad para emergencias.',
       edanCategory: 'agua_alimento',
-      tags: ['Agua Potable', 'Carga Celular', 'Botiquín'],
+      tags: ['Agua potable', 'Carga celular'],
     },
   ],
 };
@@ -106,7 +106,7 @@ export const QuickPublishSheet: React.FC = () => {
   const [intent, setIntent] = useState<'service' | 'favor' | 'emergency'>(publishDefaultType);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [barterText, setBarterText] = useState('Acepto intercambio solidario por favor o insumo.');
+  const [barterText, setBarterText] = useState('');
   const [payments, setPayments] = useState<PaymentMethod[]>([
     'efectivo',
     'billetera_virtual',
@@ -120,9 +120,7 @@ export const QuickPublishSheet: React.FC = () => {
     setSelectedTemplate(defaultTpl);
     setTitle(defaultTpl.title);
     setDescription(defaultTpl.description);
-    if (defaultTpl.barterInterest) {
-      setBarterText(defaultTpl.barterInterest);
-    }
+    setBarterText(defaultTpl.barterInterest || '');
   }, [publishDefaultType, isPublishOpen]);
 
   if (!isPublishOpen) return null;
@@ -133,18 +131,14 @@ export const QuickPublishSheet: React.FC = () => {
     setSelectedTemplate(tpl);
     setTitle(tpl.title);
     setDescription(tpl.description);
-    if (tpl.barterInterest) {
-      setBarterText(tpl.barterInterest);
-    }
+    setBarterText(tpl.barterInterest || '');
   };
 
   const handleSelectTemplate = (tpl: QuickTemplate) => {
     setSelectedTemplate(tpl);
     setTitle(tpl.title);
     setDescription(tpl.description);
-    if (tpl.barterInterest) {
-      setBarterText(tpl.barterInterest);
-    }
+    setBarterText(tpl.barterInterest || '');
   };
 
   const togglePayment = (pm: PaymentMethod) => {
@@ -158,21 +152,21 @@ export const QuickPublishSheet: React.FC = () => {
     const loc = createNeighborhoodPoint(
       (Math.random() - 0.5) * 0.0025,
       (Math.random() - 0.5) * 0.0025,
-      `${currentUser.neighborhood} (Ubicación GPS automática)`,
+      currentUser.neighborhood,
       intent === 'emergency' ? 150 : undefined
     );
 
     if (intent === 'service') {
       addService({
         providerName: currentUser.fullName,
-        tradeTitle: title.trim() || 'Servicio Vecinal',
+        tradeTitle: title.trim() || 'Servicio en la cuadra',
         category: selectedTemplate?.serviceCategory || 'oficio_hogar',
-        description: description.trim() || 'Disponible en la cuadra.',
+        description: description.trim() || 'Disponible para vecinos.',
         phone: '958001122',
-        priceRange: selectedTemplate?.priceRange || 'Precio solidario / A tratar',
+        priceRange: selectedTemplate?.priceRange || 'A tratar',
         paymentMethods: payments.length > 0 ? payments : ['efectivo', 'trueque'],
-        barterInterest: payments.includes('trueque') ? barterText : undefined,
-        trustBadges: ['Vecino Verificado DNI'],
+        barterInterest: payments.includes('trueque') && barterText.trim() ? barterText : undefined,
+        trustBadges: ['Vecino del barrio'],
         isEmergencySupport: false,
         location: loc,
       });
@@ -181,10 +175,10 @@ export const QuickPublishSheet: React.FC = () => {
         authorName: currentUser.fullName,
         direction: selectedTemplate?.direction || 'ofrezco',
         category: selectedTemplate?.favorCategory || 'prestamo_salud_herramienta',
-        title: title.trim() || 'Apoyo Solidario Vecinal',
+        title: title.trim() || 'Favor entre vecinos',
         description: description.trim() || 'Coordinación directa en la manzana.',
-        exchangeNote: barterText,
-        safeMeetingPoint: 'Parque Central / Garita de la cuadra',
+        exchangeNote: barterText.trim() || undefined,
+        safeMeetingPoint: 'Parque Central Los Perales',
         location: loc,
       });
     } else {
@@ -196,9 +190,9 @@ export const QuickPublishSheet: React.FC = () => {
             : 'vecino_vulnerable',
         edanCategory: selectedTemplate?.edanCategory || 'salud_vida',
         urgency: 'critica',
-        title: title.trim() || 'Alerta S.O.S. Vecinal',
-        description: description.trim() || 'Se requiere soporte inmediato de vecinos cercanos.',
-        resourceTags: selectedTemplate?.tags || ['Apoyo Inmediato'],
+        title: title.trim() || 'Aviso de emergencia',
+        description: description.trim() || 'Se necesita apoyo de vecinos cercanos.',
+        resourceTags: selectedTemplate?.tags || ['Urgente'],
         isSensitiveProtected: true,
         expiresInHours: 72,
         location: loc,
@@ -213,92 +207,74 @@ export const QuickPublishSheet: React.FC = () => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="publish-sheet-title"
-      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/60 p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 backdrop-blur-xs animate-fade-in"
+      onClick={closePublishModal}
     >
       <form
         onSubmit={handlePublish}
-        className="w-full max-w-xl rounded-t-3xl border border-slate-200 bg-white p-5 shadow-2xl sm:rounded-3xl"
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-[430px] rounded-t-[28px] bg-[#F2F2F7] p-5 pb-8 text-slate-900 shadow-2xl animate-sheet"
       >
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div>
-            <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-extrabold text-emerald-800">
-              Diseño Rápido en 3 Clics
-            </span>
-            <h2 id="publish-sheet-title" className="mt-1 text-lg font-extrabold text-slate-900">
-              Publicar en tu Cuadra
-            </h2>
-          </div>
+        <div className="mx-auto mb-3 h-1.5 w-9 rounded-full bg-slate-300" />
+
+        <div className="flex items-center justify-between pb-3">
           <button
             type="button"
             onClick={closePublishModal}
-            aria-label="Cerrar ventana de publicación"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200"
+            className="text-sm font-medium text-slate-500 hover:text-slate-800"
           >
-            <X className="h-5 w-5" aria-hidden="true" />
+            Cancelar
+          </button>
+          <h2 id="publish-sheet-title" className="text-base font-bold">
+            Nueva publicación
+          </h2>
+          <button
+            type="submit"
+            className={`text-sm font-bold ${
+              intent === 'emergency' ? 'text-red-600' : 'text-emerald-600'
+            }`}
+          >
+            Publicar
           </button>
         </div>
 
-        <div className="mt-3 space-y-3.5">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
-              Clic 1: Elige qué deseas publicar
-            </p>
-            <div className="mt-1.5 grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleSelectIntent('service')}
-                className={`flex min-h-[52px] flex-col items-center justify-center rounded-xl border p-2 text-xs font-bold transition ${
-                  intent === 'service'
-                    ? 'border-emerald-600 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-500/30'
-                    : 'border-slate-200 bg-white text-slate-700'
-                }`}
-              >
-                <Wrench className="h-4 w-4 text-emerald-600" aria-hidden="true" />
-                <span>1. Oficio / Comida</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectIntent('favor')}
-                className={`flex min-h-[52px] flex-col items-center justify-center rounded-xl border p-2 text-xs font-bold transition ${
-                  intent === 'favor'
-                    ? 'border-indigo-600 bg-indigo-50 text-indigo-900 ring-2 ring-indigo-500/30'
-                    : 'border-slate-200 bg-white text-slate-700'
-                }`}
-              >
-                <HeartHandshake className="h-4 w-4 text-indigo-600" aria-hidden="true" />
-                <span>2. Favor / Pool</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectIntent('emergency')}
-                className={`flex min-h-[52px] flex-col items-center justify-center rounded-xl border p-2 text-xs font-bold transition ${
-                  intent === 'emergency'
-                    ? 'border-red-600 bg-red-50 text-red-900 ring-2 ring-red-500/30'
-                    : 'border-slate-200 bg-white text-slate-700'
-                }`}
-              >
-                <AlertOctagon className="h-4 w-4 text-red-600" aria-hidden="true" />
-                <span>3. Alerta S.O.S.</span>
-              </button>
-            </div>
+        <div className="mt-1 space-y-3.5">
+          <div className="grid grid-cols-3 rounded-2xl bg-slate-200/80 p-1">
+            {[
+              { id: 'service', label: 'Oficio o venta' },
+              { id: 'favor', label: 'Favor o pool' },
+              { id: 'emergency', label: 'Emergencia' },
+            ].map((tab) => {
+              const active = intent === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => handleSelectIntent(tab.id as 'service' | 'favor' | 'emergency')}
+                  className={`rounded-xl py-2 text-xs font-semibold transition ${
+                    active ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
 
           <div>
-            <p className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
-              Clic 2: Toca una plantilla rápida (o personaliza el texto)
+            <p className="px-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Opciones rápidas
             </p>
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
+            <div className="no-scrollbar mt-1.5 flex gap-1.5 overflow-x-auto pb-1">
               {TEMPLATES[intent].map((tpl) => (
                 <button
                   key={tpl.label}
                   type="button"
                   onClick={() => handleSelectTemplate(tpl)}
-                  className={`min-h-[38px] rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+                  className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                     selectedTemplate?.label === tpl.label
-                      ? 'border-slate-900 bg-slate-900 text-white'
-                      : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-white text-slate-700 border border-slate-200/80'
                   }`}
                 >
                   {tpl.label}
@@ -307,10 +283,10 @@ export const QuickPublishSheet: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-2 rounded-2xl bg-slate-50 p-3">
-            <div>
-              <label htmlFor="pub-title" className="block text-xs font-bold text-slate-700">
-                Título del anuncio:
+          <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-xs">
+            <div className="p-3">
+              <label htmlFor="pub-title" className="block text-[11px] font-medium text-slate-400">
+                ¿Qué ofreces o necesitas?
               </label>
               <input
                 id="pub-title"
@@ -318,33 +294,51 @@ export const QuickPublishSheet: React.FC = () => {
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-900"
+                className="mt-0.5 w-full bg-transparent text-sm font-semibold text-slate-900 focus:outline-none"
+              />
+            </div>
+
+            <div className="p-3">
+              <label htmlFor="pub-desc" className="block text-[11px] font-medium text-slate-400">
+                Detalles para tus vecinos
+              </label>
+              <input
+                id="pub-desc"
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="mt-0.5 w-full bg-transparent text-xs text-slate-700 focus:outline-none"
               />
             </div>
 
             {intent !== 'emergency' && (
-              <div>
-                <label htmlFor="pub-barter" className="block text-xs font-bold text-indigo-900">
-                  Espacio para escribir acuerdo de Trueque / Favor:
+              <div className="p-3">
+                <label
+                  htmlFor="pub-barter"
+                  className="block text-[11px] font-medium text-indigo-600"
+                >
+                  ¿Aceptas algún trueque o favor a cambio? (Opcional)
                 </label>
                 <input
                   id="pub-barter"
                   type="text"
                   value={barterText}
                   onChange={(e) => setBarterText(e.target.value)}
-                  placeholder="Escribe qué aceptas o propones como intercambio solidario..."
-                  className="mt-1 w-full rounded-xl border border-indigo-200 bg-white px-3 py-2 text-xs text-slate-900"
+                  placeholder="Ej. Insumos, clases, herramientas..."
+                  className="mt-0.5 w-full bg-transparent text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none"
                 />
               </div>
             )}
+          </div>
 
-            {intent === 'service' && (
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                <span className="text-[11px] font-bold text-slate-600">Acepto:</span>
+          {intent === 'service' && (
+            <div className="flex items-center justify-between rounded-2xl bg-white px-3.5 py-2.5 shadow-xs">
+              <span className="text-xs font-medium text-slate-500">Formas de pago</span>
+              <div className="flex items-center gap-1.5">
                 {[
                   { id: 'efectivo', label: 'Efectivo' },
-                  { id: 'billetera_virtual', label: 'Yape / Plin' },
-                  { id: 'trueque', label: 'Pago en Trueque' },
+                  { id: 'billetera_virtual', label: 'Yape/Plin' },
+                  { id: 'trueque', label: 'Trueque' },
                 ].map((pm) => {
                   const active = payments.includes(pm.id as PaymentMethod);
                   return (
@@ -352,10 +346,8 @@ export const QuickPublishSheet: React.FC = () => {
                       key={pm.id}
                       type="button"
                       onClick={() => togglePayment(pm.id as PaymentMethod)}
-                      className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold ${
-                        active
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-slate-200 text-slate-600'
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold transition ${
+                        active ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'
                       }`}
                     >
                       {active && <Check className="h-3 w-3" aria-hidden="true" />}
@@ -364,18 +356,16 @@ export const QuickPublishSheet: React.FC = () => {
                   );
                 })}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           <button
             type="submit"
-            className={`w-full min-h-[52px] rounded-2xl px-4 py-3 text-sm font-extrabold text-white shadow-lg transition ${
-              intent === 'emergency'
-                ? 'bg-red-600 hover:bg-red-500'
-                : 'bg-emerald-600 hover:bg-emerald-700'
+            className={`w-full min-h-[48px] rounded-2xl py-3 text-sm font-bold text-white shadow-md transition active:scale-98 ${
+              intent === 'emergency' ? 'bg-red-600' : 'bg-emerald-600'
             }`}
           >
-            Clic 3: Publicar en mi Cuadra (Geolocalización Automática)
+            {intent === 'emergency' ? 'Enviar alerta al barrio' : 'Publicar ahora'}
           </button>
         </div>
       </form>

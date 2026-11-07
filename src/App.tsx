@@ -16,56 +16,42 @@ const MainShell: React.FC = () => {
 
   return (
     <div
-      className={`min-h-screen pb-24 transition-colors duration-200 ${
-        isSeniorMode ? 'text-lg leading-relaxed' : 'text-sm'
-      } ${isEmergency ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'}`}
+      className={`min-h-dvh transition-colors duration-200 ${
+        isEmergency ? 'bg-[#050811]' : 'bg-slate-200/70'
+      }`}
     >
-      <a
-        href="#main-content"
-        className="visually-hidden rounded-lg bg-emerald-600 px-4 py-2 font-bold text-white focus:fixed focus:left-4 focus:top-4 focus:z-50"
+      <div
+        className={`mx-auto min-h-dvh max-w-[430px] pb-28 shadow-2xl transition-colors duration-200 ${
+          isSeniorMode ? 'text-base leading-relaxed' : 'text-sm'
+        } ${
+          isEmergency
+            ? 'dark-surface bg-[#090d16] text-slate-100 ring-1 ring-slate-800'
+            : 'bg-[#F2F2F7] text-slate-900 ring-1 ring-slate-300/60'
+        }`}
       >
-        Saltar al contenido principal
-      </a>
+        <a
+          href="#main-content"
+          className="visually-hidden rounded-lg bg-emerald-600 px-4 py-2 font-bold text-white focus:fixed focus:left-4 focus:top-4 focus:z-50"
+        >
+          Ir al contenido
+        </a>
 
-      <Header />
+        <Header />
 
-      <main
-        id="main-content"
-        tabIndex={-1}
-        className="mx-auto max-w-7xl px-4 pt-4 focus:outline-none"
-      >
-        <h1 className="visually-hidden">
-          VecinOS: Plataforma de Economía Local, Favores Solidarios y Soporte en Emergencias
-        </h1>
+        <main id="main-content" tabIndex={-1} className="px-4 pt-3 focus:outline-none">
+          <h1 className="visually-hidden">VecinOS — Tu barrio conectado</h1>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            {activeTab === 'services' && <ServicesView />}
-            {activeTab === 'favors' && <FavorsView />}
-            {activeTab === 'emergency' && <EmergencyView />}
-            {activeTab === 'map' && (
-              <div className="space-y-3">
-                <h2 className="text-xl font-extrabold">Mapa Geolocalizado de tu Barrio</h2>
-                <CommunityMap />
-              </div>
-            )}
-          </div>
+          {activeTab === 'services' && <ServicesView />}
+          {activeTab === 'favors' && <FavorsView />}
+          {activeTab === 'emergency' && <EmergencyView />}
+          {activeTab === 'map' && <CommunityMap />}
+        </main>
 
-          <aside
-            aria-label="Mapa en tiempo real del barrio"
-            className="hidden lg:col-span-5 lg:block"
-          >
-            <div className="sticky top-20 space-y-3">
-              <CommunityMap />
-            </div>
-          </aside>
-        </div>
-      </main>
-
-      <BottomNav />
-      <QuickPublishSheet />
-      <RegisterDniModal />
-      <QuickGuideModal />
+        <BottomNav />
+        <QuickPublishSheet />
+        <RegisterDniModal />
+        <QuickGuideModal />
+      </div>
     </div>
   );
 };

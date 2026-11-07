@@ -249,13 +249,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const nextRatings: ServiceRating[] = [
           {
             userId: currentUser.id,
-            userName: `${currentUser.fullName} (${
-              currentUser.accountTier === 'nuevo'
-                ? 'Cuenta Nueva 0.25x'
-                : currentUser.accountTier === 'referente'
-                ? 'Vecino Referente 1.5x'
-                : 'Vecino Activo 1.0x'
-            })`,
+            userName: currentUser.fullName,
             userTier: currentUser.accountTier,
             sentiment,
             weightApplied: currentUser.reputationWeight,

@@ -297,13 +297,13 @@ export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
     title: 'Punto de Agua Potable, Botiquín de Emergencia y Carga de Celulares',
     description:
       'Contamos con 2 tanques cisterna llenos para repartir en baldes, generador a gasolina para cargar celulares de emergencia y botiquín de primeros auxilios.',
-    resourceTags: ['Agua Potable Gratis', 'Generador Eléctrico', 'Botiquín S.O.S.'],
+    resourceTags: ['Agua potable', 'Carga de celular', 'Botiquín'],
     responders: ['Junta Vecinal', 'Elisvan Choque', 'Jorge Huanca'],
     isSensitiveProtected: false,
     expiresInHours: 72,
     status: 'activo',
     createdAt: 'Hace 20 min',
-    location: createNeighborhoodPoint(0.0002, -0.0003, 'Parque Central Los Perales (Zona Segura SINAGERD)'),
+    location: createNeighborhoodPoint(0.0002, -0.0003, 'Parque Central Los Perales'),
     syncStatus: 'synced',
   },
 ];

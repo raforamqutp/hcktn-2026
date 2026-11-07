@@ -8,49 +8,66 @@ interface RatingFaceIconProps {
   showLabel?: boolean;
 }
 
+const PIXEL_CIRCLE = [
+  'M6 1H14V2H16V3H17V4H18V6H19V14H18V16H17V17H16V18H14V19H6V18H4V17H3V16H2V14H1V6H2V4H3V3H4V2H6V1Z',
+  'M6 2H14V3H16V4H17V6H18V14H17V16H16V17H14V18H6V17H4V16H3V14H2V6H3V4H4V3H6V2Z',
+];
+
 export const RatingFaceIcon: React.FC<RatingFaceIconProps> = ({
   sentiment,
   size = 'md',
   active = false,
   showLabel = false,
 }) => {
-  const dimensions = size === 'sm' ? 32 : size === 'lg' ? 56 : 42;
+  const dimensions = size === 'sm' ? 34 : size === 'lg' ? 54 : 42;
 
   const config = {
     happy: {
       label: 'FELIZ',
-      title: 'Calificación Feliz',
-      color: '#22C55E',
-      bgFill: 'rgba(34, 197, 94, 0.14)',
-      glow: 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.75))',
-      borderClass: active ? 'ring-2 ring-emerald-400 bg-slate-950' : 'bg-slate-900/95',
-      textClass: 'text-emerald-400',
+      title: 'Feliz',
+      color: '#22FF66',
+      innerFill: 'rgba(16, 78, 38, 0.55)',
+      glow: active
+        ? 'drop-shadow(0 0 8px rgba(34, 255, 102, 0.9))'
+        : 'drop-shadow(0 0 5px rgba(34, 255, 102, 0.55))',
+      ringClass: active
+        ? 'ring-1 ring-emerald-400/80 bg-[#0c1410]'
+        : 'bg-[#0b0e14]/90 hover:bg-[#0c1410]',
+      textClass: 'text-[#34FF74]',
     },
     neutral: {
       label: 'NEUTRAL',
-      title: 'Calificación Neutral',
-      color: '#EAB308',
-      bgFill: 'rgba(234, 179, 8, 0.14)',
-      glow: 'drop-shadow(0 0 8px rgba(234, 179, 8, 0.75))',
-      borderClass: active ? 'ring-2 ring-amber-400 bg-slate-950' : 'bg-slate-900/95',
-      textClass: 'text-amber-400',
+      title: 'Neutral',
+      color: '#FFC425',
+      innerFill: 'rgba(82, 58, 10, 0.55)',
+      glow: active
+        ? 'drop-shadow(0 0 8px rgba(255, 196, 37, 0.9))'
+        : 'drop-shadow(0 0 5px rgba(255, 196, 37, 0.55))',
+      ringClass: active
+        ? 'ring-1 ring-amber-400/80 bg-[#16120a]'
+        : 'bg-[#0b0e14]/90 hover:bg-[#16120a]',
+      textClass: 'text-[#FFC425]',
     },
     angry: {
       label: 'ENOJADO',
-      title: 'Calificación Enojado',
-      color: '#EF4444',
-      bgFill: 'rgba(239, 68, 68, 0.14)',
-      glow: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.75))',
-      borderClass: active ? 'ring-2 ring-red-500 bg-slate-950' : 'bg-slate-900/95',
-      textClass: 'text-red-400',
+      title: 'Enojado',
+      color: '#FF2E4C',
+      innerFill: 'rgba(88, 14, 26, 0.55)',
+      glow: active
+        ? 'drop-shadow(0 0 8px rgba(255, 46, 76, 0.9))'
+        : 'drop-shadow(0 0 5px rgba(255, 46, 76, 0.55))',
+      ringClass: active
+        ? 'ring-1 ring-rose-500/80 bg-[#180b0e]'
+        : 'bg-[#0b0e14]/90 hover:bg-[#180b0e]',
+      textClass: 'text-[#FF3B56]',
     },
   }[sentiment];
 
   return (
     <div className="inline-flex flex-col items-center gap-1 select-none">
       <div
-        className={`dark-surface inline-flex items-center justify-center rounded-xl p-1.5 transition-transform duration-150 ${config.borderClass} ${
-          active ? 'scale-105' : 'opacity-90 hover:opacity-100 hover:scale-105'
+        className={`dark-surface inline-flex items-center justify-center rounded-2xl p-1.5 transition-all duration-150 ${config.ringClass} ${
+          active ? 'scale-105' : 'opacity-85 hover:opacity-100'
         }`}
       >
         <svg
@@ -58,75 +75,75 @@ export const RatingFaceIcon: React.FC<RatingFaceIconProps> = ({
           aria-label={config.title}
           width={dimensions}
           height={dimensions}
-          viewBox="0 0 24 24"
+          viewBox="0 0 20 20"
           fill="none"
+          shapeRendering="crispEdges"
           style={{ filter: config.glow }}
         >
           <title>{config.title}</title>
-          <circle
-            cx="12"
-            cy="12"
-            r="9.5"
-            fill={config.bgFill}
-            stroke={config.color}
-            strokeWidth="2.2"
+          <path d={PIXEL_CIRCLE[1]} fill={config.innerFill} />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d={`${PIXEL_CIRCLE[0]} ${PIXEL_CIRCLE[1]}`}
+            fill={config.color}
           />
+
           {sentiment === 'happy' && (
-            <>
-              <path
-                d="M7.5 10.2C8 8.8 9.8 8.8 10.3 10.2"
-                stroke={config.color}
-                strokeWidth="2.2"
-                strokeLinecap="square"
-              />
-              <path
-                d="M13.7 10.2C14.2 8.8 16 8.8 16.5 10.2"
-                stroke={config.color}
-                strokeWidth="2.2"
-                strokeLinecap="square"
-              />
-              <path
-                d="M8 13.8H16C15.6 16.5 13.8 17.5 12 17.5C10.2 17.5 8.4 16.5 8 13.8Z"
-                fill={config.bgFill}
-                stroke={config.color}
-                strokeWidth="2"
-                strokeLinejoin="miter"
-              />
-            </>
+            <g fill={config.color}>
+              <rect x="6" y="7" width="2" height="1" />
+              <rect x="5" y="8" width="1" height="2" />
+              <rect x="8" y="8" width="1" height="2" />
+
+              <rect x="12" y="7" width="2" height="1" />
+              <rect x="11" y="8" width="1" height="2" />
+              <rect x="14" y="8" width="1" height="2" />
+
+              <rect x="6" y="12" width="8" height="1" />
+              <rect x="6" y="13" width="1" height="1" />
+              <rect x="13" y="13" width="1" height="1" />
+              <rect x="7" y="14" width="1" height="1" />
+              <rect x="12" y="14" width="1" height="1" />
+              <rect x="8" y="15" width="4" height="1" />
+            </g>
           )}
+
           {sentiment === 'neutral' && (
-            <>
-              <rect x="7.8" y="8.5" width="2.4" height="2.6" fill={config.color} />
-              <rect x="13.8" y="8.5" width="2.4" height="2.6" fill={config.color} />
-              <line
-                x1="8"
-                y1="15.2"
-                x2="16"
-                y2="15.2"
-                stroke={config.color}
-                strokeWidth="2.2"
-                strokeLinecap="square"
-              />
-            </>
+            <g fill={config.color}>
+              <rect x="7" y="7" width="1" height="1" />
+              <rect x="6" y="8" width="3" height="2" />
+
+              <rect x="12" y="7" width="1" height="1" />
+              <rect x="11" y="8" width="3" height="2" />
+
+              <rect x="6" y="13" width="8" height="1" />
+            </g>
           )}
+
           {sentiment === 'angry' && (
-            <>
-              <path d="M7.2 8.2L10.5 9.6" stroke={config.color} strokeWidth="2" strokeLinecap="square" />
-              <path d="M16.8 8.2L13.5 9.6" stroke={config.color} strokeWidth="2" strokeLinecap="square" />
-              <rect x="7.8" y="9.8" width="2.2" height="2.2" fill={config.color} />
-              <rect x="14.0" y="9.8" width="2.2" height="2.2" fill={config.color} />
-              <path
-                d="M8.2 16.8C9.2 14.6 14.8 14.6 15.8 16.8"
-                stroke={config.color}
-                strokeWidth="2.2"
-                strokeLinecap="square"
-              />
-            </>
+            <g fill={config.color}>
+              <rect x="5" y="6" width="1" height="1" />
+              <rect x="6" y="7" width="2" height="1" />
+              <rect x="8" y="8" width="1" height="1" />
+
+              <rect x="14" y="6" width="1" height="1" />
+              <rect x="12" y="7" width="2" height="1" />
+              <rect x="11" y="8" width="1" height="1" />
+
+              <rect x="6" y="9" width="2" height="2" />
+              <rect x="12" y="9" width="2" height="2" />
+
+              <rect x="8" y="13" width="4" height="1" />
+              <rect x="7" y="14" width="1" height="1" />
+              <rect x="12" y="14" width="1" height="1" />
+              <rect x="6" y="15" width="1" height="1" />
+              <rect x="13" y="15" width="1" height="1" />
+            </g>
           )}
         </svg>
       </div>
       {showLabel && (
-        <span className={`font-mono text-[10px] font-bold tracking-wider ${config.textClass}`}>
+        <span className={`font-mono text-[9px] font-bold tracking-widest ${config.textClass}`}>
           {config.label}
         </span>
       )}

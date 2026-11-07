@@ -1,9 +1,7 @@
 import {
-  AlertOctagon,
-  Clock,
-  HeartPulse,
+  Footprints,
   Lock,
-  MessageSquareWarning,
+  MessageSquare,
   PackageCheck,
   ShieldAlert,
   Users,
@@ -12,20 +10,21 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { EdanCategory } from '../../types';
 
-const EDAN_FILTERS: { id: 'all' | EdanCategory; label: string }[] = [
-  { id: 'all', label: 'Todos los Reportes' },
-  { id: 'salud_vida', label: 'Salud / Vulnerables (Insulina)' },
-  { id: 'inundacion_lluvia', label: 'Lluvias El Niño (Baldes / Sacos)' },
-  { id: 'agua_alimento', label: 'Agua Potable y Recursos' },
-  { id: 'infraestructura_energia', label: 'Sismo / Energía' },
+const EMERGENCY_FILTERS: { id: 'all' | EdanCategory; label: string }[] = [
+  { id: 'all', label: 'Todos' },
+  { id: 'salud_vida', label: 'Salud / Insulina' },
+  { id: 'inundacion_lluvia', label: 'Lluvias / Baldes' },
+  { id: 'agua_alimento', label: 'Agua y carga' },
 ];
 
 export const EmergencyView: React.FC = () => {
-  const { emergencyItems, joinEmergencyResponse, openPublishModal, currentUser } = useApp();
-  const [edanFilter, setEdanFilter] = useState<'all' | EdanCategory>('all');
+  const { emergencyItems, joinEmergencyResponse, currentUser, mode } = useApp();
+  const [section, setSection] = useState<'alerts' | 'resources'>('alerts');
+  const [category, setCategory] = useState<'all' | EdanCategory>('all');
+  const isEmergency = mode === 'emergency';
 
   const filtered = emergencyItems.filter(
-    (item) => edanFilter === 'all' || item.edanCategory === edanFilter
+    (item) => category === 'all' || item.edanCategory === category
   );
 
   const humanitarianAlerts = filtered.filter(
@@ -37,204 +36,237 @@ export const EmergencyView: React.FC = () => {
 
   const buildSmsHref = (title: string, lat: number, lng: number) => {
     const body = encodeURIComponent(
-      `[SOS VecinOS] ${title} - Ubicacion GPS: https://maps.google.com/?q=${lat},${lng}`
+      `[Urgencia VecinOS] ${title} - Ubicación: https://maps.google.com/?q=${lat},${lng}`
     );
     return `sms:?body=${body}`;
   };
 
   return (
-    <section aria-labelledby="emergency-heading" className="space-y-5">
-      <div className="dark-surface rounded-2xl border border-red-500/40 bg-slate-950 p-4 text-slate-100 shadow-lg">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-red-500/20 px-2.5 py-0.5 text-xs font-bold text-red-300 border border-red-500/30">
-              <AlertOctagon className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Protocolo Comunitario Compatible con EDAN / SINAGERD</span>
-            </div>
-            <h2 id="emergency-heading" className="text-xl font-extrabold text-white">
-              Central de Ayuda Humanitaria y Economía Solidaria de Crisis
-            </h2>
-            <p className="text-xs text-slate-300">
-              Funciona Online, Offline y vía SMS celular 2G para que ningún vecino quede
-              desamparado.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => openPublishModal('emergency')}
-              className="min-h-[48px] rounded-xl bg-red-600 px-4 py-2 text-xs font-extrabold text-white shadow hover:bg-red-500"
-            >
-              + Reportar Emergencia / Recurso
-            </button>
-          </div>
+    <section aria-label="Emergencias del barrio" className="space-y-3.5">
+      <div className="space-y-2.5">
+        <div
+          className={`grid grid-cols-2 rounded-2xl p-1 ${
+            isEmergency ? 'bg-slate-900 border border-slate-800' : 'bg-slate-200/75'
+          }`}
+        >
+          <button
+            type="button"
+            onClick={() => setSection('alerts')}
+            className={`rounded-xl py-2 text-xs font-semibold transition ${
+              section === 'alerts'
+                ? 'bg-red-600 text-white shadow-xs'
+                : isEmergency
+                ? 'text-slate-400'
+                : 'text-slate-600'
+            }`}
+          >
+            Urgencias ({humanitarianAlerts.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setSection('resources')}
+            className={`rounded-xl py-2 text-xs font-semibold transition ${
+              section === 'resources'
+                ? 'bg-teal-600 text-white shadow-xs'
+                : isEmergency
+                ? 'text-slate-400'
+                : 'text-slate-600'
+            }`}
+          >
+            Puntos de apoyo ({sharedResources.length})
+          </button>
         </div>
 
-        <div className="mt-3.5 flex flex-wrap gap-1.5">
-          {EDAN_FILTERS.map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              onClick={() => setEdanFilter(f.id)}
-              className={`min-h-[36px] rounded-xl px-3 py-1 text-xs font-semibold transition ${
-                edanFilter === f.id
-                  ? 'bg-red-600 text-white'
-                  : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pb-0.5">
+          {EMERGENCY_FILTERS.map((f) => {
+            const active = category === f.id;
+            return (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setCategory(f.id)}
+                className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
+                  active
+                    ? 'bg-red-600 text-white'
+                    : isEmergency
+                    ? 'bg-slate-900 text-slate-300 border border-slate-800'
+                    : 'bg-white text-slate-600 border border-slate-200/70'
+                }`}
+              >
+                {f.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <div className="space-y-3">
-        <h3 className="flex items-center gap-2 text-base font-extrabold text-red-700">
-          <HeartPulse className="h-5 w-5" aria-hidden="true" />
-          <span>1. Tablero de Ayuda Humanitaria (Vecinos en Vulnerabilidad y Alertas)</span>
-        </h3>
-
-        {humanitarianAlerts.map((item) => {
-          const isJoined = item.responders.includes(currentUser.fullName);
-          return (
-            <article
-              key={item.id}
-              className="rounded-2xl border-2 border-red-500/40 bg-white p-4 shadow-sm"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div className="space-y-1">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="rounded-lg bg-red-600 px-2 py-0.5 text-[11px] font-extrabold uppercase text-white">
-                      Urgencia {item.urgency}
+      {section === 'alerts' ? (
+        <div className="space-y-3">
+          {humanitarianAlerts.map((item) => {
+            const isJoined = item.responders.includes(currentUser.fullName);
+            return (
+              <article
+                key={item.id}
+                className={`rounded-3xl border p-4 transition ${
+                  isEmergency
+                    ? 'bg-[#141118] border-red-500/35 text-slate-100'
+                    : 'bg-white border-red-200 text-slate-900 shadow-xs'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full bg-red-600 px-2.5 py-0.5 text-[11px] font-bold uppercase text-white">
+                      {item.urgency === 'critica' ? 'Urgente' : 'Prioritario'}
                     </span>
-                    <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-800">
-                      A {item.location.walkingMinutes} min caminando ({item.location.distanceMeters}
-                      m)
+                    <span className="inline-flex items-center gap-1 text-slate-400">
+                      <Footprints className="h-3.5 w-3.5" aria-hidden="true" />A{' '}
+                      {item.location.walkingMinutes} min ({item.location.distanceMeters}m)
                     </span>
-                    {item.isSensitiveProtected && (
-                      <span className="inline-flex items-center gap-1 rounded-lg bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-900">
-                        <Lock className="h-3 w-3" aria-hidden="true" />
-                        Radio protegido ~150m (Ley 29733) · Caduca en {item.expiresInHours}h
-                      </span>
-                    )}
                   </div>
-                  <h4 className="text-base font-extrabold text-slate-900">{item.title}</h4>
-                  <p className="text-xs font-medium text-slate-500">
-                    Reportado por {item.authorName} · {item.createdAt}
+                  <span className="text-[11px] text-slate-400">{item.createdAt}</span>
+                </div>
+
+                <h3 className="mt-2 text-[16px] font-bold leading-snug">{item.title}</h3>
+                <p className="mt-0.5 text-xs text-slate-400">{item.authorName}</p>
+
+                <p
+                  className={`mt-2 text-[13px] leading-relaxed ${
+                    isEmergency ? 'text-slate-300' : 'text-slate-600'
+                  }`}
+                >
+                  {item.description}
+                </p>
+
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {item.resourceTags.map((tag) => (
+                    <span
+                      key={tag}
+                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                        isEmergency
+                          ? 'bg-red-950/70 text-red-200 border border-red-800/50'
+                          : 'bg-red-50 text-red-700'
+                      }`}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div
+                  className={`mt-3 rounded-2xl p-2.5 text-xs ${
+                    isEmergency ? 'bg-slate-900/90 text-slate-300' : 'bg-slate-50 text-slate-600'
+                  }`}
+                >
+                  <p className="flex items-center gap-1.5">
+                    {item.isSensitiveProtected && !isJoined && (
+                      <Lock className="h-3.5 w-3.5 shrink-0 text-amber-500" aria-hidden="true" />
+                    )}
+                    <span>
+                      {item.isSensitiveProtected && !isJoined
+                        ? 'Ubicación aproximada por privacidad · Confirma tu apoyo para ver la casa exacta'
+                        : item.location.reference}
+                    </span>
+                  </p>
+                  <p className="mt-1 flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                    <Users className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                    <span>
+                      {item.responders.length} vecinos ayudando ({item.responders.join(', ')})
+                    </span>
                   </p>
                 </div>
+
+                <div className="mt-3 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => joinEmergencyResponse(item.id)}
+                    className="inline-flex min-h-[42px] flex-1 items-center justify-center gap-1.5 rounded-2xl bg-red-600 px-3.5 py-2 text-xs font-semibold text-white transition active:scale-98"
+                  >
+                    <ShieldAlert className="h-4 w-4" aria-hidden="true" />
+                    <span>{isJoined ? 'Apoyo confirmado' : 'Voy a ayudar'}</span>
+                  </button>
+
+                  <a
+                    href={buildSmsHref(item.title, item.location.lat, item.location.lng)}
+                    className={`inline-flex min-h-[42px] items-center justify-center gap-1.5 rounded-2xl px-3.5 py-2 text-xs font-semibold transition active:scale-98 ${
+                      isEmergency
+                        ? 'bg-slate-800 text-slate-200 border border-slate-700'
+                        : 'bg-slate-100 text-slate-800'
+                    }`}
+                  >
+                    <MessageSquare className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
+                    <span>SMS</span>
+                  </a>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {sharedResources.map((item) => (
+            <article
+              key={item.id}
+              className={`rounded-3xl border p-4 transition ${
+                isEmergency
+                  ? 'bg-[#101920] border-teal-500/35 text-slate-100'
+                  : 'bg-white border-teal-200 text-slate-900 shadow-xs'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2 text-xs">
+                <span className="rounded-full bg-teal-600 px-2.5 py-0.5 text-[11px] font-bold text-white">
+                  Punto activo
+                </span>
+                <span className="inline-flex items-center gap-1 text-slate-400">
+                  <Footprints className="h-3.5 w-3.5" aria-hidden="true" />A{' '}
+                  {item.location.walkingMinutes} min ({item.location.distanceMeters}m)
+                </span>
               </div>
 
-              <p className="mt-2 text-sm text-slate-700">{item.description}</p>
+              <h3 className="mt-2 text-[16px] font-bold leading-snug">{item.title}</h3>
+              <p className="mt-0.5 text-xs text-slate-400">
+                {item.authorName} · {item.location.reference}
+              </p>
+
+              <p
+                className={`mt-2 text-[13px] leading-relaxed ${
+                  isEmergency ? 'text-slate-300' : 'text-slate-600'
+                }`}
+              >
+                {item.description}
+              </p>
 
               <div className="mt-2.5 flex flex-wrap gap-1.5">
                 {item.resourceTags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-lg bg-red-50 px-2.5 py-0.5 text-xs font-bold text-red-800 border border-red-200"
+                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                      isEmergency
+                        ? 'bg-teal-950 text-teal-200 border border-teal-800'
+                        : 'bg-teal-50 text-teal-800'
+                    }`}
                   >
-                    Necesita: {tag}
+                    {tag}
                   </span>
                 ))}
               </div>
 
-              <div className="mt-3 rounded-xl bg-slate-50 p-2.5 text-xs text-slate-700">
-                <p>
-                  <strong>Ubicación:</strong>{' '}
-                  {item.isSensitiveProtected && !isJoined
-                    ? 'Protegida por privacidad de datos sensibles. Presiona "Voy a apoyar" para ver dirección exacta.'
-                    : item.location.reference}
-                </p>
-                <p className="mt-1">
-                  <Users className="mr-1 inline h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
-                  <strong>Vecinos acudiendo ({item.responders.length}):</strong>{' '}
-                  {item.responders.join(', ')}
-                </p>
-              </div>
-
-              <div className="mt-3 flex flex-wrap items-center gap-2">
+              <div className="mt-3 flex items-center justify-between gap-2 pt-1">
+                <span className="text-xs text-slate-400">
+                  {item.responders.length} voluntarios en el punto
+                </span>
                 <button
                   type="button"
                   onClick={() => joinEmergencyResponse(item.id)}
-                  className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-xs font-bold text-white hover:bg-red-700"
+                  className="inline-flex min-h-[40px] items-center gap-1.5 rounded-2xl bg-teal-600 px-4 py-2 text-xs font-semibold text-white transition active:scale-95"
                 >
-                  <ShieldAlert className="h-4 w-4" aria-hidden="true" />
-                  <span>
-                    {isJoined ? 'Ya estás anotado en apoyo' : 'Voy a apoyar (Unirme a brigada)'}
-                  </span>
+                  <PackageCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Sumarme ({item.responders.length})</span>
                 </button>
-
-                <a
-                  href={buildSmsHref(item.title, item.location.lat, item.location.lng)}
-                  className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-slate-300 bg-slate-900 px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-800"
-                >
-                  <MessageSquareWarning className="h-4 w-4 text-amber-400" aria-hidden="true" />
-                  <span>Enviar S.O.S. por SMS (Sin Internet)</span>
-                </a>
               </div>
             </article>
-          );
-        })}
-      </div>
-
-      <div className="space-y-3 pt-2">
-        <h3 className="flex items-center gap-2 text-base font-extrabold text-teal-800">
-          <PackageCheck className="h-5 w-5" aria-hidden="true" />
-          <span>2. Economía Solidaria de Emergencia (Recursos Críticos Compartidos)</span>
-        </h3>
-
-        {sharedResources.map((item) => (
-          <article
-            key={item.id}
-            className="rounded-2xl border border-teal-500/40 bg-white p-4 shadow-sm"
-          >
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div>
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="rounded-lg bg-teal-700 px-2 py-0.5 text-[11px] font-bold text-white">
-                    Recurso Solidario Activo
-                  </span>
-                  <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-700">
-                    A {item.location.walkingMinutes} min a pie ({item.location.distanceMeters}m)
-                  </span>
-                </div>
-                <h4 className="mt-1 text-base font-extrabold text-slate-900">{item.title}</h4>
-                <p className="text-xs text-slate-500">
-                  Coordinado por {item.authorName} · {item.location.reference}
-                </p>
-              </div>
-            </div>
-
-            <p className="mt-2 text-sm text-slate-700">{item.description}</p>
-
-            <div className="mt-2.5 flex flex-wrap gap-1.5">
-              {item.resourceTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-lg bg-teal-50 px-2.5 py-0.5 text-xs font-bold text-teal-900 border border-teal-200"
-                >
-                  Disponible: {tag}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3 text-xs">
-              <span className="inline-flex items-center gap-1 text-slate-600">
-                <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-                Voluntarios en el punto: {item.responders.join(', ')}
-              </span>
-              <button
-                type="button"
-                onClick={() => joinEmergencyResponse(item.id)}
-                className="min-h-[42px] rounded-xl bg-teal-700 px-3.5 py-2 text-xs font-bold text-white hover:bg-teal-800"
-              >
-                Sumarme como Voluntario ({item.responders.length})
-              </button>
-            </div>
-          </article>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 };
