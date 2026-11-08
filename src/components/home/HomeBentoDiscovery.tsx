@@ -151,12 +151,12 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
         </p>
       </div>
 
-      {/* 2. Anchor Bento Card: Pulso del Barrio (Inspirado en el widget de nivel oscuro) */}
-      <div className="rounded-3xl bg-[#181816] text-white p-4 sm:p-5 shadow-lg border border-neutral-800">
+      {/* 2. Anchor Bento Card: Pulso del Barrio (Compacto y estilizado) */}
+      <div className="rounded-2xl sm:rounded-3xl bg-[#181816] text-white p-3.5 sm:p-4 shadow-md border border-neutral-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#E45826] text-white font-extrabold text-sm shadow-inner">
-              <ShieldCheck className="h-6 w-6" />
+            <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-[#E45826] text-white font-extrabold text-sm shadow-inner">
+              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -167,7 +167,7 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
                   Referente 1.5x
                 </span>
               </div>
-              <h2 className="text-base font-bold text-neutral-100 tracking-tight">
+              <h2 className="text-sm sm:text-base font-bold text-neutral-100 tracking-tight">
                 {currentUser.neighborhood}
               </h2>
             </div>
@@ -183,16 +183,6 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
               </span>
             </div>
           </div>
-        </div>
-
-        {/* Micro barra de confianza barrial */}
-        <div className="mt-4 pt-3 border-t border-neutral-800/80 flex items-center justify-between text-xs">
-          <span className="text-neutral-400 text-[11px]">
-            Red vecinal activa sin comisiones ni intermediarios
-          </span>
-          <span className="font-mono text-emerald-400 font-bold text-[11px]">
-            100% Verificado
-          </span>
         </div>
       </div>
 

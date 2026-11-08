@@ -1,11 +1,9 @@
 import React, { useRef, useState } from 'react';
 import {
   AlertOctagon,
-  ChevronRight,
   HeartHandshake,
   HelpCircle,
   LogOut,
-  Map,
   MapPin,
   Plus,
   ShieldCheck,
@@ -16,7 +14,6 @@ import {
   X,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { ActiveTab } from '../../types';
 import { EmergencyHotlinePanel } from '../common/EmergencyHotlinePanel';
 import { VecinosBrandLogo } from '../common/VecinosBrandLogo';
 import { CommunityMap } from '../map/CommunityMap';
@@ -74,13 +71,6 @@ export const MobileLayout: React.FC = () => {
       : currentUser.dni;
 
   const activeEmergenciesCount = emergencyItems.filter((i) => i.status === 'activo').length;
-
-  const tabs: { id: ActiveTab; label: string; icon: React.ComponentType<{ className?: string }>; badge?: number }[] = [
-    { id: 'services', label: 'Oficios', icon: Store },
-    { id: 'favors', label: 'Favores', icon: HeartHandshake },
-    { id: 'emergency', label: 'S.O.S.', icon: AlertOctagon, badge: activeEmergenciesCount },
-    { id: 'map', label: 'Mapa', icon: Map },
-  ];
 
   return (
     <div
@@ -182,49 +172,6 @@ export const MobileLayout: React.FC = () => {
             >
               {initials}
             </button>
-          </div>
-        </div>
-
-        {/* 2. iOS Segmented Control */}
-        <div className="px-4 pb-2.5 pt-0.5">
-          <div
-            role="tablist"
-            className={`grid grid-cols-4 gap-1 p-1 rounded-2xl border ${
-              isEmergency
-                ? 'bg-slate-900 border-slate-800'
-                : 'bg-slate-200/80 border-slate-300/80'
-            }`}
-          >
-            {tabs.map((tab) => {
-              const active = activeTab === tab.id;
-              const Icon = tab.icon;
-
-              return (
-                <button
-                  key={tab.id}
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-150 ${
-                    active
-                      ? isEmergency
-                        ? 'bg-slate-800 text-white shadow-xs font-black'
-                        : 'bg-white text-slate-950 shadow-xs font-black ring-1 ring-slate-950/5'
-                      : isEmergency
-                      ? 'text-slate-400 hover:text-slate-200'
-                      : 'text-slate-600 hover:text-slate-950'
-                  }`}
-                >
-                  <Icon className={`h-3.5 w-3.5 shrink-0 ${active ? (tab.id === 'emergency' ? 'text-red-600' : 'text-emerald-700') : 'text-slate-500'}`} />
-                  <span className="truncate">{tab.label}</span>
-                  {Boolean(tab.badge && tab.badge > 0) && (
-                    <span className="flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-red-600 text-white text-[9px] font-black">
-                      {tab.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
           </div>
         </div>
       </header>
@@ -366,9 +313,11 @@ export const MobileLayout: React.FC = () => {
         <div
           role="dialog"
           aria-modal="true"
+          onClick={() => setIsProfileOpen(false)}
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 backdrop-blur-xs p-0 sm:p-4 animate-fade-in"
         >
           <div
+            onClick={(e) => e.stopPropagation()}
             className={`w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border animate-sheet max-h-[90vh] overflow-y-auto ${
               isEmergency
                 ? 'bg-slate-900 border-slate-800 text-slate-100'
@@ -411,25 +360,6 @@ export const MobileLayout: React.FC = () => {
                   </span>
                 </div>
               </div>
-
-              {/* Botón para abrir panel de configuración si es host */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsProfileOpen(false);
-                  window.location.hash = '#/config';
-                }}
-                className={`w-full flex items-center justify-between p-3 rounded-2xl border transition ${
-                  isEmergency
-                    ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
-                    : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
-                }`}
-              >
-                <span className="font-bold">
-                  Ajustes y Opciones del Demo
-                </span>
-                <ChevronRight className="h-4 w-4 text-slate-400" />
-              </button>
 
               {/* Estado de conectividad */}
               <div className={`flex items-center justify-between p-3 rounded-2xl border ${
