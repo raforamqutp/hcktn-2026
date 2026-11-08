@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { RatingFaceIcon } from '../../components/common/RatingFaceIcon';
+import { HomeBentoDiscovery } from '../../components/home/HomeBentoDiscovery';
 import { useApp } from '../../context/AppContext';
 import { SentimentScore, ServiceCategory } from '../../types';
 
@@ -138,20 +139,33 @@ export const ServicesView: React.FC = () => {
   };
 
   return (
-    <section aria-label="Directorio de servicios del barrio" className="space-y-4">
-      {/* 1. Header con tipografía suiza y búsqueda despejada */}
-      <div className="space-y-3">
+    <section aria-label="Directorio de servicios del barrio" className="space-y-6">
+      {/* 0. Descubrimiento Macro Bento (Fiel a la jerarquía editorial humana) */}
+      {!isEmergency && (
+        <HomeBentoDiscovery onSelectCategory={(cat) => setSelectedCategory(cat)} />
+      )}
+
+      {/* 1. Header de sección y búsqueda */}
+      <div className="space-y-3 pt-1">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-500">
+                Lo que comparte tu cuadra hoy
+              </span>
+              <span className="text-xs font-mono text-neutral-400">
+                ({filtered.length} activo{filtered.length === 1 ? '' : 's'})
+              </span>
+            </div>
             <h2
-              className={`font-black tracking-tight ${
-                isSeniorMode ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
-              } ${isEmergency ? 'text-white' : 'text-slate-950'}`}
+              className={`font-editorial-serif italic text-neutral-900 leading-snug mt-0.5 ${
+                isSeniorMode ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'
+              } ${isEmergency ? 'text-white' : ''}`}
             >
-              Oficios y Servicios Vecinales
+              Oficios y Saberes de Vecinos
             </h2>
             <p className={`text-xs font-medium mt-0.5 ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
-              {filtered.length} anuncio{filtered.length === 1 ? '' : 's'} en Yanahuara a menos de 10 min a pie • Sin intermediarios ni comisiones
+              Trato directo entre familias de Yanahuara a menos de 10 min a pie • Sin intermediarios
             </p>
           </div>
 
@@ -327,12 +341,12 @@ export const ServicesView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Título y Descripción */}
+              {/* Título y Descripción con Estilo Editorial */}
               <div className="mt-3">
-                <h3 className={`text-base sm:text-lg font-black tracking-tight leading-snug ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
-                  {srv.tradeTitle}
+                <h3 className={`font-editorial-serif italic text-lg sm:text-xl text-[#1A1917] leading-snug font-medium ${isEmergency ? 'text-white' : ''}`}>
+                  "{srv.tradeTitle}"
                 </h3>
-                <p className={`mt-1.5 text-xs sm:text-sm leading-relaxed max-w-[65ch] ${isEmergency ? 'text-slate-300' : 'text-slate-600'}`}>
+                <p className={`mt-1.5 text-xs sm:text-sm leading-relaxed max-w-[65ch] ${isEmergency ? 'text-slate-300' : 'text-neutral-700'}`}>
                   {srv.description}
                 </p>
               </div>
@@ -413,7 +427,7 @@ export const ServicesView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setActiveBarterServiceId(isBarterActive ? null : srv.id)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition active:scale-95"
+                      className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-300 transition active:scale-95 shadow-2xs"
                     >
                       Proponer Trueque
                     </button>
@@ -421,7 +435,7 @@ export const ServicesView: React.FC = () => {
 
                   <a
                     href={`tel:${srv.phone}`}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition active:scale-95"
+                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-[#181816] hover:bg-neutral-800 text-white shadow-xs transition active:scale-95"
                   >
                     <Phone className="h-3 w-3" />
                     <span>Llamar</span>

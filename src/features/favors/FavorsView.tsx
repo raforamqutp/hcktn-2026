@@ -370,8 +370,8 @@ export const FavorsView: React.FC = () => {
                   )}
                 </div>
 
-                <h3 className={`text-base sm:text-lg font-black tracking-tight leading-snug ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
-                  {fav.title}
+                <h3 className={`font-editorial-serif italic text-lg sm:text-xl text-[#1A1917] leading-snug font-medium ${isEmergency ? 'text-white' : ''}`}>
+                  "{fav.title}"
                 </h3>
                 <p className={`mt-1.5 text-xs sm:text-sm leading-relaxed max-w-[65ch] ${isEmergency ? 'text-slate-300' : 'text-slate-600'}`}>
                   {fav.description}
@@ -415,10 +415,10 @@ export const FavorsView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleStatusChange(fav.id, 'en_curso', fav.title)}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-black text-white shadow-2xs transition active:scale-95 ${
+                      className={`px-4 py-1.5 rounded-full text-xs font-bold text-white shadow-xs transition active:scale-95 ${
                         fav.direction === 'ofrezco'
-                          ? 'bg-emerald-600 hover:bg-emerald-700'
-                          : 'bg-indigo-600 hover:bg-indigo-700'
+                          ? 'bg-[#181816] hover:bg-neutral-800'
+                          : 'bg-[#E45826] hover:bg-[#c9491b]'
                       }`}
                     >
                       {fav.direction === 'ofrezco' ? 'Pedir este apoyo' : 'Ayudar a este vecino'}
