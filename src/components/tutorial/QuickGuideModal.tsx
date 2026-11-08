@@ -69,7 +69,7 @@ export const QuickGuideModal: React.FC = () => {
               <h2 id="guide-modal-title" className="text-base font-black tracking-tight text-slate-950">
                 Guía Rápida VecinOS
               </h2>
-              <p className="text-[11px] font-semibold text-slate-500">
+              <p className="text-xs font-bold text-slate-600">
                 Tu barrio conectado a menos de 10 minutos a pie
               </p>
             </div>
@@ -85,7 +85,7 @@ export const QuickGuideModal: React.FC = () => {
         </div>
 
         {/* Indicador de 3 Pasos */}
-        <div className="mt-3.5 grid grid-cols-3 gap-2">
+        <nav aria-label="Progreso de la guía" className="mt-3.5 grid grid-cols-3 gap-2">
           {[
             { step: 1, title: '1. Servicios & Trueque' },
             { step: 2, title: '2. Favores & Pool' },
@@ -97,13 +97,15 @@ export const QuickGuideModal: React.FC = () => {
               <button
                 key={item.step}
                 type="button"
+                aria-current={isActive ? 'step' : undefined}
+                aria-label={`Paso ${item.step}: ${item.title}`}
                 onClick={() => setCurrentStep(item.step)}
                 className={`flex flex-col items-center gap-1 rounded-xl p-2 text-left transition border ${
                   isActive
                     ? 'bg-emerald-50 border-emerald-400 text-emerald-950 font-black'
                     : isCompleted
                     ? 'bg-slate-100 border-slate-300 text-slate-700 font-bold'
-                    : 'bg-white border-slate-200 text-slate-400 font-medium'
+                    : 'bg-white border-slate-200 text-slate-600 font-bold'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -128,7 +130,7 @@ export const QuickGuideModal: React.FC = () => {
               </button>
             );
           })}
-        </div>
+        </nav>
 
         {/* CONTENIDO DEL PASO 1 */}
         {currentStep === 1 && (

@@ -168,7 +168,7 @@ export const RegisterDniModal: React.FC = () => {
               <h2 id="dni-modal-title" className="text-base font-black tracking-tight text-slate-950">
                 Identificación Vecinal (3 Capas)
               </h2>
-              <p className="text-[11px] font-medium text-slate-500">
+              <p className="text-xs font-bold text-slate-600">
                 Consulta en vivo con RENIEC y Padrón Local
               </p>
             </div>
@@ -210,7 +210,9 @@ export const RegisterDniModal: React.FC = () => {
         {/* ALERTA: BLOQUEO POR MENOR DE EDAD CON BYPASS S.O.S. */}
         {minorBlockedError && (
           <div
+            id="dni-minor-error"
             role="alert"
+            tabIndex={-1}
             className="mt-3.5 space-y-3 rounded-2xl border-2 border-red-400 bg-red-50 p-4 text-xs text-red-950 animate-fade-in shadow-sm"
           >
             <div className="flex items-start gap-2.5">
@@ -244,6 +246,7 @@ export const RegisterDniModal: React.FC = () => {
         {/* ALERTA DE ERROR GENERAL */}
         {generalError && (
           <p
+            id="dni-general-error"
             role="alert"
             className="mt-3 rounded-xl bg-amber-50 border border-amber-300 p-3 text-xs font-bold text-amber-900 animate-fade-in"
           >
@@ -272,10 +275,10 @@ export const RegisterDniModal: React.FC = () => {
             {/* Campo DNI */}
             <div className="p-3.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="dni-input" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <label htmlFor="dni-input" className="block text-xs font-black text-slate-700 uppercase tracking-wider">
                   Número de DNI (8 dígitos)
                 </label>
-                <span className="text-[11px] font-mono text-slate-400 font-bold">
+                <span className="text-xs font-mono text-slate-600 font-black">
                   {dni.length}/8
                 </span>
               </div>
@@ -287,6 +290,16 @@ export const RegisterDniModal: React.FC = () => {
                   pattern="[0-9]*"
                   maxLength={8}
                   required
+                  aria-invalid={Boolean(minorBlockedError || generalError)}
+                  aria-describedby={
+                    minorBlockedError
+                      ? 'dni-minor-error'
+                      : generalError
+                      ? 'dni-general-error'
+                      : livePreview
+                      ? 'dni-live-preview'
+                      : undefined
+                  }
                   value={dni}
                   onChange={(e) => setDni(e.target.value.replace(/\D/g, ''))}
                   placeholder="Ej. 70448548"
@@ -302,7 +315,9 @@ export const RegisterDniModal: React.FC = () => {
 
             {/* VISTA PREVIA DEL NOMBRE OBTENIDO EN VIVO */}
             {livePreview && (
-              <div className="p-3 bg-emerald-50/70 border-t border-emerald-100 animate-fade-in">
+              <div id="dni-live-preview"
+                aria-live="polite"
+                className="p-3 bg-emerald-50/70 border-t border-emerald-100 animate-fade-in">
                 <div className="flex items-center justify-between mb-0.5">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">
                     Nombre detectado en {livePreview.source === 'api_reniec' ? 'RENIEC Oficial' : 'Padrón Local'}:
@@ -320,7 +335,7 @@ export const RegisterDniModal: React.FC = () => {
 
             {/* Campo Contraseña o PIN de Seguridad */}
             <div className="p-3.5">
-              <label htmlFor="dni-pwd" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <label htmlFor="dni-pwd" className="block text-xs font-black text-slate-700 uppercase tracking-wider">
                 Contraseña vecinal
               </label>
               <div className="mt-1 flex items-center gap-2">
@@ -328,6 +343,7 @@ export const RegisterDniModal: React.FC = () => {
                 <input
                   id="dni-pwd"
                   type="password"
+                  autoComplete="current-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -391,7 +407,7 @@ export const RegisterDniModal: React.FC = () => {
         </form>
 
         {/* Resumen de las 3 capas */}
-        <div className="mt-4 rounded-xl bg-slate-100 p-2.5 text-[11px] font-medium text-slate-600 border border-slate-200/80">
+        <div className="mt-4 rounded-xl bg-slate-100 p-2.5 text-xs font-bold text-slate-700 border border-slate-200/80">
           <p className="font-bold text-slate-800 mb-1">Mecanismo de Confianza en 3 Capas:</p>
           <p>1. RENIEC API en vivo · 2. Padrón Vecinal Offline + Heurística · 3. Declaración Jurada 18+.</p>
         </div>

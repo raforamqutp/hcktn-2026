@@ -128,12 +128,71 @@ button, [role="button"], a {
   white-space: nowrap !important;
 }
 
+/* WCAG 2.2 AA/AAA Guaranteed Visible Focus Indicator */
+:focus-visible,
 :where(a:any-link, button, input, select, textarea):focus-visible {
-  outline: 2px solid #059669;
-  outline-offset: 2px;
+  outline: 2.5px solid #059669 !important;
+  outline-offset: 2.5px !important;
+}
+
+/* Accessible reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 .leaflet-container {
   font-family: inherit;
   z-index: 10;
+}
+
+/* 3D Flip Card Mechanics */
+.flip-card-container {
+  perspective: 1200px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 520ms cubic-bezier(0.25, 1, 0.5, 1);
+  transform-style: preserve-3d;
+  transform-origin: center center;
+}
+
+.flip-card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 1rem;
+}
+
+.flip-card-front {
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+  z-index: 1;
+}
+
+.flip-card-inner.is-flipped .flip-card-front {
+  pointer-events: none;
+}
+
+.flip-card-inner:not(.is-flipped) .flip-card-back {
+  pointer-events: none;
 }

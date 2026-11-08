@@ -39,7 +39,7 @@ export const BottomNav: React.FC = () => {
           className={`pointer-events-auto flex flex-1 items-center justify-around rounded-full border p-1.5 shadow-lg backdrop-blur-xl transition-colors ${
             isEmergency
               ? 'dark-surface bg-[#111726]/90 border-slate-800 text-slate-300'
-              : 'bg-white/90 border-slate-200/80 text-slate-500 shadow-md'
+              : 'bg-white/95 border-slate-300 text-slate-700 shadow-md'
           }`}
         >
           {navItems.map((item) => {
@@ -56,7 +56,7 @@ export const BottomNav: React.FC = () => {
                     ? isSosTab || isEmergency
                       ? 'bg-red-500/15 text-red-500'
                       : 'bg-emerald-500/12 text-emerald-700'
-                    : 'hover:text-slate-900'
+                    : 'text-slate-700 hover:text-slate-950 font-bold'
                 }`}
               >
                 {item.icon}

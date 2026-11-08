@@ -279,7 +279,7 @@ export const QuickPublishSheet: React.FC = () => {
               <Sparkles className="h-5 w-5 text-indigo-600" />
               Publicación en 3 Clics
             </h2>
-            <p className="text-xs font-semibold text-slate-600 mt-0.5">
+            <p className="text-xs font-bold text-slate-700 mt-0.5">
               1. Intención · 2. Plantilla Inteligente · 3. Confirmar
             </p>
           </div>
@@ -296,7 +296,7 @@ export const QuickPublishSheet: React.FC = () => {
         <div className="mt-4 space-y-4">
           {/* PASO 1: INTENCIÓN */}
           <div>
-            <span className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5">
+            <span className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1.5">
               1. ¿Qué deseas compartir o solicitar?
             </span>
             <div className="grid grid-cols-3 gap-2">
@@ -332,6 +332,7 @@ export const QuickPublishSheet: React.FC = () => {
                   <button
                     key={tab.id}
                     type="button"
+                    aria-pressed={active}
                     onClick={() => handleSelectIntent(tab.id as 'service' | 'favor' | 'emergency')}
                     className={`flex flex-col items-center justify-center rounded-2xl p-3 text-center transition-all active:scale-95 border-2 ${
                       active
@@ -353,7 +354,7 @@ export const QuickPublishSheet: React.FC = () => {
           {/* PASO 2: PLANTILLAS INTELIGENTES */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="block text-[11px] font-black uppercase tracking-wider text-slate-500">
+              <span className="block text-xs font-black uppercase tracking-wider text-slate-700">
                 2. Plantillas rápidas sugeridas
               </span>
               <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
@@ -368,6 +369,7 @@ export const QuickPublishSheet: React.FC = () => {
                   <button
                     key={tpl.label}
                     type="button"
+                    aria-pressed={active}
                     onClick={() => handleSelectTemplate(tpl)}
                     className={`shrink-0 min-h-[40px] inline-flex items-center rounded-full px-4 py-2 text-xs font-bold transition active:scale-95 border ${
                       active
@@ -386,7 +388,7 @@ export const QuickPublishSheet: React.FC = () => {
           {/* Campos editables con la información precargada */}
           <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl bg-slate-50 border-2 border-slate-200 shadow-2xs">
             <div className="p-3">
-              <label htmlFor="pub-title" className="block text-[11px] font-black text-slate-600">
+              <label htmlFor="pub-title" className="block text-xs font-black text-slate-800">
                 Título del anuncio (precargado)
               </label>
               <input
@@ -400,7 +402,7 @@ export const QuickPublishSheet: React.FC = () => {
             </div>
 
             <div className="p-3">
-              <label htmlFor="pub-desc" className="block text-[11px] font-black text-slate-600">
+              <label htmlFor="pub-desc" className="block text-xs font-black text-slate-800">
                 Detalle para los vecinos
               </label>
               <textarea
@@ -449,7 +451,7 @@ export const QuickPublishSheet: React.FC = () => {
                   value={barterText}
                   onChange={(e) => setBarterText(e.target.value)}
                   placeholder="Ej. Insumos de repostería, turnos de pool, herramientas..."
-                  className="mt-1 w-full bg-transparent text-xs font-bold text-indigo-950 placeholder:text-indigo-400 focus:outline-none"
+                  className="mt-1 w-full bg-transparent text-xs font-bold text-indigo-950 placeholder:text-indigo-600/70 focus:outline-none"
                 />
               </div>
             )}
@@ -470,6 +472,7 @@ export const QuickPublishSheet: React.FC = () => {
                     <button
                       key={pm.id}
                       type="button"
+                      aria-pressed={active}
                       onClick={() => togglePayment(pm.id as PaymentMethod)}
                       className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-xs font-black transition active:scale-95 border ${
                         active

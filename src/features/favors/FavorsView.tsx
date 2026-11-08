@@ -109,6 +109,7 @@ export const FavorsView: React.FC = () => {
       {actionNotice && (
         <div
           role="status"
+          aria-live="polite"
           className="fixed top-20 right-4 z-50 max-w-sm rounded-2xl bg-emerald-600 text-white p-4 shadow-xl border border-emerald-400 flex items-start gap-3 animate-slide-up"
         >
           <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5 text-emerald-200" />
@@ -139,7 +140,7 @@ export const FavorsView: React.FC = () => {
             </div>
             <p
               className={`font-semibold mt-0.5 ${
-                isEmergency ? 'text-slate-300' : 'text-slate-700'
+                isEmergency ? 'text-slate-200' : 'text-slate-800 font-bold'
               } ${isSeniorMode ? 'text-base' : 'text-xs md:text-sm'}`}
             >
               Préstamo gratuito de muletas, taladros, pool escolar matutino y ayuda solidaria entre vecinos
@@ -262,10 +263,12 @@ export const FavorsView: React.FC = () => {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                id="search-favors-input"
+                aria-label="Buscar muletas, pool escolar, taladro o libros"
                 placeholder="Buscar muletas, pool escolar, taladro, libros..."
                 className={`w-full rounded-2xl pl-10 pr-4 py-2.5 text-xs font-semibold focus:outline-none transition border-2 ${
                   isEmergency
-                    ? 'bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-400'
+                    ? 'bg-slate-900 border-slate-700 text-white placeholder:text-slate-600 focus:border-indigo-400'
                     : 'bg-white border-slate-200/90 text-slate-950 placeholder:text-slate-500 focus:border-indigo-600'
                 }`}
               />
@@ -296,6 +299,7 @@ export const FavorsView: React.FC = () => {
                   <button
                     key={dir.id}
                     type="button"
+                    aria-pressed={active}
                     onClick={() => setDirectionFilter(dir.id as 'all' | 'ofrezco' | 'solicito')}
                     className={`rounded-xl px-3 py-2 text-xs font-black transition active:scale-95 ${
                       active
@@ -324,6 +328,7 @@ export const FavorsView: React.FC = () => {
                   <button
                     key={cat.id}
                     type="button"
+                    aria-pressed={active}
                     onClick={() => setCategoryFilter(cat.id)}
                     className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition active:scale-95 ${
                       active

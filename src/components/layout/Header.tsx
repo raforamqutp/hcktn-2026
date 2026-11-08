@@ -19,6 +19,59 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { AccountTier, ActiveTab } from '../../types';
 
+
+const VecinosBrandLogo: React.FC<{ isEmergency: boolean; size?: 'sm' | 'md' }> = ({
+  isEmergency,
+  size = 'md',
+}) => {
+  const isSm = size === 'sm';
+  return (
+    <div
+      className={`relative flex items-center justify-center text-white shadow-md transition-all duration-200 group-hover:scale-105 ${
+        isSm ? 'h-9 w-9 rounded-xl' : 'h-11 w-11 rounded-[14px]'
+      } ${
+        isEmergency
+          ? 'bg-gradient-to-br from-rose-500 via-red-600 to-red-800 shadow-red-900/30 ring-1 ring-white/25'
+          : 'bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-800 shadow-emerald-900/25 ring-1 ring-white/30'
+      }`}
+    >
+      <div
+        className={`absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent pointer-events-none ${
+          isSm ? 'rounded-t-xl' : 'rounded-t-[14px]'
+        }`}
+      />
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        className={`${isSm ? 'h-5 w-5' : 'h-6 w-6'} text-white drop-shadow-xs`}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3 10.2L12 3L21 10.2"
+          stroke="currentColor"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M6.5 10.8V17.2C6.5 19.3 8.2 21 10.3 21H13.7C15.8 21 17.5 19.3 17.5 17.2V10.8"
+          stroke="currentColor"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+        />
+        <path
+          d="M9.2 13.8L12 17.2L14.8 13.8"
+          stroke="currentColor"
+          strokeWidth="2.3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="12" cy="8.6" r="1.5" fill="currentColor" />
+      </svg>
+    </div>
+  );
+};
+
 export const Header: React.FC = () => {
   const {
     mode,
@@ -79,12 +132,12 @@ export const Header: React.FC = () => {
     },
     {
       id: 'map',
-      label: 'Mapa del Barrio',
+      label: 'Mapa',
       icon: <Map className="h-4 w-4 stroke-[2.2]" aria-hidden="true" />,
     },
     {
       id: 'emergency',
-      label: 'S.O.S. / Urgencias',
+      label: 'S.O.S.',
       icon: <AlertOctagon className="h-4 w-4 stroke-[2.2]" aria-hidden="true" />,
       badge: emergencyItems.filter((i) => i.status === 'activo').length,
     },
@@ -100,54 +153,61 @@ export const Header: React.FC = () => {
         }`}
       >
         {/* BARRA DE NAVEGACIÓN ESCRITORIO (Visible en PC y tablets, oculta en celular) */}
-        <div className="hidden md:flex max-w-7xl mx-auto items-center justify-between gap-4 px-6 py-3.5">
-          {/* Logo y Cuadra con Alto Contraste */}
-          <div className="flex items-center gap-3">
+        <div className="hidden md:flex max-w-7xl mx-auto items-center justify-between gap-3 lg:gap-4 px-4 lg:px-6 py-2.5">
+          {/* Logo y Cuadra con Alto Contraste y Balance Óptico */}
+          <div className="flex items-center gap-2.5 lg:gap-3 shrink-0">
             <button
               type="button"
               onClick={() => setActiveTab('services')}
-              className="flex items-center gap-2.5 group text-left"
+              className="flex items-center gap-3 group text-left transition"
+              aria-label="Ir a inicio de VecinOS"
             >
-              <div
-                className={`flex h-10 w-10 items-center justify-center rounded-2xl text-white font-black text-base shadow-sm transition group-hover:scale-105 ${
-                  isEmergency ? 'bg-red-600' : 'bg-emerald-600'
-                }`}
-              >
-                V
-              </div>
+              <VecinosBrandLogo isEmergency={isEmergency} />
               <div>
-                <span className={`text-xl font-black tracking-tight leading-none ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
-                  VecinOS
-                </span>
-                <span className="block text-xs font-black text-emerald-700 leading-tight">
+                <div className="flex items-baseline tracking-tight leading-none">
+                  <span className={`text-[21px] font-black tracking-tight ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
+                    Vecin
+                  </span>
+                  <span className={`text-[21px] font-black tracking-tight ${isEmergency ? 'text-red-400' : 'text-emerald-600'}`}>
+                    OS
+                  </span>
+                </div>
+                <span className={`block text-[11px] font-black tracking-wide leading-tight mt-0.5 ${isEmergency ? 'text-slate-300' : 'text-emerald-800'}`}>
                   Tu barrio conectado
                 </span>
               </div>
             </button>
 
-            <div className="h-6 w-px bg-slate-300" />
+            <div className="hidden xl:block h-6 w-px bg-slate-200 dark:bg-slate-800" />
 
             {/* Ubicación clara y legible */}
-            <div className="flex items-center gap-1.5 text-xs font-black text-slate-900 bg-emerald-50 border-2 border-emerald-200/90 px-3 py-1 rounded-full">
+            <div
+              title={`Tu zona vecinal: ${currentUser.neighborhood}`}
+              className={`hidden xl:flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border transition-colors ${
+                isEmergency
+                  ? 'bg-slate-900/90 border-slate-700 text-slate-200'
+                  : 'bg-emerald-50/80 border-emerald-200/90 text-emerald-950'
+              }`}
+            >
               <MapPin className="h-3.5 w-3.5 text-emerald-700 shrink-0" aria-hidden="true" />
-              <span className="truncate max-w-[210px]">{currentUser.neighborhood}</span>
+              <span className="truncate max-w-[170px] font-black">{currentUser.neighborhood}</span>
             </div>
 
             {!isOnline && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 border-2 border-amber-300 px-3 py-0.5 text-xs font-black text-amber-950">
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 border border-amber-300 px-2.5 py-1 text-[11px] font-black text-amber-950 animate-pulse">
                 <WifiOff className="h-3.5 w-3.5" aria-hidden="true" />
-                Modo Offline{pendingSyncCount > 0 ? ` (${pendingSyncCount})` : ''}
+                Offline{pendingSyncCount > 0 ? ` (${pendingSyncCount})` : ''}
               </span>
             )}
           </div>
 
-          {/* Tabs Centrales de Alta Legibilidad */}
+          {/* Tabs Centrales de Alta Legibilidad y Perfecta Simetría (1 sola línea, sin desnivel) */}
           <nav
             aria-label="Navegación principal de escritorio"
-            className={`flex items-center rounded-2xl p-1 border-2 transition-colors ${
+            className={`flex items-center rounded-2xl p-1 border transition-colors shadow-2xs ${
               isEmergency
-                ? 'bg-slate-900 border-slate-700'
-                : 'bg-slate-100 border-slate-300'
+                ? 'bg-slate-900/90 border-slate-700'
+                : 'bg-slate-100/90 border-slate-200'
             }`}
           >
             {desktopNavItems.map((item) => {
@@ -159,20 +219,20 @@ export const Header: React.FC = () => {
                   type="button"
                   onClick={() => setActiveTab(item.id)}
                   aria-current={active ? 'page' : undefined}
-                  className={`relative flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black transition ${
+                  className={`relative h-10 px-3.5 lg:px-4 flex items-center justify-center gap-2 rounded-xl text-xs font-black whitespace-nowrap transition-all duration-150 active:scale-95 ${
                     active
                       ? isSos || isEmergency
                         ? 'bg-red-600 text-white shadow-xs'
                         : 'bg-white text-slate-950 shadow-xs ring-1 ring-slate-300'
                       : isEmergency
                       ? 'text-slate-300 hover:text-white hover:bg-slate-800'
-                      : 'text-slate-800 hover:text-slate-950 hover:bg-slate-200/70'
+                      : 'text-slate-700 hover:text-slate-950 hover:bg-slate-200/70'
                   }`}
                 >
                   {item.icon}
                   <span>{item.label}</span>
                   {item.badge ? (
-                    <span className="ml-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-black text-white">
+                    <span className="ml-0.5 inline-flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-red-600 text-[10px] font-black text-white shadow-xs">
                       {item.badge}
                     </span>
                   ) : null}
@@ -181,63 +241,75 @@ export const Header: React.FC = () => {
             })}
           </nav>
 
-          {/* Botones de Acción Derecha */}
-          <div className="flex items-center gap-2.5">
+          {/* Botones de Acción Derecha Ordenados y Sincronizados (Sin saturación) */}
+          <div className="flex items-center gap-2 shrink-0">
             {/* Botón Publicar */}
             <button
               type="button"
               onClick={() => openPublishModal()}
-              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-black text-white shadow-xs transition hover:brightness-105 active:scale-95 ${
+              className={`h-10 px-4 inline-flex items-center gap-1.5 rounded-full text-xs font-black text-white shadow-xs transition hover:brightness-105 active:scale-95 ${
                 isEmergency ? 'bg-red-600' : 'bg-emerald-600'
               }`}
             >
               <Plus className="h-4 w-4 stroke-[2.5]" />
-              <span>Publicar</span>
+              <span className="whitespace-nowrap">Publicar</span>
             </button>
 
-            {/* Accesibilidad Letra Grande */}
-            <button
-              type="button"
-              onClick={toggleSeniorMode}
-              title={isSeniorMode ? 'Letra grande activada' : 'Activar letra grande'}
-              aria-label="Cambiar tamaño de texto"
-              className={`flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border-2 transition active:scale-95 ${
-                isSeniorMode
-                  ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs'
-                  : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100 font-bold'
+            {/* Agrupación elegante de Utilidades (Accesibilidad Senior + Simulador de Red) */}
+            <div
+              className={`flex items-center rounded-full p-0.5 border ${
+                isEmergency ? 'bg-slate-900 border-slate-700' : 'bg-slate-100 border-slate-200'
               }`}
             >
-              <Type className="h-4 w-4" />
-            </button>
+              {/* Accesibilidad Letra Grande */}
+              <button
+                type="button"
+                onClick={toggleSeniorMode}
+                title={isSeniorMode ? 'Letra grande activada' : 'Activar letra grande'}
+                aria-label="Cambiar tamaño de texto"
+                className={`h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-full transition-all active:scale-95 ${
+                  isSeniorMode
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : isEmergency
+                    ? 'text-slate-300 hover:text-white hover:bg-slate-800'
+                    : 'text-slate-700 hover:text-slate-950 hover:bg-white'
+                }`}
+              >
+                <Type className="h-4 w-4" />
+              </button>
 
-            {/* Simulador Red */}
-            <button
-              type="button"
-              onClick={() => setIsOnline(!isOnline)}
-              title={isOnline ? 'Simular desconexión' : 'Simular conexión'}
-              aria-label="Alternar estado de conexión"
-              className={`flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border-2 transition active:scale-95 ${
-                isOnline
-                  ? 'bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100'
-                  : 'bg-amber-100 text-amber-950 border-amber-400 hover:bg-amber-200'
-              }`}
-            >
-              {isOnline ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
-            </button>
+              {/* Simulador Red */}
+              <button
+                type="button"
+                onClick={() => setIsOnline(!isOnline)}
+                title={isOnline ? 'Simular desconexión' : 'Simular conexión'}
+                aria-label="Alternar estado de conexión"
+                className={`h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-full transition-all active:scale-95 ${
+                  !isOnline
+                    ? 'bg-amber-500 text-white shadow-xs'
+                    : isEmergency
+                    ? 'text-slate-300 hover:text-white hover:bg-slate-800'
+                    : 'text-slate-700 hover:text-slate-950 hover:bg-white'
+                }`}
+              >
+                {isOnline ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
+              </button>
+            </div>
 
             {/* Botón S.O.S. */}
             <button
               type="button"
               aria-pressed={isEmergency}
               onClick={toggleEmergencyMode}
-              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-xs font-black transition active:scale-95 border-2 ${
+              title={isEmergency ? 'Salir del modo alerta' : 'Activar modo alerta vecinal'}
+              className={`h-10 px-3.5 inline-flex items-center gap-1.5 rounded-full text-xs font-black transition active:scale-95 border-2 ${
                 isEmergency
-                  ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-md ring-2 ring-emerald-400/40'
-                  : 'bg-red-50 text-red-700 border-red-500 hover:bg-red-100'
+                  ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-md ring-2 ring-emerald-400/40 animate-pulse'
+                  : 'bg-red-50 text-red-700 border-red-300 hover:bg-red-100'
               }`}
             >
-              <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-              <span>{isEmergency ? 'Salir de S.O.S.' : 'Modo S.O.S.'}</span>
+              <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span className="whitespace-nowrap">{isEmergency ? 'Salir S.O.S.' : 'Modo S.O.S.'}</span>
             </button>
 
             {/* Chip de Perfil de Alto Contraste */}
@@ -245,17 +317,21 @@ export const Header: React.FC = () => {
               type="button"
               onClick={() => setIsProfileOpen(true)}
               aria-label="Abrir perfil y opciones"
-              className="flex items-center gap-2 pl-2 pr-3.5 py-1.5 min-h-[44px] rounded-full border-2 border-slate-300 bg-white hover:bg-slate-100 transition active:scale-95"
+              className={`h-10 flex items-center gap-2 pl-1.5 pr-3 rounded-full border-2 transition active:scale-95 ${
+                isEmergency
+                  ? 'bg-slate-900 border-slate-700 text-white hover:bg-slate-800'
+                  : 'bg-white border-slate-200 text-slate-950 hover:bg-slate-50'
+              }`}
             >
               <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-slate-950 text-[11px] font-black text-white shadow-xs">
                 {initials}
                 <span
                   className={`absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border-2 border-white ${
-                    isOnline ? 'bg-emerald-600' : 'bg-amber-500'
+                    isOnline ? 'bg-emerald-500' : 'bg-amber-500'
                   }`}
                 />
               </span>
-              <span className="text-xs font-black text-slate-950 max-w-[100px] truncate">
+              <span className="text-xs font-black max-w-[90px] truncate whitespace-nowrap">
                 {currentUser.fullName.split(' ')[0]}
               </span>
             </button>
@@ -263,29 +339,39 @@ export const Header: React.FC = () => {
         </div>
 
         {/* HEADER MÓVIL (Visible en celular, oculto en PC) */}
-        <div className="flex md:hidden items-center justify-between gap-2 px-4 py-3">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className={`text-[20px] font-black tracking-tight ${isEmergency ? 'text-white' : 'text-slate-950'}`}>VecinOS</span>
-              {!isOnline && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 border border-amber-300 px-2 py-0.5 text-[11px] font-bold text-amber-950">
-                  <WifiOff className="h-3 w-3" aria-hidden="true" />
-                  Sin red
+        <div className="flex md:hidden items-center justify-between gap-2 px-4 py-2.5">
+          <button
+            type="button"
+            onClick={() => setActiveTab('services')}
+            className="flex items-center gap-2.5 min-w-0 flex-1 text-left"
+            aria-label="Ir a inicio de VecinOS"
+          >
+            <VecinosBrandLogo isEmergency={isEmergency} size="sm" />
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className={`text-[19px] font-black tracking-tight leading-none ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
+                  Vecin<span className={isEmergency ? 'text-red-400' : 'text-emerald-600'}>OS</span>
                 </span>
-              )}
+                {!isOnline && (
+                  <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-100 border border-amber-300 px-1.5 py-0.2 text-[10px] font-bold text-amber-950">
+                    <WifiOff className="h-2.5 w-2.5" aria-hidden="true" />
+                    Offline
+                  </span>
+                )}
+              </div>
+              <p className={`flex items-center gap-1 truncate text-[11px] font-bold mt-0.5 ${isEmergency ? 'text-slate-300' : 'text-slate-600'}`}>
+                <MapPin className="h-3 w-3 shrink-0 text-emerald-700" aria-hidden="true" />
+                <span className="truncate">{currentUser.neighborhood}</span>
+              </p>
             </div>
-            <p className={`flex items-center gap-1 truncate text-xs font-bold ${isEmergency ? 'text-slate-300' : 'text-slate-700'}`}>
-              <MapPin className="h-3.5 w-3.5 shrink-0 text-emerald-700" aria-hidden="true" />
-              <span className="truncate">{currentUser.neighborhood}</span>
-            </p>
-          </div>
+          </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
               aria-pressed={isEmergency}
               onClick={toggleEmergencyMode}
-              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-xs font-black transition active:scale-95 border-2 ${
+              className={`inline-flex min-h-[44px] items-center gap-1 rounded-full px-3 py-2 text-xs font-black transition active:scale-95 border-2 ${
                 isEmergency
                   ? 'bg-emerald-500 text-slate-950 border-emerald-400'
                   : 'bg-red-50 text-red-700 border-red-500 hover:bg-red-100'

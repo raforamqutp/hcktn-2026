@@ -98,7 +98,7 @@ export const EmergencyView: React.FC = () => {
             </h2>
             <p
               className={`text-xs md:text-sm font-semibold mt-0.5 ${
-                isEmergency ? 'text-slate-300' : 'text-slate-700'
+                isEmergency ? 'text-slate-200' : 'text-slate-800 font-bold'
               }`}
             >
               Protocolo comunitario de respuesta rápida ante sismo, inundaciones y apoyo a vulnerables
@@ -215,6 +215,7 @@ export const EmergencyView: React.FC = () => {
                 <button
                   key={f.id}
                   type="button"
+                  aria-pressed={active}
                   onClick={() => setCategory(f.id)}
                   className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition active:scale-95 ${
                     active
@@ -273,7 +274,7 @@ export const EmergencyView: React.FC = () => {
                         {item.location.walkingMinutes} min ({item.location.distanceMeters}m)
                       </span>
                     </div>
-                    <span className="text-[11px] font-semibold text-slate-500">{item.createdAt}</span>
+                    <span className="text-xs font-bold text-slate-600 dark:text-slate-300">{item.createdAt}</span>
                   </div>
 
                   <h3
@@ -359,6 +360,7 @@ export const EmergencyView: React.FC = () => {
                   <a
                     href={buildSmsHref(item.title, item.location.lat, item.location.lng)}
                     title="Enviar alerta SMS sin internet"
+                    aria-label={`Enviar alerta SMS de auxilio para ${item.title} sin necesidad de datos moviles`}
                     className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-2xl px-4 py-2.5 text-xs font-black bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 transition active:scale-95"
                   >
                     <MessageSquare className="h-4 w-4 text-amber-600" aria-hidden="true" />
@@ -447,7 +449,7 @@ export const EmergencyView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleJoin(item.id, item.title)}
-                    className="inline-flex min-h-[42px] items-center gap-1.5 rounded-2xl bg-teal-700 hover:bg-teal-800 px-4 py-2 text-xs font-black text-white transition active:scale-95 shadow-xs"
+                    className="inline-flex min-h-[44px] items-center gap-1.5 rounded-2xl bg-teal-700 hover:bg-teal-800 px-4 py-2 text-xs font-black text-white transition active:scale-95 shadow-xs"
                   >
                     <PackageCheck className="h-4 w-4" aria-hidden="true" />
                     <span>{isJoined ? 'Voluntario activo' : 'Sumarme al punto'}</span>
