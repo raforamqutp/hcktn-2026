@@ -273,7 +273,7 @@ export const QuickPublishSheet: React.FC = () => {
       <form
         onSubmit={handlePublish}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-xl rounded-t-[32px] sm:rounded-3xl bg-white p-5 pb-8 sm:p-7 text-slate-950 shadow-2xl animate-sheet sm:animate-scale-in max-h-[92vh] overflow-y-auto no-scrollbar border-2 border-slate-200"
+        className="w-full max-w-xl rounded-t-[32px] sm:rounded-3xl bg-white p-5 pb-16 sm:p-7 text-slate-950 shadow-2xl animate-sheet sm:animate-scale-in max-h-[92vh] overflow-y-auto no-scrollbar border-2 border-slate-200"
       >
         <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-slate-300 sm:hidden" />
 
@@ -333,8 +333,8 @@ export const QuickPublishSheet: React.FC = () => {
                   label: 'Favor / Pool',
                   desc: 'Préstamo solidario o ruta',
                   icon: HandHeart,
-                  colorClass: 'text-indigo-700',
-                  activeClass: 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-500',
+                  colorClass: 'text-emerald-700',
+                  activeClass: 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-500',
                   disabled: isMinor,
                 },
                 {
@@ -471,12 +471,12 @@ export const QuickPublishSheet: React.FC = () => {
 
             {/* Trueque o acuerdo mutuo */}
             {intent !== 'emergency' && (
-              <div className="p-3 bg-indigo-50/40">
+              <div className="p-3 bg-emerald-50/40">
                 <label
                   htmlFor="pub-barter"
-                  className="block text-[11px] font-black text-indigo-950 flex items-center gap-1.5"
+                  className="block text-[11px] font-black text-emerald-950 flex items-center gap-1.5"
                 >
-                  <ArrowLeftRight className="h-3.5 w-3.5 text-indigo-700" />
+                  <ArrowLeftRight className="h-3.5 w-3.5 text-emerald-700" />
                   ¿Aceptas trueque o favor a cambio? (Opcional)
                 </label>
                 <input
@@ -485,7 +485,7 @@ export const QuickPublishSheet: React.FC = () => {
                   value={barterText}
                   onChange={(e) => setBarterText(e.target.value)}
                   placeholder="Ej. Insumos de repostería, turnos de pool, apoyo en jardinería..."
-                  className="mt-1 w-full bg-transparent text-xs font-bold text-indigo-950 placeholder:text-indigo-400 focus:outline-none"
+                  className="mt-1 w-full bg-transparent text-xs font-bold text-emerald-950 placeholder:text-emerald-600/50 focus:outline-none"
                 />
               </div>
             )}

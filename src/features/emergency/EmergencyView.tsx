@@ -73,7 +73,7 @@ export const EmergencyView: React.FC = () => {
   };
 
   return (
-    <section aria-label="Emergencias y S.O.S. del barrio" className="space-y-4">
+    <section aria-label="Emergencias y S.O.S. del barrio" className="space-y-4 pb-32 sm:pb-20">
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>

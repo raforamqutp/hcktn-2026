@@ -311,13 +311,13 @@ export const ServicesView: React.FC = () => {
               onClick={() => setOnlyBarter(!onlyBarter)}
               className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 border ${
                 onlyBarter
-                  ? 'bg-indigo-600 border-indigo-600 text-white shadow-2xs'
+                  ? 'bg-emerald-600 border-emerald-600 text-white shadow-2xs'
                   : isEmergency
                   ? 'bg-slate-900 border-slate-800 text-slate-300'
                   : 'bg-white border-slate-200/90 text-slate-700 hover:border-slate-300'
               }`}
             >
-              <ArrowLeftRight className="h-3 w-3 text-indigo-500" />
+              <ArrowLeftRight className="h-3 w-3 text-emerald-600" />
               <span>Acepta trueque</span>
             </button>
 
@@ -443,8 +443,8 @@ export const ServicesView: React.FC = () => {
                   </span>
                 )}
                 {srv.paymentMethods.includes('trueque') && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-50 text-indigo-900 border border-indigo-200">
-                    <ArrowLeftRight className="h-3 w-3 text-indigo-600" /> Trueque
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
+                    <ArrowLeftRight className="h-3 w-3 text-emerald-600" /> Trueque
                   </span>
                 )}
               </div>
@@ -454,14 +454,14 @@ export const ServicesView: React.FC = () => {
                 <div
                   className={`mt-2.5 p-2.5 rounded-xl border text-xs flex items-start gap-2 ${
                     isEmergency
-                      ? 'bg-slate-800/80 border-slate-700 text-indigo-200'
-                      : 'bg-indigo-50/60 border-indigo-200/80 text-indigo-950'
+                      ? 'bg-slate-800/80 border-slate-700 text-emerald-200'
+                      : 'bg-emerald-50/60 border-emerald-200/80 text-emerald-950'
                   }`}
                 >
-                  <ArrowLeftRight className="h-3.5 w-3.5 text-indigo-600 shrink-0 mt-0.5" />
+                  <ArrowLeftRight className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-bold text-indigo-900 block text-[11px]">Intercambio aceptado:</span>
-                    <span className="text-[11px] leading-relaxed text-indigo-950">{srv.barterInterest}</span>
+                    <span className="font-bold text-emerald-900 block text-[11px]">Intercambio aceptado:</span>
+                    <span className="text-[11px] leading-relaxed text-emerald-950">{srv.barterInterest}</span>
                   </div>
                 </div>
               )}
@@ -471,8 +471,8 @@ export const ServicesView: React.FC = () => {
               {srv.barterProposals && srv.barterProposals.length > 0 && (
                 <div className="mt-2.5 space-y-1.5">
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-indigo-900 flex items-center gap-1.5">
-                      <ArrowLeftRight className="h-3 w-3 text-indigo-600" />
+                    <span className="text-[10px] font-black uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
+                      <ArrowLeftRight className="h-3 w-3 text-emerald-600" />
                       Propuestas de trueque ({srv.barterProposals.length})
                     </span>
                   </div>
@@ -484,7 +484,7 @@ export const ServicesView: React.FC = () => {
                           ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950'
                           : prop.status === 'rechazado'
                           ? 'bg-slate-50 border-slate-200 text-slate-500'
-                          : 'bg-indigo-50/50 border-indigo-200 text-indigo-950'
+                          : 'bg-emerald-50/50 border-emerald-200 text-emerald-950'
                       }`}
                     >
                       <div className="min-w-0">
@@ -813,9 +813,9 @@ export const ServicesView: React.FC = () => {
 
               {/* Panel Desplegable de Propuesta de Trueque */}
               {isBarterActive && (
-                <div className="mt-3 p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200 animate-scale-in space-y-2.5">
+                <div className="mt-3 p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200 animate-scale-in space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-indigo-950">¿Qué ofreces a cambio a {srv.providerName.split(' ')[0]}?</span>
+                    <span className="text-xs font-bold text-emerald-950">¿Qué ofreces a cambio a {srv.providerName.split(' ')[0]}?</span>
                     <button type="button" onClick={() => setActiveBarterServiceId(null)} className="text-slate-400 hover:text-slate-700">
                       <X className="h-3.5 w-3.5" />
                     </button>
@@ -827,7 +827,7 @@ export const ServicesView: React.FC = () => {
                         key={idx}
                         type="button"
                         onClick={() => setBarterText(chip)}
-                        className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-white border border-indigo-200 text-indigo-900 hover:bg-indigo-100"
+                        className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-white border border-emerald-200 text-emerald-900 hover:bg-emerald-100"
                       >
                         {chip}
                       </button>
@@ -840,12 +840,12 @@ export const ServicesView: React.FC = () => {
                       value={barterText}
                       onChange={(e) => setBarterText(e.target.value)}
                       placeholder="Ej. Te ofrezco 2 fuentes de comida o soporte técnico..."
-                      className="flex-1 rounded-xl px-3 py-1.5 text-xs bg-white border border-indigo-300 text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="flex-1 rounded-xl px-3 py-1.5 text-xs bg-white border border-emerald-300 text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                     <button
                       type="button"
                       onClick={() => handleSendBarter(srv.id)}
-                      className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-2xs"
+                      className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs"
                     >
                       Enviar
                     </button>
