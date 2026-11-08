@@ -177,7 +177,7 @@ export const RegisterDniModal: React.FC = () => {
             type="button"
             onClick={() => setIsAuthModalOpen(false)}
             aria-label="Cerrar modal de identificación"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 transition"
+            className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 transition"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -350,7 +350,7 @@ export const RegisterDniModal: React.FC = () => {
                   key={item.dni}
                   type="button"
                   onClick={() => handleSelectDemoDni(item.dni)}
-                  className={`rounded-full px-2.5 py-1 text-[11px] font-bold border transition ${
+                  className={`inline-flex items-center min-h-[38px] rounded-full px-3 py-1.5 text-xs font-bold border transition ${
                     item.isMinor
                       ? 'bg-red-50 text-red-700 border-red-300 hover:bg-red-100'
                       : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'

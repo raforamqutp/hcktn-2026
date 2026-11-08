@@ -287,7 +287,7 @@ export const QuickPublishSheet: React.FC = () => {
             type="button"
             onClick={closePublishModal}
             aria-label="Cerrar modal"
-            className="h-8 w-8 inline-flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+            className="h-11 w-11 min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
           >
             <X className="h-4 w-4" />
           </button>
@@ -369,7 +369,7 @@ export const QuickPublishSheet: React.FC = () => {
                     key={tpl.label}
                     type="button"
                     onClick={() => handleSelectTemplate(tpl)}
-                    className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-bold transition active:scale-95 border ${
+                    className={`shrink-0 min-h-[40px] inline-flex items-center rounded-full px-4 py-2 text-xs font-bold transition active:scale-95 border ${
                       active
                         ? 'bg-slate-950 text-white border-slate-950 shadow-xs'
                         : 'bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200'
@@ -471,7 +471,7 @@ export const QuickPublishSheet: React.FC = () => {
                       key={pm.id}
                       type="button"
                       onClick={() => togglePayment(pm.id as PaymentMethod)}
-                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-black transition active:scale-95 border ${
+                      className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-xs font-black transition active:scale-95 border ${
                         active
                           ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
                           : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'

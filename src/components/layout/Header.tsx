@@ -201,7 +201,7 @@ export const Header: React.FC = () => {
               onClick={toggleSeniorMode}
               title={isSeniorMode ? 'Letra grande activada' : 'Activar letra grande'}
               aria-label="Cambiar tamaño de texto"
-              className={`flex h-9 w-9 items-center justify-center rounded-full border-2 transition active:scale-95 ${
+              className={`flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border-2 transition active:scale-95 ${
                 isSeniorMode
                   ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs'
                   : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100 font-bold'
@@ -216,7 +216,7 @@ export const Header: React.FC = () => {
               onClick={() => setIsOnline(!isOnline)}
               title={isOnline ? 'Simular desconexión' : 'Simular conexión'}
               aria-label="Alternar estado de conexión"
-              className={`flex h-9 w-9 items-center justify-center rounded-full border-2 transition active:scale-95 ${
+              className={`flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border-2 transition active:scale-95 ${
                 isOnline
                   ? 'bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100'
                   : 'bg-amber-100 text-amber-950 border-amber-400 hover:bg-amber-200'
@@ -230,7 +230,7 @@ export const Header: React.FC = () => {
               type="button"
               aria-pressed={isEmergency}
               onClick={toggleEmergencyMode}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-black transition active:scale-95 border-2 ${
+              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-xs font-black transition active:scale-95 border-2 ${
                 isEmergency
                   ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-md ring-2 ring-emerald-400/40'
                   : 'bg-red-50 text-red-700 border-red-500 hover:bg-red-100'
@@ -245,7 +245,7 @@ export const Header: React.FC = () => {
               type="button"
               onClick={() => setIsProfileOpen(true)}
               aria-label="Abrir perfil y opciones"
-              className="flex items-center gap-2 pl-2 pr-3.5 py-1 rounded-full border-2 border-slate-300 bg-white hover:bg-slate-100 transition active:scale-95"
+              className="flex items-center gap-2 pl-2 pr-3.5 py-1.5 min-h-[44px] rounded-full border-2 border-slate-300 bg-white hover:bg-slate-100 transition active:scale-95"
             >
               <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-slate-950 text-[11px] font-black text-white shadow-xs">
                 {initials}
@@ -285,7 +285,7 @@ export const Header: React.FC = () => {
               type="button"
               aria-pressed={isEmergency}
               onClick={toggleEmergencyMode}
-              className={`inline-flex min-h-[38px] items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-black transition active:scale-95 border-2 ${
+              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-xs font-black transition active:scale-95 border-2 ${
                 isEmergency
                   ? 'bg-emerald-500 text-slate-950 border-emerald-400'
                   : 'bg-red-50 text-red-700 border-red-500 hover:bg-red-100'
@@ -299,7 +299,7 @@ export const Header: React.FC = () => {
               type="button"
               onClick={() => setIsProfileOpen(true)}
               aria-label="Abrir perfil y opciones"
-              className="relative flex h-9 w-9 items-center justify-center rounded-full text-xs font-black bg-slate-950 text-white shadow-sm"
+              className="relative flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-xs font-black bg-slate-950 text-white shadow-sm"
             >
               {initials}
               <span
@@ -336,7 +336,7 @@ export const Header: React.FC = () => {
                 type="button"
                 onClick={() => setIsProfileOpen(false)}
                 aria-label="Cerrar ajustes"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 transition"
+                className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 transition"
               >
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
@@ -356,7 +356,7 @@ export const Header: React.FC = () => {
                     setIsProfileOpen(false);
                     setIsAuthModalOpen(true);
                   }}
-                  className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs font-black text-emerald-800 hover:bg-emerald-100 transition"
+                  className="inline-flex min-h-[44px] items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-3.5 py-2 text-xs font-black text-emerald-800 hover:bg-emerald-100 transition"
                 >
                   <UserCheck className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>Validar DNI</span>

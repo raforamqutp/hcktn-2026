@@ -273,7 +273,7 @@ export const FavorsView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSearch('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-black text-slate-400 hover:text-slate-700"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-xs font-black text-slate-500 hover:text-slate-800"
                 >
                   Limpiar
                 </button>
@@ -566,7 +566,7 @@ export const FavorsView: React.FC = () => {
                       className={`inline-flex items-center justify-center gap-1.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black transition active:scale-95 shadow-xs ${
                         isSeniorMode
                           ? 'min-h-[50px] px-5 text-sm'
-                          : 'min-h-[42px] px-4 text-xs'
+                          : 'min-h-[44px] px-4 text-xs'
                       }`}
                     >
                       <HandHeart className="h-4 w-4" aria-hidden="true" />

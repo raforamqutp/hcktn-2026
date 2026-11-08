@@ -350,7 +350,7 @@ export const EmergencyView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleJoin(item.id, item.title)}
-                    className="inline-flex min-h-[42px] flex-1 items-center justify-center gap-1.5 rounded-2xl bg-red-600 hover:bg-red-700 px-4 py-2 text-xs font-black text-white transition active:scale-95 shadow-xs"
+                    className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-2xl bg-red-600 hover:bg-red-700 px-4 py-2.5 text-xs font-black text-white transition active:scale-95 shadow-xs"
                   >
                     <ShieldAlert className="h-4 w-4" aria-hidden="true" />
                     <span>{isJoined ? '🛡 Apoyo confirmado' : 'Voy a ayudar'}</span>
@@ -359,7 +359,7 @@ export const EmergencyView: React.FC = () => {
                   <a
                     href={buildSmsHref(item.title, item.location.lat, item.location.lng)}
                     title="Enviar alerta SMS sin internet"
-                    className="inline-flex min-h-[42px] items-center justify-center gap-1.5 rounded-2xl px-4 py-2 text-xs font-black bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 transition active:scale-95"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-2xl px-4 py-2.5 text-xs font-black bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 transition active:scale-95"
                   >
                     <MessageSquare className="h-4 w-4 text-amber-600" aria-hidden="true" />
                     <span>SMS</span>

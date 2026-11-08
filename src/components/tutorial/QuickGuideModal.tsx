@@ -78,7 +78,7 @@ export const QuickGuideModal: React.FC = () => {
             type="button"
             onClick={handleClose}
             aria-label="Cerrar guía interactiva"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 transition"
+            className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 transition"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -306,7 +306,7 @@ export const QuickGuideModal: React.FC = () => {
             <button
               type="button"
               onClick={handleClose}
-              className="text-xs font-bold text-slate-500 hover:text-slate-800 transition px-2 py-2"
+              className="text-xs font-bold text-slate-500 hover:text-slate-800 transition min-h-[44px] inline-flex items-center px-3 py-2"
             >
               Omitir tutorial
             </button>

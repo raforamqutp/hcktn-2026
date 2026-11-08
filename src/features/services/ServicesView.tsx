@@ -739,7 +739,7 @@ export const ServicesView: React.FC = () => {
                   <div className="flex flex-1 items-center gap-2">
                     <a
                       href={`tel:${srv.phone}`}
-                      className="inline-flex min-h-[42px] flex-1 items-center justify-center gap-1.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-xs font-bold text-white transition active:scale-95 shadow-xs"
+                      className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white transition active:scale-95 shadow-xs"
                     >
                       <Phone className="h-4 w-4" aria-hidden="true" />
                       <span>Llamar al vecino</span>
@@ -751,7 +751,7 @@ export const ServicesView: React.FC = () => {
                         onClick={() =>
                           setActiveBarterServiceId(isBarterActive ? null : srv.id)
                         }
-                        className={`inline-flex min-h-[42px] flex-1 items-center justify-center gap-1.5 rounded-2xl px-3.5 py-2 text-xs font-bold transition active:scale-95 border ${
+                        className={`inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-2xl px-3.5 py-2.5 text-xs font-bold transition active:scale-95 border ${
                           isEmergency
                             ? 'bg-indigo-950 text-indigo-200 border-indigo-800'
                             : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-950 border-indigo-200'
@@ -768,7 +768,7 @@ export const ServicesView: React.FC = () => {
                     onClick={() => handleReport(srv.id)}
                     aria-label="Reportar anuncio"
                     title={isReported ? 'Anuncio reportado' : 'Reportar publicación'}
-                    className={`flex h-10 w-10 items-center justify-center rounded-full transition ${
+                    className={`flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full transition ${
                       isReported
                         ? isEmergency ? 'text-red-300 bg-red-950/80' : 'text-red-700 bg-red-100'
                         : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
