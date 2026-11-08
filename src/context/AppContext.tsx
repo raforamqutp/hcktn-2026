@@ -76,6 +76,11 @@ export interface AppContextType {
   ) => void;
   rateServiceWithFace: (serviceId: string, sentiment: SentimentScore, comment?: string) => void;
   submitBarterProposal: (serviceId: string, offeredExchangeText: string) => void;
+  updateBarterProposalStatus: (
+    serviceId: string,
+    proposalId: string,
+    status: 'aceptado' | 'rechazado'
+  ) => void;
   reportItem: (id: string, reason: string) => void;
   deleteService: (serviceId: string) => void;
 
@@ -94,6 +99,7 @@ export interface AppContextType {
     data: Omit<EmergencyItem, 'id' | 'createdAt' | 'responders' | 'status' | 'syncStatus'>
   ) => void;
   joinEmergencyResponse: (itemId: string) => void;
+  resolveEmergencyItem: (itemId: string) => void;
 }
 
 function computeWeightedMetrics(ratings: ServiceRating[]) {
@@ -350,6 +356,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  const updateBarterProposalStatus: AppContextType['updateBarterProposalStatus'] = (
+    serviceId,
+    proposalId,
+    status
+  ) => {
+    setServices((prev) =>
+      prev.map((srv) => {
+        if (srv.id !== serviceId) return srv;
+        return {
+          ...srv,
+          barterProposals: srv.barterProposals.map((prop) =>
+            prop.id === proposalId ? { ...prop, status } : prop
+          ),
+        };
+      })
+    );
+  };
+
   const reportItem: AppContextType['reportItem'] = (id) => {
     setServices((prev) =>
       prev.map((srv) => (srv.id === id ? { ...srv, isReported: true } : srv))
@@ -417,6 +441,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  const resolveEmergencyItem: AppContextType['resolveEmergencyItem'] = (itemId) => {
+    setEmergencyItems((prev) =>
+      prev.map((item) => {
+        if (item.id !== itemId) return item;
+        return {
+          ...item,
+          status: 'atendido',
+        };
+      })
+    );
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -455,6 +491,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteService,
         rateServiceWithFace,
         submitBarterProposal,
+        updateBarterProposalStatus,
         reportItem,
         favors,
         addFavor,
@@ -463,6 +500,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         emergencyItems,
         addEmergencyItem,
         joinEmergencyResponse,
+        resolveEmergencyItem,
       }}
     >
       {children}

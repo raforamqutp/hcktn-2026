@@ -28,3 +28,5 @@ dist-ssr
 designs-ideas/
 .npm-cache/
 .temp/
+
+*.apk

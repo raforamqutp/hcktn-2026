@@ -126,6 +126,7 @@ export const ServicesView: React.FC = () => {
     isSeniorMode,
     rateServiceWithFace,
     submitBarterProposal,
+    updateBarterProposalStatus,
     reportItem,
     deleteService,
   } = useApp();
@@ -466,6 +467,74 @@ export const ServicesView: React.FC = () => {
               )}
 
               {/* Medallón de Reputación / Estado de Publicación */}
+              {/* Propuestas de Trueque Comunitario */}
+              {srv.barterProposals && srv.barterProposals.length > 0 && (
+                <div className="mt-2.5 space-y-1.5">
+                  <div className="flex items-center justify-between px-1">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-indigo-900 flex items-center gap-1.5">
+                      <ArrowLeftRight className="h-3 w-3 text-indigo-600" />
+                      Propuestas de trueque ({srv.barterProposals.length})
+                    </span>
+                  </div>
+                  {srv.barterProposals.map((prop) => (
+                    <div
+                      key={prop.id}
+                      className={`p-2.5 rounded-xl border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
+                        prop.status === 'aceptado'
+                          ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950'
+                          : prop.status === 'rechazado'
+                          ? 'bg-slate-50 border-slate-200 text-slate-500'
+                          : 'bg-indigo-50/50 border-indigo-200 text-indigo-950'
+                      }`}
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-bold text-[11px] text-slate-900">{prop.proposerName}</span>
+                          <span
+                            className={`px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase ${
+                              prop.status === 'aceptado'
+                                ? 'bg-emerald-200 text-emerald-900'
+                                : prop.status === 'rechazado'
+                                ? 'bg-slate-200 text-slate-700'
+                                : 'bg-amber-100 text-amber-900 border border-amber-300'
+                            }`}
+                          >
+                            {prop.status === 'aceptado'
+                              ? '✓ Trueque acordado'
+                              : prop.status === 'rechazado'
+                              ? 'Declinado'
+                              : 'Propuesta pendiente'}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-mono">{prop.createdAt}</span>
+                        </div>
+                        <p className={`mt-0.5 text-xs font-medium ${prop.status === 'rechazado' ? 'line-through text-slate-400' : 'text-slate-800'}`}>
+                          "{prop.offeredExchangeText}"
+                        </p>
+                      </div>
+
+                      {isOwnPost && prop.status === 'pendiente' && (
+                        <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+                          <button
+                            type="button"
+                            onClick={() => updateBarterProposalStatus(srv.id, prop.id, 'aceptado')}
+                            className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] shadow-2xs transition active:scale-95"
+                          >
+                            Aceptar trueque
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => updateBarterProposalStatus(srv.id, prop.id, 'rechazado')}
+                            className="px-2 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-[11px] transition active:scale-95"
+                          >
+                            Declinar
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {isOwnPost ? (
                 <div className="mt-3 p-3.5 border-2 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-emerald-50/70 border-emerald-300 text-emerald-950 shadow-2xs">
                   <div className="flex items-center gap-2.5 min-w-0">

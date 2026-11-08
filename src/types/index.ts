@@ -54,7 +54,7 @@ export interface BarterProposal {
   proposerName: string;
   proposerTier: AccountTier;
   offeredExchangeText: string;
-  status: 'pendiente' | 'aceptado';
+  status: 'pendiente' | 'aceptado' | 'rechazado';
   createdAt: string;
 }
 
