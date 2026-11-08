@@ -19,8 +19,8 @@ export const EmergencyHotlinePanel: React.FC<EmergencyHotlinePanelProps> = ({
   subtitle = 'Mantén presionado 1 segundo sobre cualquiera para llamar directo.',
   className = '',
 }) => {
-  const { mode } = useApp();
-  const isEmergency = mode === 'emergency';
+  const { mode, activeTab } = useApp();
+  const isEmergency = mode === 'emergency' || activeTab === 'emergency';
 
   return (
     <div

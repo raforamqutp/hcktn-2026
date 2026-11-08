@@ -101,8 +101,8 @@ export const HoldToCallButton: React.FC<HoldToCallProps> = ({
   accentColor,
   compact = false,
 }) => {
-  const { mode } = useApp();
-  const isEmergency = mode === 'emergency';
+  const { mode, activeTab } = useApp();
+  const isEmergency = mode === 'emergency' || activeTab === 'emergency';
 
   const [progress, setProgress] = useState(0);
   const [isPressing, setIsPressing] = useState(false);

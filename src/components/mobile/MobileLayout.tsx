@@ -1,13 +1,16 @@
 import React, { useRef, useState } from 'react';
 import {
   AlertOctagon,
+  ChevronDown,
   ChevronRight,
+  ChevronUp,
   HeartHandshake,
   HelpCircle,
   LogOut,
   Map,
   MapPin,
   Plus,
+  ShieldAlert,
   ShieldCheck,
   Store,
   Type,
@@ -41,6 +44,7 @@ export const MobileLayout: React.FC = () => {
   } = useApp();
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [showHotlinesMobile, setShowHotlinesMobile] = useState(false);
   const isEmergency = mode === 'emergency' || activeTab === 'emergency';
 
   // 4 clics en el logo para ir al panel host secreto (/config)
@@ -220,15 +224,64 @@ export const MobileLayout: React.FC = () => {
 
       {/* 3. Contenido Principal */}
       <main className="flex-1 px-4 pt-3 pb-32">
-        {/* Sección de Teléfonos de Auxilio Rápido (Hold-to-Call) */}
-        <div className="mb-4">
-          <EmergencyHotlinePanel
-            columns={2}
-            compact={true}
-            title="Auxilio Rápido (Yanahuara)"
-            subtitle="Mantén presionado 1s sobre cualquiera para llamar directo."
-          />
-        </div>
+        {/* Auxilio Rápido Móvil (En S.O.S. siempre abierto; en otras pestañas barra colapsable para no tapar el feed) */}
+        {activeTab === 'emergency' ? (
+          <div className="mb-4">
+            <EmergencyHotlinePanel
+              columns={2}
+              compact={true}
+              title="Auxilio Rápido (Yanahuara)"
+              subtitle="Mantén presionado 1s sobre cualquiera para llamar directo."
+            />
+          </div>
+        ) : (
+          <div className="mb-3.5">
+            <div
+              className={`rounded-2xl border transition-all ${
+                isEmergency
+                  ? 'bg-slate-900 border-slate-800 text-slate-200'
+                  : 'bg-white border-slate-200/90 text-slate-900 shadow-2xs'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => setShowHotlinesMobile((prev) => !prev)}
+                className="w-full flex items-center justify-between px-3.5 py-2 text-xs transition hover:opacity-90"
+                aria-expanded={showHotlinesMobile}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-red-100 text-red-600">
+                    <ShieldAlert className="h-3 w-3" />
+                  </span>
+                  <span className="font-bold truncate text-[11px] sm:text-xs">
+                    Auxilio Rápido: <span className="font-normal text-slate-500">Serenazgo 270000 · Bomberos 116</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 shrink-0 text-[10px] font-bold text-red-600">
+                  <span>{showHotlinesMobile ? 'Ocultar' : 'Mantén 1s'}</span>
+                  {showHotlinesMobile ? (
+                    <ChevronUp className="h-3 w-3" />
+                  ) : (
+                    <ChevronDown className="h-3 w-3" />
+                  )}
+                </div>
+              </button>
+
+              {showHotlinesMobile && (
+                <div className="p-3 pt-0 border-t border-slate-100">
+                  <div className="pt-2">
+                    <EmergencyHotlinePanel
+                      columns={2}
+                      compact={true}
+                      title="Llamada Inmediata (Yanahuara)"
+                      subtitle="Mantén presionado 1s sobre cualquiera para llamar directo."
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Vista activa */}
         <div className={isSeniorMode ? 'text-base' : 'text-sm'}>
