@@ -7,6 +7,7 @@ import {
   GraduationCap,
   HandHeart,
   HeartHandshake,
+  Lock,
   MapPin,
   Plus,
   Search,
@@ -29,7 +30,8 @@ const FAVOR_CATEGORIES: { id: 'all' | FavorCategory; label: string; icon: React.
 ];
 
 export const FavorsView: React.FC = () => {
-  const { favors, markFavorStatus, isSeniorMode, openPublishModal, mode } = useApp();
+  const { favors, markFavorStatus, isSeniorMode, openPublishModal, mode, currentUser } = useApp();
+  const isMinor = !currentUser.isVerifiedAdult;
   const [directionFilter, setDirectionFilter] = useState<'all' | 'ofrezco' | 'solicito'>('all');
   const [categoryFilter, setCategoryFilter] = useState<'all' | FavorCategory>('all');
   const [search, setSearch] = useState('');
@@ -77,7 +79,7 @@ export const FavorsView: React.FC = () => {
     switch (tier) {
       case 'referente':
         return {
-          label: 'Vecino Referente (1.5x)',
+          label: 'Vecino Referente',
           badgeClass: isEmergency
             ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700'
             : 'bg-emerald-100 text-emerald-950 border-emerald-300',
@@ -85,7 +87,7 @@ export const FavorsView: React.FC = () => {
         };
       case 'activo':
         return {
-          label: 'Vecino Activo (1.0x)',
+          label: 'Vecino Verificado',
           badgeClass: isEmergency
             ? 'bg-blue-950/80 text-blue-300 border-blue-700'
             : 'bg-blue-100 text-blue-950 border-blue-300',
@@ -94,7 +96,7 @@ export const FavorsView: React.FC = () => {
       case 'nuevo':
       default:
         return {
-          label: 'Cuenta Nueva (0.25x)',
+          label: 'Vecino de la Cuadra',
           badgeClass: isEmergency
             ? 'bg-slate-800 text-slate-300 border-slate-700'
             : 'bg-slate-100 text-slate-800 border-slate-300',
@@ -559,7 +561,15 @@ export const FavorsView: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  {fav.status === 'disponible' && (
+                  {isMinor ? (
+                    <span
+                      className="inline-flex items-center gap-1.5 rounded-2xl bg-amber-50 border border-amber-300 px-3 py-1.5 text-[11px] font-bold text-amber-900"
+                      title="Modo Protegido: Los favores y coordinación directa están reservados para cuentas de adultos"
+                    >
+                      <Lock className="h-3.5 w-3.5 text-amber-700" />
+                      <span>Solo adultos (Modo Protegido)</span>
+                    </span>
+                  ) : fav.status === 'disponible' ? (
                     <button
                       type="button"
                       onClick={() => handleStatusChange(fav.id, 'en_curso', fav.title)}
@@ -578,9 +588,9 @@ export const FavorsView: React.FC = () => {
                           : 'Ofrecer mi apoyo'}
                       </span>
                     </button>
-                  )}
+                  ) : null}
 
-                  {fav.status === 'en_curso' && (
+                  {!isMinor && fav.status === 'en_curso' && (
                     <button
                       type="button"
                       onClick={() => handleStatusChange(fav.id, 'completado', fav.title)}

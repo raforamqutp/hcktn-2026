@@ -218,7 +218,7 @@ export async function validatePeruvianDni(
   return {
     success: true,
     dni,
-    fullName: `Vecino Verificado (DNI ${dni})`,
+    fullName: 'Vecino Verificado',
     source: 'offline_heuristic',
   };
 }

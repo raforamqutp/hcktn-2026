@@ -9,6 +9,7 @@ import {
   CornerDownRight,
   Flag,
   Footprints,
+  Lock,
   MessageSquare,
   Phone,
   Search,
@@ -68,6 +69,7 @@ export const ServicesView: React.FC = () => {
   const [proposalSentNotice, setProposalSentNotice] = useState<string | null>(null);
 
   const isEmergency = mode === 'emergency';
+  const isMinor = !currentUser.isVerifiedAdult;
 
   const filtered = services
     .filter((srv) => {
@@ -120,9 +122,9 @@ export const ServicesView: React.FC = () => {
   };
 
   const getTierLabel = (tier: string) => {
-    if (tier === 'referente') return 'Vecino Referente (1.5x)';
-    if (tier === 'activo') return 'Vecino Activo (1.0x)';
-    return 'Cuenta Nueva (0.25x)';
+    if (tier === 'referente') return 'Vecino Referente';
+    if (tier === 'activo') return 'Vecino Verificado';
+    return 'Vecino del Barrio';
   };
 
   return (
@@ -498,13 +500,14 @@ export const ServicesView: React.FC = () => {
                     }`}>
                       <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                       <span>
-                        Voto registrado con peso <span className="underline">{fb.weight}x</span> [
-                        {fb.tier === 'referente'
-                          ? 'Vecino Referente'
-                          : fb.tier === 'activo'
-                          ? 'Vecino Activo'
-                          : 'Cuenta Nueva'}
-                        ]
+                        Tu voto fue registrado como{' '}
+                        <strong>
+                          {fb.tier === 'referente'
+                            ? 'Vecino Referente'
+                            : fb.tier === 'activo'
+                            ? 'Vecino Verificado'
+                            : 'Vecino del Barrio'}
+                        </strong>
                       </span>
                     </div>
                   )}
@@ -552,7 +555,7 @@ export const ServicesView: React.FC = () => {
                               <span className={`font-bold ${isEmergency ? 'text-slate-100' : 'text-slate-900'}`}>
                                 {r.userName}{' '}
                                 <span className={`font-normal ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
-                                  ({r.weightApplied}x peso)
+                                  · {r.userTier === 'referente' ? 'Vecino Referente' : r.userTier === 'activo' ? 'Vecino Verificado' : 'Vecino'}
                                 </span>
                               </span>
                               <span
@@ -638,32 +641,39 @@ export const ServicesView: React.FC = () => {
 
                 {/* Botones de Acción */}
                 <div className="flex items-center justify-between gap-2">
-                  <div className="flex flex-1 items-center gap-2">
-                    <a
-                      href={`tel:${srv.phone}`}
-                      className="inline-flex min-h-[42px] flex-1 items-center justify-center gap-1.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-xs font-bold text-white transition active:scale-95 shadow-xs"
-                    >
-                      <Phone className="h-4 w-4" aria-hidden="true" />
-                      <span>Llamar al vecino</span>
-                    </a>
-
-                    {srv.paymentMethods.includes('trueque') && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setActiveBarterServiceId(isBarterActive ? null : srv.id)
-                        }
-                        className={`inline-flex min-h-[42px] flex-1 items-center justify-center gap-1.5 rounded-2xl px-3.5 py-2 text-xs font-bold transition active:scale-95 border ${
-                          isEmergency
-                            ? 'bg-indigo-950 text-indigo-200 border-indigo-800'
-                            : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-950 border-indigo-200'
-                        }`}
+                  {isMinor ? (
+                    <div className="flex flex-1 items-center gap-2 p-2.5 rounded-2xl bg-amber-50 border border-amber-300 text-xs font-bold text-amber-900">
+                      <Lock className="h-4 w-4 text-amber-700 shrink-0" />
+                      <span>Transacciones y contacto restringidos en Modo Protegido (Menor de edad)</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-1 items-center gap-2">
+                      <a
+                        href={`tel:${srv.phone}`}
+                        className="inline-flex min-h-[42px] flex-1 items-center justify-center gap-1.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-xs font-bold text-white transition active:scale-95 shadow-xs"
                       >
-                        <ArrowLeftRight className="h-3.5 w-3.5" aria-hidden="true" />
-                        <span>{isBarterActive ? 'Cerrar trueque' : 'Proponer trueque'}</span>
-                      </button>
-                    )}
-                  </div>
+                        <Phone className="h-4 w-4" aria-hidden="true" />
+                        <span>Llamar al vecino</span>
+                      </a>
+
+                      {srv.paymentMethods.includes('trueque') && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActiveBarterServiceId(isBarterActive ? null : srv.id)
+                          }
+                          className={`inline-flex min-h-[42px] flex-1 items-center justify-center gap-1.5 rounded-2xl px-3.5 py-2 text-xs font-bold transition active:scale-95 border ${
+                            isEmergency
+                              ? 'bg-indigo-950 text-indigo-200 border-indigo-800'
+                              : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-950 border-indigo-200'
+                          }`}
+                        >
+                          <ArrowLeftRight className="h-3.5 w-3.5" aria-hidden="true" />
+                          <span>{isBarterActive ? 'Cerrar trueque' : 'Proponer trueque'}</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
 
                   <button
                     type="button"

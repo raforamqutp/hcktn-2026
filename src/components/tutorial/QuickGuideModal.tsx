@@ -77,7 +77,7 @@ export const QuickGuideModal: React.FC = () => {
           <button
             type="button"
             onClick={handleClose}
-            aria-label="Cerrar guía interactiva"
+            aria-label="Cerrar guía"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 transition"
           >
             <X className="h-4 w-4" aria-hidden="true" />
@@ -89,7 +89,7 @@ export const QuickGuideModal: React.FC = () => {
           {[
             { step: 1, title: '1. Servicios & Trueque' },
             { step: 2, title: '2. Favores & Pool' },
-            { step: 3, title: '3. S.O.S. & Offline' },
+            { step: 3, title: '3. S.O.S. & Emergencias' },
           ].map((item) => {
             const isActive = currentStep === item.step;
             const isCompleted = currentStep > item.step;
@@ -139,25 +139,27 @@ export const QuickGuideModal: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <p className="font-black text-slate-950 text-sm">
-                  Economía Local & Trueque Vecinal
+                  Economía Local & Oficios de Confianza
                 </p>
                 <p className="leading-relaxed font-medium text-slate-600">
-                  Encuentra desde lasañas caseras de la vecina hasta cerrajeros y gasfiteros avalados por tu propia cuadra.
+                  Encuentra desde lasañas caseras de la vecina hasta cerrajeros y enfermeros avalados por personas de tu propia cuadra.
                 </p>
               </div>
             </div>
 
-            {/* Caritas Neon-Dark */}
-            <div className="rounded-2xl bg-slate-950 p-4 border border-slate-800 text-slate-200">
+            {/* Reputación Vecinal */}
+            <div className="rounded-2xl bg-slate-900 p-4 border border-slate-800 text-slate-200">
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
-                <span className="font-mono text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
-                  Reputación con 3 Caritas Neon-Dark (Ponderada)
+                  Reputación Vecinal Basada en Confianza
                 </span>
-                <span className="text-[10px] font-mono text-emerald-400 font-bold">100% Blindado</span>
+                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800">
+                  Opinión comunitaria real
+                </span>
               </div>
-              <p className="text-[11px] text-slate-400 mb-3">
-                Cero emojis genéricos del sistema. Tu voto se calcula con base a tu antigüedad en el barrio (0.25x en cuentas nuevas, hasta 1.5x en vecinos antiguos):
+              <p className="text-[11px] text-slate-300 mb-3 leading-relaxed">
+                Califica la atención de manera sencilla: Feliz, Conforme o Desconforme. La opinión de vecinos con mayor arraigo en la cuadra brinda un respaldo sólido a la comunidad:
               </p>
               <div className="flex items-center justify-around gap-2 pt-1">
                 <RatingFaceIcon sentiment="happy" size="sm" showLabel />
@@ -184,7 +186,7 @@ export const QuickGuideModal: React.FC = () => {
                 </div>
               </div>
               <p className="mt-2 text-[11px] text-slate-500 font-medium">
-                Al elegir Trueque se despliega una caja interactiva para que propongas qué habilidad o producto ofreces a cambio.
+                Al elegir Trueque se despliega un espacio para proponer qué producto, favor o habilidad ofreces a cambio.
               </p>
             </div>
           </div>
@@ -202,41 +204,41 @@ export const QuickGuideModal: React.FC = () => {
                   Cadena de Favores & Préstamos Solidarios
                 </p>
                 <p className="leading-relaxed font-medium text-slate-600">
-                  Préstamo gratuito de implementos médicos (muletas, sillas de ruedas) y herramientas (taladros, escaleras) sin costo alguno.
+                  Préstamo gratuito de implementos médicos (muletas, sillas) y herramientas (taladros, escaleras) sin costo alguno.
                 </p>
               </div>
             </div>
 
-            {/* Pool Escolar Destacado */}
+            {/* Pool Escolar */}
             <div className="rounded-2xl bg-indigo-50 border-2 border-indigo-200 p-4">
               <div className="flex items-center gap-2 mb-1.5">
                 <Users className="h-5 w-5 text-indigo-700" />
                 <p className="font-black text-indigo-950 text-xs">
-                  Pool Escolar y Rutas al Colegio
+                  Pool Escolar y Rutas Seguras
                 </p>
               </div>
               <p className="text-[11px] font-medium text-indigo-900 leading-relaxed">
-                Coordina traslados compartidos con padres de familia del barrio para llevar a los niños al colegio de forma segura, ahorrando combustible y tiempo.
+                Coordina traslados compartidos con padres del barrio para llevar a los niños al colegio de forma segura, reduciendo tráfico y ahorrando combustible.
               </p>
             </div>
 
-            {/* Publicación en 3 Clics */}
+            {/* Publicación en 3 Pasos */}
             <div className="rounded-2xl bg-white p-3.5 shadow-xs border border-slate-200">
               <p className="font-black text-slate-900 text-xs mb-2">
-                Publicación ultrarrápida en ≤ 3 clics:
+                Publicación sencilla en 3 pasos:
               </p>
               <div className="space-y-1.5 text-[11px] font-medium text-slate-700">
                 <div className="flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-950 text-white font-bold text-[10px]">1</span>
-                  <span>Elige: Ofrecer Oficio, Favor o Alerta S.O.S.</span>
+                  <span>Elige qué compartir: Oficio, Favor o Alerta S.O.S.</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-950 text-white font-bold text-[10px]">2</span>
-                  <span>Toca un chip de plantilla rápida (autocompleta todo).</span>
+                  <span>Escribe un título y descripción (o elige una sugerencia rápida).</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-950 text-white font-bold text-[10px]">3</span>
-                  <span>Presiona "Publicar en mi cuadra" con Punto Seguro de Encuentro.</span>
+                  <span>Presiona "Publicar" con Punto Seguro de Encuentro.</span>
                 </div>
               </div>
             </div>
@@ -252,46 +254,46 @@ export const QuickGuideModal: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <p className="font-black text-slate-950 text-sm">
-                  Modo S.O.S., Resiliencia Offline & SMS
+                  Alertas S.O.S. y Apoyo Comunitario
                 </p>
                 <p className="leading-relaxed font-medium text-slate-600">
-                  En caso de terremoto o lluvias por El Niño, VecinOS se transforma en un tablero de coordinación humanitaria vecinal.
+                  En emergencias como sismos o lluvias intensas, VecinOS permite coordinar auxilio rápido y compartir recursos vitales (agua, energía, abrigo).
                 </p>
               </div>
             </div>
 
-            {/* Ley 29733 de Privacidad */}
+            {/* Privacidad de Vecinos */}
             <div className="rounded-2xl bg-amber-50 border border-amber-300 p-3.5">
               <p className="font-black text-amber-950 text-xs flex items-center gap-1.5 mb-1">
                 <ShieldAlert className="h-4 w-4 text-amber-700" />
-                <span>Protección a Vulnerables (Ley N.° 29733)</span>
+                <span>Privacidad y Protección Barrial</span>
               </p>
               <p className="text-[11px] text-amber-900 leading-relaxed font-medium">
-                La ubicación exacta de adultos mayores o personas enfermas se resguarda con un radio de privacidad de ~150 metros y expira en 72h.
+                La dirección exacta de adultos mayores o casos médicos se resguarda en un radio general aproximado para proteger su intimidad y seguridad.
               </p>
             </div>
 
-            {/* Offline First & Fallback por SMS Nativo */}
+            {/* Resiliencia sin Conexión */}
             <div className="rounded-2xl bg-white p-3.5 shadow-xs border border-slate-200">
               <p className="font-black text-slate-900 text-xs mb-1.5 flex items-center gap-1.5">
                 <Smartphone className="h-4 w-4 text-emerald-700" />
-                <span>Resiliencia Total sin Conexión</span>
+                <span>Funciona incluso sin Internet</span>
               </p>
               <div className="space-y-2 text-[11px] font-medium text-slate-600">
                 <div className="flex items-center gap-2">
                   <WifiOff className="h-4 w-4 text-slate-500" />
-                  <span>Sigue funcionando 100% offline y encola tus publicaciones para sincronizarlas al volver la red.</span>
+                  <span>El mapa vectorial y tus publicaciones quedan guardados en tu celular y se envían apenas vuelva la señal.</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4 text-emerald-600" />
-                  <span>Incluye botón nativo para enviar auxilio S.O.S. por SMS celular básico (sin datos móviles).</span>
+                  <span>Incluye botón para enviar ubicación y pedido de auxilio por mensaje SMS de texto tradicional.</span>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* BARRA DE NAVEGACIÓN Y BOTONES INFERIORES */}
+        {/* Botones Inferiores */}
         <div className="mt-5 pt-3 border-t border-slate-200 flex items-center justify-between gap-3">
           {currentStep > 1 ? (
             <button
@@ -308,7 +310,7 @@ export const QuickGuideModal: React.FC = () => {
               onClick={handleClose}
               className="text-xs font-bold text-slate-500 hover:text-slate-800 transition px-2 py-2"
             >
-              Omitir tutorial
+              Omitir guía
             </button>
           )}
 
@@ -319,13 +321,13 @@ export const QuickGuideModal: React.FC = () => {
           >
             {currentStep < 3 ? (
               <>
-                <span>Siguiente paso ({currentStep}/3)</span>
+                <span>Siguiente ({currentStep}/3)</span>
                 <ArrowRight className="h-4 w-4" />
               </>
             ) : (
               <>
                 <CheckCircle2 className="h-4 w-4" />
-                <span>Entendido, entrar al barrio</span>
+                <span>Entendido, ir al barrio</span>
               </>
             )}
           </button>

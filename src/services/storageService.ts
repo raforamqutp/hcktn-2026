@@ -128,4 +128,40 @@ export const storageService = {
       return;
     }
   },
+
+  // ==========================================
+  // CREDENCIALES DE CUENTAS LOCALES (DEMO / OFFLINE)
+  // ==========================================
+  loadRegisteredAccounts(): Record<string, { password?: string; phone?: string; fullName: string; isMinor: boolean }> {
+    try {
+      const raw = localStorage.getItem('vecinos_registered_accounts_v1');
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  },
+
+  saveRegisteredAccount(dni: string, data: { password?: string; phone?: string; fullName: string; isMinor: boolean }): void {
+    try {
+      const accounts = this.loadRegisteredAccounts();
+      accounts[dni] = { ...accounts[dni], ...data };
+      localStorage.setItem('vecinos_registered_accounts_v1', JSON.stringify(accounts));
+    } catch {
+      return;
+    }
+  },
+
+  resetAllToFactoryDefaults(): void {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.SERVICES);
+      localStorage.removeItem(STORAGE_KEYS.FAVORS);
+      localStorage.removeItem(STORAGE_KEYS.EMERGENCY);
+      localStorage.removeItem(STORAGE_KEYS.GUIDE_SEEN);
+      localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
+      localStorage.removeItem(STORAGE_KEYS.SYNC_QUEUE);
+      localStorage.removeItem('vecinos_registered_accounts_v1');
+    } catch {
+      return;
+    }
+  },
 };

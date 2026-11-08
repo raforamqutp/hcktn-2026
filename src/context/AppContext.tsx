@@ -45,6 +45,7 @@ export interface AppContextType {
   isOnboardingActive: boolean;
   setIsOnboardingActive: (active: boolean) => void;
   resetToColdStart: () => void;
+  logout: () => void;
 
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
@@ -137,9 +138,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     storageService.clearUserProfile();
     setIsOnboardingActive(true);
   };
-  const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(
-    () => !storageService.hasSeenQuickGuide()
-  );
+
+  const logout = () => {
+    storageService.clearUserProfile();
+    setIsOnboardingActive(true);
+  };
+
+  const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(false);
 
   const [isPublishOpen, setIsPublishOpen] = useState<boolean>(false);
   const [publishDefaultType, setPublishDefaultType] = useState<'service' | 'favor' | 'emergency'>(
@@ -399,6 +404,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isOnboardingActive,
         setIsOnboardingActive,
         resetToColdStart,
+        logout,
         activeTab,
         setActiveTab,
         isPublishOpen,

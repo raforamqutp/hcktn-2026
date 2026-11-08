@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LoginOnboardingView } from './components/auth/LoginOnboardingView';
-import { RegisterDniModal } from './components/auth/RegisterDniModal';
+import { HostConfigView } from './components/config/HostConfigView';
 import { BottomNav } from './components/layout/BottomNav';
 import { DesktopCompanionPanel } from './components/layout/DesktopCompanionPanel';
 import { Header } from './components/layout/Header';
@@ -12,14 +12,72 @@ import { EmergencyView } from './features/emergency/EmergencyView';
 import { FavorsView } from './features/favors/FavorsView';
 import { ServicesView } from './features/services/ServicesView';
 
+const checkIsConfigRoute = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const p = window.location.pathname.toLowerCase();
+  const h = window.location.hash.toLowerCase();
+  const s = window.location.search.toLowerCase();
+  return (
+    p === '/config' ||
+    p.startsWith('/config/') ||
+    h === '#/config' ||
+    h.startsWith('#/config') ||
+    s.includes('config=true')
+  );
+};
+
 const MainShell: React.FC = () => {
   const { activeTab, mode, isSeniorMode, isOnboardingActive, setIsOnboardingActive } = useApp();
-  const isEmergency = mode === 'emergency';
+  const isEmergency = mode === 'emergency' || activeTab === 'emergency';
 
+  const [isConfigView, setIsConfigView] = useState<boolean>(checkIsConfigRoute);
+
+  // Escuchar cambios de URL, popstate y hashchange
+  useEffect(() => {
+    const handleUrlChange = () => {
+      setIsConfigView(checkIsConfigRoute());
+    };
+
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('hashchange', handleUrlChange);
+
+    // Atajo de teclado de conveniencia para la demo: Ctrl + Alt + C abre el host config
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.altKey && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault();
+        setIsConfigView((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('hashchange', handleUrlChange);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  const handleExitConfig = () => {
+    setIsConfigView(false);
+    if (window.location.hash.includes('config')) {
+      window.location.hash = '';
+    }
+    if (window.location.pathname.includes('config')) {
+      window.history.pushState(null, '', '/');
+    }
+  };
+
+  // 1. Endpoint Oculto para Host / Pruebas de la Demo (/config)
+  if (isConfigView) {
+    return <HostConfigView onExit={handleExitConfig} />;
+  }
+
+  // 2. Pantalla de Entrada en Frío / Registro Inicial (DNI + Contraseña)
   if (isOnboardingActive) {
     return <LoginOnboardingView onSuccess={() => setIsOnboardingActive(false)} />;
   }
 
+  // 3. Aplicación Principal VecinOS
   return (
     <div
       className={`min-h-dvh transition-colors duration-200 ${
@@ -36,7 +94,7 @@ const MainShell: React.FC = () => {
       {/* Main Responsive Header */}
       <Header />
 
-      {/* Responsive Main Container: Full width on desktop, ergonomic on mobile */}
+      {/* Responsive Main Container */}
       <main
         id="main-content"
         tabIndex={-1}
@@ -47,7 +105,6 @@ const MainShell: React.FC = () => {
         <h1 className="visually-hidden">VecinOS — Tu barrio conectado</h1>
 
         {activeTab === 'map' ? (
-          /* Expansive full-width Map view for desktop and mobile */
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
@@ -62,16 +119,15 @@ const MainShell: React.FC = () => {
             <CommunityMap heightClassName="h-[480px] md:h-[640px] lg:h-[720px]" />
           </div>
         ) : (
-          /* Dual-Column Responsive Layout for desktop, single column for mobile */
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-            {/* Main Content Feed (takes 8 cols on large screens, or full width on mobile) */}
+            {/* Feed Principal */}
             <div className="lg:col-span-8 w-full min-w-0">
               {activeTab === 'services' && <ServicesView />}
               {activeTab === 'favors' && <FavorsView />}
               {activeTab === 'emergency' && <EmergencyView />}
             </div>
 
-            {/* Desktop Companion Side Panel (takes 4 cols on large screens, hidden on mobile) */}
+            {/* Panel Lateral de Acompañamiento en Escritorio */}
             <div className="hidden lg:block lg:col-span-4 w-full">
               <DesktopCompanionPanel />
             </div>
@@ -79,12 +135,11 @@ const MainShell: React.FC = () => {
         )}
       </main>
 
-      {/* Mobile Floating Bottom Navigation (hidden on desktop) */}
+      {/* Navegación Móvil Inferior */}
       <BottomNav />
 
-      {/* Global Modals & Dialogs (centered dialogs on desktop, bottom sheets on mobile) */}
+      {/* Modales Globales */}
       <QuickPublishSheet />
-      <RegisterDniModal />
       <QuickGuideModal />
     </div>
   );

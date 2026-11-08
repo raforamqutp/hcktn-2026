@@ -37,7 +37,7 @@ const EMERGENCY_FILTERS: FilterDef[] = [
 const EMERGENCY_HOTLINES = [
   { name: 'Bomberos CGBVP', number: '116', icon: Flame, color: 'text-red-500' },
   { name: 'SAMU Urgencias', number: '106', icon: HeartPulse, color: 'text-rose-500' },
-  { name: 'Serenazgo Yanahuara', number: '054253668', display: '(054) 253668', icon: Shield, color: 'text-emerald-500' },
+  { name: 'Serenazgo Yanahuara', number: '054270000', display: '(054) 270000', icon: Shield, color: 'text-emerald-500' },
   { name: 'Policía Nacional', number: '105', icon: PhoneCall, color: 'text-blue-500' },
 ];
 

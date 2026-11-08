@@ -8,6 +8,7 @@ export interface UserProfile {
   id: string;
   dni: string;
   fullName: string;
+  phone?: string;
   neighborhood: string;
   accountTier: AccountTier;
   seniorityMonths: number;
