@@ -22,13 +22,12 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
   const { isOnline, currentUser, setCurrentUser, triggerEmergencyBypass } = useApp();
 
   const [dni, setDni] = useState('');
-  const [swornAdult, setSwornAdult] = useState(true);
+  const [swornAgreement, setSwornAgreement] = useState(true);
   const [loading, setLoading] = useState(false);
   const [livePreview, setLivePreview] = useState<{
     fullName: string;
-    source: 'api_reniec' | 'offline_heuristic';
   } | null>(null);
-  const [minorBlockedError, setMinorBlockedError] = useState<string | null>(null);
+  const [isMinor, setIsMinor] = useState(false);
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [isTermsOpen, setIsTermsOpen] = useState(false);
 
@@ -37,27 +36,27 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
     if (dni.length === 8) {
       let isMounted = true;
       setLoading(true);
-      setMinorBlockedError(null);
       setGeneralError(null);
       setLivePreview(null);
+      setIsMinor(false);
 
       validatePeruvianDni(dni, isOnline).then((res) => {
         if (!isMounted) return;
         setLoading(false);
 
         if (res.isMinorBlocked) {
-          setLivePreview(null);
-          setMinorBlockedError(
-            res.errorMessage ||
-              'DNI no habilitado o perteneciente a menor de edad. El registro titular requiere ser mayor de 18 años.'
-          );
+          // Caso menor de edad: No bloqueamos con pantalla roja, lo identificamos y activamos Modo Protegido
+          setIsMinor(true);
+          setLivePreview({
+            fullName: res.fullName || 'Vecino (Menor de Edad)',
+          });
         } else if (res.success && res.fullName) {
-          setMinorBlockedError(null);
+          setIsMinor(false);
           setLivePreview({
             fullName: res.fullName,
-            source: res.source,
           });
         } else {
+          setIsMinor(false);
           setLivePreview(null);
           setGeneralError(res.errorMessage || 'No se pudo verificar el DNI en el padrón.');
         }
@@ -68,7 +67,7 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
       };
     } else {
       setLivePreview(null);
-      setMinorBlockedError(null);
+      setIsMinor(false);
       setGeneralError(null);
       setLoading(false);
     }
@@ -76,15 +75,14 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!swornAdult) {
-      setGeneralError('Debes confirmar la declaración jurada de mayoría de edad.');
+    if (!swornAgreement) {
+      setGeneralError('Debes confirmar la declaración vecinal para continuar.');
       return;
     }
     if (dni.length !== 8) {
       setGeneralError('Ingresa los 8 dígitos de tu DNI.');
       return;
     }
-    if (minorBlockedError) return;
     if (!livePreview) {
       setGeneralError('Espera a que el sistema verifique el DNI.');
       return;
@@ -94,7 +92,7 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
       ...currentUser,
       dni,
       fullName: livePreview.fullName,
-      isVerifiedAdult: true,
+      isVerifiedAdult: !isMinor,
       neighborhood: 'Urb. Los Perales / Yanahuara',
     };
 
@@ -106,12 +104,7 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
     }
   };
 
-  const isFormValid =
-    dni.length === 8 &&
-    !loading &&
-    livePreview !== null &&
-    !minorBlockedError &&
-    swornAdult;
+  const isFormValid = dni.length === 8 && !loading && livePreview !== null && swornAgreement;
 
   return (
     <div className="min-h-dvh w-full bg-[#FAFAFA] text-slate-900 flex flex-col justify-between p-4 sm:p-6 transition-all selection:bg-slate-900 selection:text-white">
@@ -130,33 +123,6 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
               Ingresa tu DNI para verificar tu cuenta y conectarte con tu cuadra.
             </p>
           </div>
-
-          {/* ALERTA: Menor de edad bloqueado */}
-          {minorBlockedError && (
-            <div
-              role="alert"
-              className="rounded-2xl bg-red-50 p-4 border border-red-200/80 text-xs space-y-2.5 text-red-950 animate-fade-in"
-            >
-              <div className="flex items-start gap-2.5">
-                <ShieldAlert className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-black text-red-900">Acceso Titular Restringido</p>
-                  <p className="text-[11px] font-medium text-red-800 leading-snug mt-0.5">
-                    {minorBlockedError}
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={triggerEmergencyBypass}
-                className="w-full min-h-[40px] bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-xs shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5"
-              >
-                <AlertTriangle className="h-4 w-4" />
-                <span>Pedir auxilio S.O.S. (Bypass Humanitario)</span>
-              </button>
-            </div>
-          )}
 
           {/* Formulario */}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -213,9 +179,22 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
                       {livePreview.fullName}
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded-full shrink-0">
-                    {livePreview.source === 'api_reniec' ? 'RENIEC Oficial' : 'Padrón Local'}
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 rounded-full shrink-0">
+                    Verificado
                   </span>
+                </div>
+              )}
+
+              {/* AVISO INFORMATIVO DE MENOR DE EDAD (Funcionalidades Limitadas / Modo Protegido) */}
+              {isMinor && (
+                <div className="rounded-2xl bg-amber-50/90 border border-amber-200/90 p-3.5 space-y-1.5 text-xs text-amber-950 animate-fade-in">
+                  <div className="flex items-center gap-2 font-bold text-amber-900">
+                    <ShieldAlert className="h-4 w-4 text-amber-600 shrink-0" />
+                    <span>Cuenta de Menor de Edad</span>
+                  </div>
+                  <p className="text-[11px] text-amber-800 leading-snug font-medium">
+                    Por seguridad vecinal, tu acceso tendrá <strong>funcionalidades limitadas</strong> (solo consulta del mapa de la cuadra y alertas de emergencia S.O.S.). Las transacciones de oficios o trueques están restringidas a adultos.
+                  </p>
                 </div>
               )}
 
@@ -227,20 +206,24 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
               )}
             </div>
 
-            {/* Declaración Jurada */}
+            {/* Declaración Jurada adaptativa */}
             <label className="flex items-start gap-2.5 text-xs text-slate-700 cursor-pointer pt-1 group">
               <input
                 type="checkbox"
-                checked={swornAdult}
-                onChange={(e) => setSwornAdult(e.target.checked)}
+                checked={swornAgreement}
+                onChange={(e) => setSwornAgreement(e.target.checked)}
                 className="mt-0.5 h-4 w-4 rounded border-slate-300 text-slate-950 focus:ring-slate-900 cursor-pointer"
               />
               <span className="text-[11px] text-slate-600 leading-snug group-hover:text-slate-900 transition">
-                Declaro bajo juramento ser <strong className="text-slate-900">mayor de 18 años</strong> y vecino residente de la zona.
+                {isMinor ? (
+                  <>Declaro ser vecino de la zona y acceder con <strong>autorización de mi apoderado</strong>.</>
+                ) : (
+                  <>Declaro bajo juramento ser <strong className="text-slate-900">mayor de 18 años</strong> y vecino residente de la zona.</>
+                )}
               </span>
             </label>
 
-            {/* Botón de Ingreso: Estrictamente bloqueado hasta validar */}
+            {/* Botón de Ingreso */}
             <button
               type="submit"
               disabled={!isFormValid}
@@ -253,11 +236,11 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Verificando identidad...</span>
+                  <span>Verificando...</span>
                 </>
               ) : isFormValid ? (
                 <>
-                  <span>Continuar al Barrio</span>
+                  <span>{isMinor ? 'Continuar (Modo Protegido)' : 'Continuar al Barrio'}</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               ) : (
@@ -269,7 +252,7 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
             </button>
           </form>
 
-          {/* Enlace a Términos y Privacidad (Ley 29733) */}
+          {/* Enlace limpio a Términos y Condiciones */}
           <div className="text-center pt-1">
             <button
               type="button"
@@ -277,7 +260,7 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
               className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 hover:text-slate-800 transition"
             >
               <FileText className="h-3.5 w-3.5" />
-              <span>Términos de Convivencia y Privacidad (Ley N.° 29733)</span>
+              <span>Términos y Condiciones</span>
             </button>
           </div>
         </div>

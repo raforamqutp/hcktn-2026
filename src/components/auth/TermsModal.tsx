@@ -30,10 +30,10 @@ export const TermsModal: React.FC<TermsModalProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h2 id="terms-title" className="text-sm font-black text-slate-950">
-                Términos y Privacidad Vecinal
+                Términos y Condiciones
               </h2>
               <p className="text-[11px] font-semibold text-slate-500">
-                Convivencia segura y Ley N.° 29733 (Perú)
+                Información de uso y convivencia comunitaria
               </p>
             </div>
           </div>
