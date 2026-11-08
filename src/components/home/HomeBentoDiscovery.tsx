@@ -119,7 +119,7 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       badgeText: 'text-white',
       title: 'Auxilio S.O.S.',
       subtitle: 'Serenazgo, Bomberos, SAMU',
-      tag: 'Hold 1s · 24/7',
+      tag: 'Directo · 24/7',
       cardBg: 'bg-[#FFF1F2] hover:bg-[#FFE4E6]',
       cardBorder: 'border-[#FECDD3]',
       action: () => {

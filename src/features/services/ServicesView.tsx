@@ -15,7 +15,6 @@ import {
   ShieldCheck,
   Smartphone,
   Sparkles,
-  Star,
   Users,
   Utensils,
   Wrench,
@@ -55,10 +54,66 @@ const QUICK_BARTER_CHIPS = [
   'Cuidado o paseo de mascotas',
 ];
 
-interface VoteFeedback {
+interface ConductConfig {
   sentiment: SentimentScore;
-  weight: number;
-  tier: string;
+  label: string;
+  containerClass: string;
+  scoreClass: string;
+  badgeClass: string;
+  subtitleClass: string;
+  buttonClass: string;
+}
+
+function getConductConfig(score: number, isEmergency: boolean): ConductConfig {
+  if (score >= 80) {
+    return {
+      sentiment: 'happy',
+      label: 'Conducta Ejemplar',
+      containerClass: isEmergency
+        ? 'bg-emerald-950/40 border-2 border-emerald-600/80 text-emerald-100 shadow-xs'
+        : 'bg-emerald-50/90 border-2 border-emerald-300 text-emerald-950 shadow-xs',
+      scoreClass: isEmergency ? 'text-emerald-300' : 'text-emerald-900',
+      badgeClass: isEmergency
+        ? 'bg-emerald-900/80 text-emerald-200 border-emerald-500'
+        : 'bg-emerald-100 text-emerald-950 border-emerald-400',
+      subtitleClass: isEmergency ? 'text-emerald-200' : 'text-emerald-900',
+      buttonClass: isEmergency
+        ? 'bg-emerald-900/80 text-emerald-200 border border-emerald-600 hover:bg-emerald-800'
+        : 'bg-white text-emerald-950 border-2 border-emerald-300 hover:bg-emerald-100/70',
+    };
+  }
+  if (score >= 60) {
+    return {
+      sentiment: 'neutral',
+      label: 'Conducta Aceptable',
+      containerClass: isEmergency
+        ? 'bg-amber-950/40 border-2 border-amber-600/80 text-amber-100 shadow-xs'
+        : 'bg-amber-50/90 border-2 border-amber-300 text-amber-950 shadow-xs',
+      scoreClass: isEmergency ? 'text-amber-300' : 'text-amber-900',
+      badgeClass: isEmergency
+        ? 'bg-amber-900/80 text-amber-200 border-amber-500'
+        : 'bg-amber-100 text-amber-950 border-amber-400',
+      subtitleClass: isEmergency ? 'text-amber-200' : 'text-amber-900',
+      buttonClass: isEmergency
+        ? 'bg-amber-900/80 text-amber-200 border border-amber-600 hover:bg-amber-800'
+        : 'bg-white text-amber-950 border-2 border-amber-300 hover:bg-amber-100/70',
+    };
+  }
+  return {
+    sentiment: 'angry',
+    label: 'Conducta en Revisión',
+    containerClass: isEmergency
+      ? 'bg-rose-950/40 border-2 border-rose-700/80 text-rose-100 shadow-xs'
+      : 'bg-rose-50/90 border-2 border-rose-300 text-rose-950 shadow-xs',
+    scoreClass: isEmergency ? 'text-rose-300' : 'text-rose-900',
+    badgeClass: isEmergency
+      ? 'bg-rose-900/80 text-rose-200 border-rose-500'
+      : 'bg-rose-100 text-rose-950 border-rose-400',
+    subtitleClass: isEmergency ? 'text-rose-200' : 'text-rose-900',
+    buttonClass: isEmergency
+      ? 'bg-rose-900/80 text-rose-200 border border-rose-600 hover:bg-rose-800'
+      : 'bg-white text-rose-950 border-2 border-rose-300 hover:bg-rose-100/70',
+  };
 }
 
 export const ServicesView: React.FC = () => {
@@ -80,9 +135,8 @@ export const ServicesView: React.FC = () => {
   const [activeBarterServiceId, setActiveBarterServiceId] = useState<string | null>(null);
   const [barterText, setBarterText] = useState('');
   const [expandedReviewsId, setExpandedReviewsId] = useState<string | null>(null);
-  const [votingOpenId, setVotingOpenId] = useState<string | null>(null);
+  const [openRatingServiceId, setOpenRatingServiceId] = useState<string | null>(null);
   const [reportedIds, setReportedIds] = useState<Record<string, boolean>>({});
-  const [voteFeedback, setVoteFeedback] = useState<Record<string, VoteFeedback>>({});
   const [proposalSentNotice, setProposalSentNotice] = useState<string | null>(null);
 
   const isEmergency = mode === 'emergency' || activeTab === 'emergency';
@@ -112,14 +166,6 @@ export const ServicesView: React.FC = () => {
 
   const handleVote = (serviceId: string, sentiment: SentimentScore) => {
     rateServiceWithFace(serviceId, sentiment);
-    setVoteFeedback((prev) => ({
-      ...prev,
-      [serviceId]: {
-        sentiment,
-        weight: currentUser.reputationWeight,
-        tier: currentUser.accountTier,
-      },
-    }));
   };
 
   const handleSendBarter = (serviceId: string) => {
@@ -280,8 +326,11 @@ export const ServicesView: React.FC = () => {
           const isReported = reportedIds[srv.id] || srv.isReported;
           const isBarterActive = activeBarterServiceId === srv.id;
           const isReviewsOpen = expandedReviewsId === srv.id;
-          const isVotingOpen = votingOpenId === srv.id;
+          const isRatingOpen = openRatingServiceId === srv.id;
           const catColor = CATEGORY_COLORS[srv.category] || CATEGORY_COLORS.oficio_hogar;
+          const conduct = getConductConfig(srv.weightedScore, isEmergency);
+          const totalOpinions = srv.happyCount + srv.neutralCount + srv.angryCount;
+          const topReviewers = srv.ratings.map((r) => r.userName.split(' ')[0]).slice(0, 2).join(', ');
 
           return (
             <article
@@ -387,58 +436,180 @@ export const ServicesView: React.FC = () => {
                 </div>
               )}
 
-              {/* Línea Divisoria Inferior y Acciones */}
-              <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
-                {/* Lado izquierdo: Confianza comunitaria y botón calificar */}
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5">
-                    <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                    <span className={`font-black tabular ${isEmergency ? 'text-emerald-400' : 'text-slate-900'}`}>
-                      {srv.weightedScore}%
-                    </span>
-                    <span className="text-[11px] text-slate-500">
-                      ({srv.ratings.length} aval{srv.ratings.length === 1 ? '' : 'es'})
-                    </span>
+              {/* Medallón de Reputación y Calificación 3D con Caritas (Anthony UI Polish) */}
+              <div className="mt-3 relative w-full h-[106px] flip-card-container">
+                <div className={`flip-card-inner ${isRatingOpen ? 'is-flipped' : ''}`}>
+                  {/* Cara A (Front): Medallón de Conducta */}
+                  <div
+                    className={`flip-card-front p-3.5 border-2 rounded-2xl flex items-center justify-between gap-2.5 ${conduct.containerClass} ${
+                      isRatingOpen ? 'pointer-events-none' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="shrink-0 drop-shadow-xs">
+                        <RatingFaceIcon
+                          sentiment={conduct.sentiment}
+                          size="md"
+                          isDarkTheme={isEmergency}
+                          showLabel={false}
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className={`text-xl font-black tabular leading-none ${conduct.scoreClass}`}>
+                            {srv.weightedScore}%
+                          </span>
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border ${conduct.badgeClass}`}
+                          >
+                            {conduct.label}
+                          </span>
+                        </div>
+                        <p className={`text-[11px] font-bold truncate mt-1 ${conduct.subtitleClass}`}>
+                          {srv.ratings.length > 0
+                            ? `Avalado por ${topReviewers} (${totalOpinions} ${totalOpinions === 1 ? 'opinión' : 'opiniones'})`
+                            : 'Vecino nuevo · Sin observaciones'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setOpenRatingServiceId(srv.id)}
+                      aria-label={`Calificar trato de ${srv.providerName}`}
+                      className={`shrink-0 inline-flex items-center justify-center rounded-xl px-3.5 py-2 text-xs font-black transition active:scale-95 shadow-xs ${conduct.buttonClass}`}
+                    >
+                      <span>{srv.userVote ? 'Mi voto' : 'Calificar trato'}</span>
+                    </button>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setVotingOpenId(isVotingOpen ? null : srv.id)}
-                    className="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 hover:underline"
+                  {/* Cara B (Back): Selector de Caritas */}
+                  <div
+                    className={`flip-card-back p-3 border-2 rounded-2xl flex flex-col justify-between ${
+                      isEmergency
+                        ? 'bg-slate-900 border-slate-700 text-white'
+                        : 'bg-white border-slate-200/90 text-slate-950 shadow-xs'
+                    } ${!isRatingOpen ? 'pointer-events-none' : ''}`}
                   >
-                    {isVotingOpen ? 'Ocultar' : 'Calificar'}
-                  </button>
+                    <div className="flex items-center justify-between px-1">
+                      <span className={`text-[10.5px] font-black uppercase tracking-wider ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
+                        Calificar trato
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setOpenRatingServiceId(null)}
+                        aria-label="Cerrar calificación"
+                        className={`h-5 w-5 flex items-center justify-center rounded-full transition-all active:scale-90 ${
+                          isEmergency
+                            ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-950'
+                        }`}
+                      >
+                        <X className="h-3 w-3 stroke-[2.5]" aria-hidden="true" />
+                      </button>
+                    </div>
 
+                    <div className="grid grid-cols-3 gap-2 w-full mt-1.5">
+                      <button
+                        type="button"
+                        aria-pressed={srv.userVote === 'happy'}
+                        onClick={() => {
+                          handleVote(srv.id, 'happy');
+                          setTimeout(() => setOpenRatingServiceId(null), 500);
+                        }}
+                        className={`h-[52px] flex flex-col items-center justify-center py-1 px-1 rounded-xl border-2 transition-all active:scale-95 ${
+                          srv.userVote === 'happy'
+                            ? isEmergency
+                              ? 'bg-emerald-950/80 border-emerald-400 text-emerald-200 ring-2 ring-emerald-500/30'
+                              : 'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-xs ring-2 ring-emerald-500/20'
+                            : isEmergency
+                            ? 'bg-slate-800/90 border-slate-700 text-slate-200 hover:border-emerald-400 hover:bg-emerald-950/40'
+                            : 'bg-slate-50/90 hover:bg-emerald-50/60 border-slate-200 hover:border-emerald-400 text-slate-800 shadow-2xs'
+                        }`}
+                      >
+                        <RatingFaceIcon sentiment="happy" size="sm" bare={true} showLabel={false} isDarkTheme={isEmergency} />
+                        <span className="text-[10.5px] font-black mt-1 leading-none">Buen trato</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        aria-pressed={srv.userVote === 'neutral'}
+                        onClick={() => {
+                          handleVote(srv.id, 'neutral');
+                          setTimeout(() => setOpenRatingServiceId(null), 500);
+                        }}
+                        className={`h-[52px] flex flex-col items-center justify-center py-1 px-1 rounded-xl border-2 transition-all active:scale-95 ${
+                          srv.userVote === 'neutral'
+                            ? isEmergency
+                              ? 'bg-amber-950/80 border-amber-400 text-amber-200 ring-2 ring-amber-500/30'
+                              : 'bg-amber-50 border-amber-500 text-amber-950 shadow-xs ring-2 ring-amber-500/20'
+                            : isEmergency
+                            ? 'bg-slate-800/90 border-slate-700 text-slate-200 hover:border-amber-400 hover:bg-amber-950/40'
+                            : 'bg-slate-50/90 hover:bg-amber-50/60 border-slate-200 hover:border-amber-400 text-slate-800 shadow-2xs'
+                        }`}
+                      >
+                        <RatingFaceIcon sentiment="neutral" size="sm" bare={true} showLabel={false} isDarkTheme={isEmergency} />
+                        <span className="text-[10.5px] font-black mt-1 leading-none">Regular</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        aria-pressed={srv.userVote === 'angry'}
+                        onClick={() => {
+                          handleVote(srv.id, 'angry');
+                          setTimeout(() => setOpenRatingServiceId(null), 500);
+                        }}
+                        className={`h-[52px] flex flex-col items-center justify-center py-1 px-1 rounded-xl border-2 transition-all active:scale-95 ${
+                          srv.userVote === 'angry'
+                            ? isEmergency
+                              ? 'bg-rose-950/80 border-rose-400 text-rose-200 ring-2 ring-rose-500/30'
+                              : 'bg-rose-50 border-rose-500 text-rose-950 shadow-xs ring-2 ring-rose-500/20'
+                            : isEmergency
+                            ? 'bg-slate-800/90 border-slate-700 text-slate-200 hover:border-rose-400 hover:bg-rose-950/40'
+                            : 'bg-slate-50/90 hover:bg-rose-50/60 border-slate-200 hover:border-rose-400 text-slate-800 shadow-2xs'
+                        }`}
+                      >
+                        <RatingFaceIcon sentiment="angry" size="sm" bare={true} showLabel={false} isDarkTheme={isEmergency} />
+                        <span className="text-[10.5px] font-black mt-1 leading-none">A mejorar</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Acciones y opiniones */}
+              <div className="mt-3.5 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div>
                   {srv.ratings.length > 0 && (
                     <button
                       type="button"
                       onClick={() => setExpandedReviewsId(isReviewsOpen ? null : srv.id)}
-                      className="text-[11px] font-medium text-slate-500 hover:text-slate-800 hover:underline flex items-center gap-0.5"
+                      className="text-[11px] font-bold text-slate-600 hover:text-slate-950 hover:underline flex items-center gap-1"
                     >
-                      <span>Opiniones</span>
+                      <span>Ver opiniones ({srv.ratings.length})</span>
                       {isReviewsOpen ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                     </button>
                   )}
                 </div>
 
-                {/* Lado derecho: Botones de Acción Primaria */}
                 <div className="flex items-center gap-2">
                   {srv.paymentMethods.includes('trueque') && !isMinor && (
                     <button
                       type="button"
                       onClick={() => setActiveBarterServiceId(isBarterActive ? null : srv.id)}
-                      className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-300 transition active:scale-95 shadow-2xs"
+                      className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-300 transition active:scale-95 shadow-2xs inline-flex items-center gap-1.5"
                     >
-                      Proponer Trueque
+                      <ArrowLeftRight className="h-3.5 w-3.5 text-neutral-500" />
+                      <span>Proponer trueque</span>
                     </button>
                   )}
 
                   <a
                     href={`tel:${srv.phone}`}
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-[#181816] hover:bg-neutral-800 text-white shadow-xs transition active:scale-95"
+                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition active:scale-95"
                   >
-                    <Phone className="h-3 w-3" />
-                    <span>Llamar</span>
+                    <Phone className="h-3.5 w-3.5" />
+                    <span>Llamar al vecino</span>
                   </a>
 
                   <button
@@ -447,48 +618,10 @@ export const ServicesView: React.FC = () => {
                     title={isReported ? 'Reportado para moderación' : 'Reportar publicación'}
                     className={`p-1.5 rounded-lg transition ${isReported ? 'text-amber-500' : 'text-slate-300 hover:text-slate-600'}`}
                   >
-                    <Flag className="h-3 w-3" />
+                    <Flag className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
-
-              {/* Panel Desplegable de Calificación (Caritas Táctiles) */}
-              {isVotingOpen && (
-                <div className="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200 animate-scale-in flex items-center justify-between gap-2">
-                  <span className="text-xs font-bold text-slate-700">Tu valoración vecinal:</span>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => handleVote(srv.id, 'happy')}
-                      className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white text-xs font-bold text-emerald-800 transition active:scale-90"
-                    >
-                      <RatingFaceIcon sentiment="happy" size="sm" active={srv.userVote === 'happy'} isDarkTheme={isEmergency} />
-                      <span>Bien ({srv.happyCount})</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleVote(srv.id, 'neutral')}
-                      className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white text-xs font-bold text-amber-800 transition active:scale-90"
-                    >
-                      <RatingFaceIcon sentiment="neutral" size="sm" active={srv.userVote === 'neutral'} isDarkTheme={isEmergency} />
-                      <span>Regular ({srv.neutralCount})</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleVote(srv.id, 'angry')}
-                      className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white text-xs font-bold text-rose-800 transition active:scale-90"
-                    >
-                      <RatingFaceIcon sentiment="angry" size="sm" active={srv.userVote === 'angry'} isDarkTheme={isEmergency} />
-                      <span>A mejorar ({srv.angryCount})</span>
-                    </button>
-                  </div>
-                  {voteFeedback[srv.id] && (
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                      Voto {voteFeedback[srv.id].weight}x guardado
-                    </span>
-                  )}
-                </div>
-              )}
 
               {/* Panel Desplegable de Opiniones */}
               {isReviewsOpen && (

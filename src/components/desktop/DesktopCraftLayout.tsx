@@ -19,6 +19,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { ActiveTab } from '../../types';
 import { EmergencyHotlinePanel } from '../common/EmergencyHotlinePanel';
+import { VecinosBrandLogo } from '../common/VecinosBrandLogo';
 import { CommunityMap } from '../map/CommunityMap';
 import { ServicesView } from '../../features/services/ServicesView';
 import { FavorsView } from '../../features/favors/FavorsView';
@@ -106,29 +107,37 @@ export const DesktopCraftLayout: React.FC = () => {
             <button
               type="button"
               onClick={handleLogoClick}
-              className="flex items-center gap-2.5 text-left group focus:outline-none"
-              title="VecinOS — Yanahuara, Arequipa"
+              className="flex items-center gap-3 text-left group focus:outline-none"
+              title="VecinOS — Yanahuara, Arequipa (Clic para inicio)"
+              aria-label="Ir a inicio de VecinOS"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 group-hover:bg-emerald-700 text-white font-black text-xl shadow-xs transition transform group-active:scale-95">
-                V
-              </div>
+              <VecinosBrandLogo isEmergency={isEmergency} />
               <div>
-                <div className="flex items-center gap-2">
-                  <span className={`font-black text-lg tracking-tight ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
-                    VecinOS
+                <div className="flex items-baseline tracking-tight leading-none">
+                  <span className={`text-[21px] font-black tracking-tight ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
+                    Vecin
                   </span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
-                    Yanahuara • Arequipa
+                  <span className={`text-[21px] font-black tracking-tight ${isEmergency ? 'text-red-400' : 'text-emerald-600'}`}>
+                    OS
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className={`inline-block h-2 w-2 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-                  <span className={`text-xs font-medium ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
-                    {isOnline ? 'Red de confianza activa' : `Modo P2P Offline (${pendingSyncCount} pendientes)`}
+                  <span className={`block text-[11px] font-black tracking-wide leading-tight ${isEmergency ? 'text-slate-300' : 'text-emerald-800'}`}>
+                    Tu barrio conectado
                   </span>
+                  {!isOnline && (
+                    <span className="text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded-full leading-none">
+                      P2P ({pendingSyncCount})
+                    </span>
+                  )}
                 </div>
               </div>
             </button>
+
+            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50/80 border border-emerald-200/90 text-xs font-bold text-emerald-900">
+              <MapPin className="h-3.5 w-3.5 text-emerald-700" />
+              <span>Urb. Los Perales / Yanahuara</span>
+            </div>
           </div>
 
           {/* Navegación Rápida Central */}
@@ -189,21 +198,21 @@ export const DesktopCraftLayout: React.FC = () => {
               <span>Publicar en el Barrio</span>
             </button>
 
-            {/* Toggle Modo Senior */}
+            {/* Toggle Modo Senior - Botón 'T' como Anthony */}
             <button
               type="button"
               onClick={toggleSeniorMode}
-              className={`flex h-9 px-2.5 items-center gap-1.5 rounded-xl text-xs font-bold border transition active:scale-95 ${
+              className={`h-9 w-9 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-xl text-sm font-black border transition-all active:scale-95 ${
                 isSeniorMode
-                  ? 'bg-amber-100 border-amber-300 text-amber-900'
+                  ? 'bg-emerald-600 border-emerald-600 text-white shadow-xs'
                   : isEmergency
-                  ? 'bg-slate-800 border-slate-700 text-slate-200'
-                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                  ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700'
+                  : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100'
               }`}
-              title="Modo Texto Grande para Adultos Mayores"
+              title={isSeniorMode ? 'Letra grande activada' : 'Activar letra grande'}
+              aria-label="Cambiar tamaño de texto"
             >
               <Type className="h-4 w-4" />
-              <span className="hidden sm:inline">{isSeniorMode ? 'Modo Normal' : 'Modo Senior'}</span>
             </button>
 
             {/* Tutorial */}
@@ -278,7 +287,7 @@ export const DesktopCraftLayout: React.FC = () => {
                 columns={1}
                 compact={true}
                 title="Teléfonos de Auxilio Rápido"
-                subtitle="Centrales oficiales de Yanahuara y Arequipa. Mantén 1s para llamar."
+                subtitle="Centrales oficiales de Yanahuara y Arequipa disponibles 24/7."
               />
 
               {/* Mini Preview de Mapa Interactivo */}

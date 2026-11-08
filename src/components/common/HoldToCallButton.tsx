@@ -202,7 +202,7 @@ export const HoldToCallButton: React.FC<HoldToCallProps> = ({
       ref={buttonRef}
       role="button"
       tabIndex={0}
-      aria-label={`Llamar a ${name} al número ${display}. Mantén presionado un segundo.`}
+      aria-label={`Llamar a ${name} al número ${display}.`}
       onMouseDown={startHold}
       onMouseUp={cancelHold}
       onMouseLeave={cancelHold}
@@ -289,12 +289,6 @@ export const HoldToCallButton: React.FC<HoldToCallProps> = ({
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-600 text-white shadow-xs">
               <Check className="h-3 w-3" />
               <span>Llamando</span>
-            </span>
-          )}
-
-          {!isPressing && !isCompleted && (
-            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border shadow-2xs ${colors.badge}`}>
-              Mantén 1s
             </span>
           )}
 

@@ -7,6 +7,7 @@ interface RatingFaceIconProps {
   active?: boolean;
   showLabel?: boolean;
   isDarkTheme?: boolean;
+  bare?: boolean;
 }
 
 export const RatingFaceIcon: React.FC<RatingFaceIconProps> = ({
@@ -15,8 +16,9 @@ export const RatingFaceIcon: React.FC<RatingFaceIconProps> = ({
   active = false,
   showLabel = false,
   isDarkTheme = false,
+  bare = false,
 }) => {
-  const pixelSize = size === 'sm' ? 32 : size === 'lg' ? 48 : 38;
+  const pixelSize = size === 'sm' ? 24 : size === 'lg' ? 48 : 38;
 
   const configs = {
     light: {
@@ -79,9 +81,13 @@ export const RatingFaceIcon: React.FC<RatingFaceIconProps> = ({
   return (
     <div className="inline-flex flex-col items-center gap-1 select-none">
       <div
-        className={`inline-flex items-center justify-center rounded-xl p-1 transition-all duration-150 shadow-2xs ${config.bg} ${
-          active ? 'scale-105' : 'hover:scale-102'
-        }`}
+        className={
+          bare
+            ? 'inline-flex items-center justify-center'
+            : `inline-flex items-center justify-center rounded-xl p-1 transition-all duration-150 shadow-2xs ${config.bg} ${
+                active ? 'scale-105' : 'hover:scale-102'
+              }`
+        }
       >
         <svg
           role="img"

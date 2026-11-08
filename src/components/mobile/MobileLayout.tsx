@@ -18,6 +18,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { ActiveTab } from '../../types';
 import { EmergencyHotlinePanel } from '../common/EmergencyHotlinePanel';
+import { VecinosBrandLogo } from '../common/VecinosBrandLogo';
 import { CommunityMap } from '../map/CommunityMap';
 import { ServicesView } from '../../features/services/ServicesView';
 import { FavorsView } from '../../features/favors/FavorsView';
@@ -100,29 +101,32 @@ export const MobileLayout: React.FC = () => {
       >
         <div className="px-4 py-2.5 flex items-center justify-between gap-2">
           {/* Logo y Ubicación */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleLogoClick}
-              className="flex items-center gap-2 text-left active:scale-95 transition"
-              title="VecinOS Yanahuara"
+              className="flex items-center gap-2 text-left active:scale-95 transition min-w-0"
+              title="VecinOS Yanahuara (Clic para inicio)"
+              aria-label="Ir a inicio de VecinOS"
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white font-black text-lg shadow-xs">
-                V
-              </div>
-              <div>
+              <VecinosBrandLogo isEmergency={isEmergency} size="sm" />
+              <div className="min-w-0">
                 <div className="flex items-center gap-1.5 leading-none">
-                  <span className={`font-black text-base tracking-tight ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
-                    VecinOS
+                  <span className={`text-[19px] font-black tracking-tight leading-none ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
+                    Vecin<span className={isEmergency ? 'text-red-400' : 'text-emerald-600'}>OS</span>
                   </span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-sm">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-1 py-0.5 rounded-sm">
                     Yanahuara
                   </span>
                 </div>
                 <div className="flex items-center gap-1 mt-0.5">
+                  <span className={`text-[10px] font-semibold leading-none ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
+                    Tu barrio conectado
+                  </span>
+                  <span className="text-slate-300">·</span>
                   <span className={`inline-block h-1.5 w-1.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-                  <span className={`text-[10px] font-semibold ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
-                    {isOnline ? 'Red Vecinal Activa' : `Offline (${pendingSyncCount} pendientes)`}
+                  <span className={`text-[9px] font-medium leading-none ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
+                    {isOnline ? 'Activo' : `Offline (${pendingSyncCount})`}
                   </span>
                 </div>
               </div>
@@ -131,21 +135,21 @@ export const MobileLayout: React.FC = () => {
 
           {/* Acciones de la barra superior */}
           <div className="flex items-center gap-1.5">
-            {/* Toggle Modo Senior */}
+            {/* Toggle Modo Senior - Solo icono 'T' */}
             <button
               type="button"
               onClick={toggleSeniorMode}
-              className={`flex h-8 px-2 items-center gap-1 rounded-xl text-xs font-bold border transition active:scale-95 ${
+              className={`h-8 w-8 min-h-[32px] min-w-[32px] flex items-center justify-center rounded-xl text-xs font-black border transition active:scale-95 ${
                 isSeniorMode
-                  ? 'bg-amber-100 border-amber-300 text-amber-900'
+                  ? 'bg-emerald-600 border-emerald-600 text-white shadow-xs'
                   : isEmergency
                   ? 'bg-slate-800 border-slate-700 text-slate-200'
                   : 'bg-slate-100 border-slate-200 text-slate-800'
               }`}
-              title="Modo Texto Grande para Adultos Mayores"
+              title={isSeniorMode ? 'Letra grande activada' : 'Activar letra grande'}
+              aria-label="Cambiar tamaño de texto"
             >
-              <Type className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-black">{isSeniorMode ? 'Fácil' : 'Normal'}</span>
+              <Type className="h-4 w-4" />
             </button>
 
             {/* Ayuda / Tutorial */}
@@ -227,7 +231,7 @@ export const MobileLayout: React.FC = () => {
               columns={2}
               compact={true}
               title="Auxilio Rápido (Yanahuara)"
-              subtitle="Mantén presionado 1s sobre cualquiera para llamar directo."
+              subtitle="Llamada directa a centrales oficiales de Yanahuara y Arequipa."
             />
           </div>
         )}
