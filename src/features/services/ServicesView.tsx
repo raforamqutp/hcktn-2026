@@ -46,6 +46,69 @@ interface VoteFeedback {
   tier: string;
 }
 
+
+interface ConductConfig {
+  sentiment: SentimentScore;
+  label: string;
+  containerClass: string;
+  scoreClass: string;
+  badgeClass: string;
+  subtitleClass: string;
+  buttonClass: string;
+}
+
+function getConductConfig(score: number, isEmergency: boolean): ConductConfig {
+  if (score >= 80) {
+    return {
+      sentiment: 'happy',
+      label: 'Conducta Ejemplar',
+      containerClass: isEmergency
+        ? 'bg-emerald-950/40 border-2 border-emerald-600/80 text-emerald-100 shadow-xs'
+        : 'bg-emerald-50/90 border-2 border-emerald-300 text-emerald-950 shadow-xs',
+      scoreClass: isEmergency ? 'text-emerald-300' : 'text-emerald-900',
+      badgeClass: isEmergency
+        ? 'bg-emerald-900/80 text-emerald-200 border-emerald-500'
+        : 'bg-emerald-100 text-emerald-950 border-emerald-400',
+      subtitleClass: isEmergency ? 'text-emerald-200' : 'text-emerald-900',
+      buttonClass: isEmergency
+        ? 'bg-emerald-900/80 text-emerald-200 border border-emerald-600 hover:bg-emerald-800'
+        : 'bg-white text-emerald-950 border-2 border-emerald-300 hover:bg-emerald-100/70',
+    };
+  }
+  if (score >= 60) {
+    return {
+      sentiment: 'neutral',
+      label: 'Conducta Aceptable',
+      containerClass: isEmergency
+        ? 'bg-amber-950/40 border-2 border-amber-600/80 text-amber-100 shadow-xs'
+        : 'bg-amber-50/90 border-2 border-amber-300 text-amber-950 shadow-xs',
+      scoreClass: isEmergency ? 'text-amber-300' : 'text-amber-900',
+      badgeClass: isEmergency
+        ? 'bg-amber-900/80 text-amber-200 border-amber-500'
+        : 'bg-amber-100 text-amber-950 border-amber-400',
+      subtitleClass: isEmergency ? 'text-amber-200' : 'text-amber-900',
+      buttonClass: isEmergency
+        ? 'bg-amber-900/80 text-amber-200 border border-amber-600 hover:bg-amber-800'
+        : 'bg-white text-amber-950 border-2 border-amber-300 hover:bg-amber-100/70',
+    };
+  }
+  return {
+    sentiment: 'angry',
+    label: 'Conducta en Revisión',
+    containerClass: isEmergency
+      ? 'bg-rose-950/40 border-2 border-rose-700/80 text-rose-100 shadow-xs'
+      : 'bg-rose-50/90 border-2 border-rose-300 text-rose-950 shadow-xs',
+    scoreClass: isEmergency ? 'text-rose-300' : 'text-rose-900',
+    badgeClass: isEmergency
+      ? 'bg-rose-900/80 text-rose-200 border-rose-500'
+      : 'bg-rose-100 text-rose-950 border-rose-400',
+    subtitleClass: isEmergency ? 'text-rose-200' : 'text-rose-900',
+    buttonClass: isEmergency
+      ? 'bg-rose-900/80 text-rose-200 border border-rose-600 hover:bg-rose-800'
+      : 'bg-white text-rose-950 border-2 border-rose-300 hover:bg-rose-100/70',
+  };
+}
+
 export const ServicesView: React.FC = () => {
   const {
     services,
@@ -66,6 +129,7 @@ export const ServicesView: React.FC = () => {
   const [reportedIds, setReportedIds] = useState<Record<string, boolean>>({});
   const [voteFeedback, setVoteFeedback] = useState<Record<string, VoteFeedback>>({});
   const [proposalSentNotice, setProposalSentNotice] = useState<string | null>(null);
+  const [openRatingServiceId, setOpenRatingServiceId] = useState<string | null>(null);
 
   const isEmergency = mode === 'emergency';
 
@@ -383,132 +447,166 @@ export const ServicesView: React.FC = () => {
 
               {/* Reputación Vecinal Amigable & Calificación */}
               <div className="mt-4 pt-3 border-t border-slate-200/80 space-y-3">
-                <div
-                  className={`rounded-2xl p-3 border transition-colors ${
-                    isEmergency
-                      ? 'bg-[#151c2c] border-slate-700 text-slate-100'
-                      : 'bg-emerald-50/50 border-emerald-200/80 text-slate-900'
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span
-                          className={`text-base font-black tabular ${
-                            isEmergency ? 'text-emerald-400' : 'text-emerald-800'
-                          }`}
+                {(() => {
+                  const conduct = getConductConfig(srv.weightedScore, isEmergency);
+                  const isRatingOpen = openRatingServiceId === srv.id;
+                  const totalOpinions = srv.happyCount + srv.neutralCount + srv.angryCount;
+                  const topReviewers = srv.ratings.map((r) => r.userName.split(' ')[0]).slice(0, 2).join(', ');
+
+                  return (
+                    <div className={`rounded-2xl p-3 border-2 transition-all ${conduct.containerClass}`}>
+                      <div className="flex items-center justify-between gap-3">
+                        {/* Lado Izquierdo: Carita Hero Grande + Porcentaje Dinámico + Estatus */}
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="shrink-0 drop-shadow-xs">
+                            <RatingFaceIcon
+                              sentiment={conduct.sentiment}
+                              size="md"
+                              isDarkTheme={isEmergency}
+                              showLabel={false}
+                            />
+                          </div>
+
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className={`text-xl font-black tabular leading-none ${conduct.scoreClass}`}>
+                                {srv.weightedScore}%
+                              </span>
+                              <span
+                                className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border ${conduct.badgeClass}`}
+                              >
+                                {conduct.label}
+                              </span>
+                            </div>
+                            <p className={`text-[11px] font-bold truncate mt-1 ${conduct.subtitleClass}`}>
+                              {srv.ratings.length > 0
+                                ? `Avalado por ${topReviewers} (${totalOpinions} ${totalOpinions === 1 ? 'opinión' : 'opiniones'})`
+                                : 'Vecino nuevo · Sin observaciones'}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Lado Derecho: Botón para Calificar Trato */}
+                        <button
+                          type="button"
+                          onClick={() => setOpenRatingServiceId(isRatingOpen ? null : srv.id)}
+                          className={`shrink-0 inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-[11px] font-black transition active:scale-95 shadow-xs ${conduct.buttonClass}`}
                         >
-                          {srv.weightedScore}%
-                        </span>
-                        <span
-                          className={`text-xs font-bold ${
-                            isEmergency ? 'text-slate-200' : 'text-slate-800'
-                          }`}
-                        >
-                          aprobación comunitaria
-                        </span>
+                          <span>{srv.userVote ? 'Mi voto' : 'Calificar trato'}</span>
+                          <ChevronDown
+                            className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                              isRatingOpen ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </button>
                       </div>
-                      <p
-                        className={`truncate text-[11px] font-medium mt-0.5 ${
-                          isEmergency ? 'text-slate-400' : 'text-slate-600'
-                        }`}
-                      >
-                        {srv.ratings.length > 0
-                          ? `Avalado por ${srv.ratings.map((r) => r.userName.split(' ')[0]).join(', ')}`
-                          : 'Opinión de la cuadra:'}
-                      </p>
-                    </div>
 
-                    {/* Caritas Amigables de Alto Contraste */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleVote(srv.id, 'happy')}
-                        aria-label={`Calificar Feliz (${srv.happyCount})`}
-                        className="flex items-center gap-1 p-0.5 transition pressable"
-                      >
-                        <RatingFaceIcon
-                          sentiment="happy"
-                          size="sm"
-                          active={srv.userVote === 'happy'}
-                          showLabel
-                          isDarkTheme={isEmergency}
-                        />
-                        <span
-                          className={`text-xs font-black tabular ${
-                            isEmergency ? 'text-emerald-400' : 'text-emerald-800'
+                      {/* Desplegable de Votación Limpia y Táctil (3 Caritas Amplias) */}
+                      {isRatingOpen && (
+                        <div className="mt-3 pt-2.5 border-t border-black/10 dark:border-white/10 space-y-2 animate-scale-in">
+                          <div className="flex items-center justify-between text-[11px]">
+                            <span className="font-black text-slate-900 dark:text-white">
+                              ¿Cómo calificarías su conducta y atención?
+                            </span>
+                            <span className="font-semibold text-slate-500 dark:text-slate-400">
+                              Peso: {currentUser.reputationWeight}x
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleVote(srv.id, 'happy')}
+                              className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition active:scale-95 ${
+                                srv.userVote === 'happy'
+                                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-400'
+                                  : isEmergency
+                                  ? 'bg-slate-900 border-slate-700 text-slate-200 hover:border-emerald-500'
+                                  : 'bg-white border-slate-200 text-slate-800 hover:border-emerald-400 shadow-2xs'
+                              }`}
+                            >
+                              <RatingFaceIcon
+                                sentiment="happy"
+                                size="sm"
+                                active={srv.userVote === 'happy'}
+                                isDarkTheme={isEmergency || srv.userVote === 'happy'}
+                                showLabel={false}
+                              />
+                              <span className="text-[11px] font-black mt-1">Buen trato</span>
+                              <span className="text-[9px] font-bold opacity-75">Cumplió bien</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleVote(srv.id, 'neutral')}
+                              className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition active:scale-95 ${
+                                srv.userVote === 'neutral'
+                                  ? 'bg-amber-500 text-white border-amber-500 shadow-md ring-2 ring-amber-300'
+                                  : isEmergency
+                                  ? 'bg-slate-900 border-slate-700 text-slate-200 hover:border-amber-500'
+                                  : 'bg-white border-slate-200 text-slate-800 hover:border-amber-400 shadow-2xs'
+                              }`}
+                            >
+                              <RatingFaceIcon
+                                sentiment="neutral"
+                                size="sm"
+                                active={srv.userVote === 'neutral'}
+                                isDarkTheme={isEmergency || srv.userVote === 'neutral'}
+                                showLabel={false}
+                              />
+                              <span className="text-[11px] font-black mt-1">Regular</span>
+                              <span className="text-[9px] font-bold opacity-75">Demoras</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleVote(srv.id, 'angry')}
+                              className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 transition active:scale-95 ${
+                                srv.userVote === 'angry'
+                                  ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-400'
+                                  : isEmergency
+                                  ? 'bg-slate-900 border-slate-700 text-slate-200 hover:border-rose-500'
+                                  : 'bg-white border-slate-200 text-slate-800 hover:border-rose-400 shadow-2xs'
+                              }`}
+                            >
+                              <RatingFaceIcon
+                                sentiment="angry"
+                                size="sm"
+                                active={srv.userVote === 'angry'}
+                                isDarkTheme={isEmergency || srv.userVote === 'angry'}
+                                showLabel={false}
+                              />
+                              <span className="text-[11px] font-black mt-1">A mejorar</span>
+                              <span className="text-[9px] font-bold opacity-75">No cumplió</span>
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Feedback explícito de peso por antigüedad tras votar */}
+                      {fb && (
+                        <div
+                          className={`mt-2 flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[11px] font-bold animate-scale-in ${
+                            isEmergency
+                              ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-200'
+                              : 'bg-white border-emerald-300 text-emerald-950 shadow-2xs'
                           }`}
                         >
-                          {srv.happyCount}
-                        </span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleVote(srv.id, 'neutral')}
-                        aria-label={`Calificar Neutral (${srv.neutralCount})`}
-                        className="flex items-center gap-1 p-0.5 transition pressable"
-                      >
-                        <RatingFaceIcon
-                          sentiment="neutral"
-                          size="sm"
-                          active={srv.userVote === 'neutral'}
-                          showLabel
-                          isDarkTheme={isEmergency}
-                        />
-                        <span
-                          className={`text-xs font-black tabular ${
-                            isEmergency ? 'text-amber-400' : 'text-amber-800'
-                          }`}
-                        >
-                          {srv.neutralCount}
-                        </span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleVote(srv.id, 'angry')}
-                        aria-label={`Calificar Enojado (${srv.angryCount})`}
-                        className="flex items-center gap-1 p-0.5 transition pressable"
-                      >
-                        <RatingFaceIcon
-                          sentiment="angry"
-                          size="sm"
-                          active={srv.userVote === 'angry'}
-                          showLabel
-                          isDarkTheme={isEmergency}
-                        />
-                        <span
-                          className={`text-xs font-black tabular ${
-                            isEmergency ? 'text-rose-400' : 'text-rose-800'
-                          }`}
-                        >
-                          {srv.angryCount}
-                        </span>
-                      </button>
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                          <span>
+                            Voto registrado con peso <span className="underline">{fb.weight}x</span> [
+                            {fb.tier === 'referente'
+                              ? 'Vecino Referente'
+                              : fb.tier === 'activo'
+                              ? 'Vecino Activo'
+                              : 'Cuenta Nueva'}
+                            ]
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-
-                  {/* Feedback explícito de peso por antigüedad tras votar */}
-                  {fb && (
-                    <div className={`mt-2.5 flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[11px] font-bold animate-scale-in ${
-                      isEmergency
-                        ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-200'
-                        : 'bg-emerald-50 border-emerald-200 text-emerald-950'
-                    }`}>
-                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                      <span>
-                        Voto registrado con peso <span className="underline">{fb.weight}x</span> [
-                        {fb.tier === 'referente'
-                          ? 'Vecino Referente'
-                          : fb.tier === 'activo'
-                          ? 'Vecino Activo'
-                          : 'Cuenta Nueva'}
-                        ]
-                      </span>
-                    </div>
-                  )}
-                </div>
+                  );
+                })()}
 
                 {/* Desplegable de Reseñas y Derecho a Réplica */}
                 {srv.ratings.length > 0 && (
