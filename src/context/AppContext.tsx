@@ -42,6 +42,10 @@ export interface AppContextType {
   isSeniorMode: boolean;
   toggleSeniorMode: () => void;
 
+  isOnboardingActive: boolean;
+  setIsOnboardingActive: (active: boolean) => void;
+  resetToColdStart: () => void;
+
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
 
@@ -119,6 +123,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeTab, setActiveTab] = useState<ActiveTab>('services');
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [isOnboardingActive, setIsOnboardingActive] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const q = new URLSearchParams(window.location.search).get('demo');
+      if (q === 'onboarding') return true;
+      const stored = localStorage.getItem('vecinos_user_profile_v1');
+      if (!stored) return true;
+    }
+    return false;
+  });
+
+  const resetToColdStart = () => {
+    storageService.clearUserProfile();
+    setIsOnboardingActive(true);
+  };
   const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(
     () => !storageService.hasSeenQuickGuide()
   );
@@ -378,6 +396,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         syncNow,
         isSeniorMode,
         toggleSeniorMode,
+        isOnboardingActive,
+        setIsOnboardingActive,
+        resetToColdStart,
         activeTab,
         setActiveTab,
         isPublishOpen,

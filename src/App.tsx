@@ -1,4 +1,5 @@
 import React from 'react';
+import { LoginOnboardingView } from './components/auth/LoginOnboardingView';
 import { RegisterDniModal } from './components/auth/RegisterDniModal';
 import { BottomNav } from './components/layout/BottomNav';
 import { DesktopCompanionPanel } from './components/layout/DesktopCompanionPanel';
@@ -12,8 +13,12 @@ import { FavorsView } from './features/favors/FavorsView';
 import { ServicesView } from './features/services/ServicesView';
 
 const MainShell: React.FC = () => {
-  const { activeTab, mode, isSeniorMode } = useApp();
+  const { activeTab, mode, isSeniorMode, isOnboardingActive, setIsOnboardingActive } = useApp();
   const isEmergency = mode === 'emergency';
+
+  if (isOnboardingActive) {
+    return <LoginOnboardingView onSuccess={() => setIsOnboardingActive(false)} />;
+  }
 
   return (
     <div

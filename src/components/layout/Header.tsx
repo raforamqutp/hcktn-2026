@@ -8,6 +8,7 @@ import {
   Map,
   MapPin,
   Plus,
+  RotateCcw,
   Store,
   Type,
   UserCheck,
@@ -28,6 +29,7 @@ export const Header: React.FC = () => {
     pendingSyncCount,
     currentUser,
     switchDemoUserTier,
+    resetToColdStart,
     setIsAuthModalOpen,
     setIsTutorialOpen,
     isSeniorMode,
@@ -443,6 +445,21 @@ export const Header: React.FC = () => {
                   <span>Cómo funciona VecinOS</span>
                 </span>
                 <ChevronRight className="h-4 w-4 text-slate-500" aria-hidden="true" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsProfileOpen(false);
+                  resetToColdStart();
+                }}
+                className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-bold text-emerald-800 hover:bg-emerald-50 transition border-t border-slate-100"
+              >
+                <span className="flex items-center gap-2.5">
+                  <RotateCcw className="h-4 w-4 text-emerald-700" />
+                  <span>Probar Registro Inicial (Demo en frío)</span>
+                </span>
+                <ChevronRight className="h-4 w-4 text-emerald-600" aria-hidden="true" />
               </button>
             </div>
           </div>
