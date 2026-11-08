@@ -42,6 +42,10 @@ export interface AppContextType {
   isSeniorMode: boolean;
   toggleSeniorMode: () => void;
 
+  designVariant: 'craft' | 'classic';
+  setDesignVariant: (variant: 'craft' | 'classic') => void;
+  toggleDesignVariant: () => void;
+
   isOnboardingActive: boolean;
   setIsOnboardingActive: (active: boolean) => void;
   resetToColdStart: () => void;
@@ -122,6 +126,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isOnline, setIsOnline] = useState<boolean>(true);
   const [isSeniorMode, setIsSeniorMode] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>('services');
+
+  const [designVariant, setDesignVariantState] = useState<'craft' | 'classic'>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('vecinos_design_variant');
+      if (stored === 'classic' || stored === 'craft') return stored;
+    }
+    return 'craft';
+  });
+
+  const setDesignVariant = (v: 'craft' | 'classic') => {
+    setDesignVariantState(v);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('vecinos_design_variant', v);
+    }
+  };
+
+  const toggleDesignVariant = () => {
+    setDesignVariant(designVariant === 'craft' ? 'classic' : 'craft');
+  };
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [isOnboardingActive, setIsOnboardingActive] = useState<boolean>(() => {
@@ -401,6 +424,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         syncNow,
         isSeniorMode,
         toggleSeniorMode,
+        designVariant,
+        setDesignVariant,
+        toggleDesignVariant,
         isOnboardingActive,
         setIsOnboardingActive,
         resetToColdStart,

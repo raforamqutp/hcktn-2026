@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { LoginOnboardingView } from './components/auth/LoginOnboardingView';
 import { HostConfigView } from './components/config/HostConfigView';
+import { DesktopCraftLayout } from './components/desktop/DesktopCraftLayout';
 import { BottomNav } from './components/layout/BottomNav';
 import { DesktopCompanionPanel } from './components/layout/DesktopCompanionPanel';
 import { Header } from './components/layout/Header';
 import { CommunityMap } from './components/map/CommunityMap';
+import { MobileLayout } from './components/mobile/MobileLayout';
 import { QuickPublishSheet } from './components/publish/QuickPublishSheet';
 import { QuickGuideModal } from './components/tutorial/QuickGuideModal';
 import { AppProvider, useApp } from './context/AppContext';
@@ -27,7 +29,14 @@ const checkIsConfigRoute = (): boolean => {
 };
 
 const MainShell: React.FC = () => {
-  const { activeTab, mode, isSeniorMode, isOnboardingActive, setIsOnboardingActive } = useApp();
+  const {
+    activeTab,
+    mode,
+    isSeniorMode,
+    isOnboardingActive,
+    setIsOnboardingActive,
+    designVariant,
+  } = useApp();
   const isEmergency = mode === 'emergency' || activeTab === 'emergency';
 
   const [isConfigView, setIsConfigView] = useState<boolean>(checkIsConfigRoute);
@@ -77,7 +86,28 @@ const MainShell: React.FC = () => {
     return <LoginOnboardingView onSuccess={() => setIsOnboardingActive(false)} />;
   }
 
-  // 3. Aplicación Principal VecinOS
+  // 3. Motor de Diseño Apple & OpenDesign Craft (Doble Layout Dedicado)
+  if (designVariant === 'craft') {
+    return (
+      <>
+        {/* Layout Nativo Móvil (< 1024px) con Hold-to-Call de 1s en Emergencias */}
+        <div className="block lg:hidden">
+          <MobileLayout />
+        </div>
+
+        {/* Layout Asimétrico y Espacioso de Escritorio (>= 1024px) */}
+        <div className="hidden lg:block">
+          <DesktopCraftLayout />
+        </div>
+
+        {/* Modales y Hojas Globales Compartidas */}
+        <QuickPublishSheet />
+        <QuickGuideModal />
+      </>
+    );
+  }
+
+  // 4. Fallback: Aplicación Principal con Diseño Clásico Anterior
   return (
     <div
       className={`min-h-dvh transition-colors duration-200 ${

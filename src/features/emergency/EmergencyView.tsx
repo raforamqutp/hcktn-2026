@@ -42,13 +42,13 @@ const EMERGENCY_HOTLINES = [
 ];
 
 export const EmergencyView: React.FC = () => {
-  const { emergencyItems, joinEmergencyResponse, currentUser, mode, openPublishModal } = useApp();
+  const { emergencyItems, joinEmergencyResponse, currentUser, mode, openPublishModal, activeTab } = useApp();
   const [section, setSection] = useState<'alerts' | 'resources'>('alerts');
   const [category, setCategory] = useState<'all' | EdanCategory>('all');
   const [showHotlines, setShowHotlines] = useState(false);
   const [joinedNotice, setJoinedNotice] = useState<string | null>(null);
 
-  const isEmergency = mode === 'emergency';
+  const isEmergency = mode === 'emergency' || activeTab === 'emergency';
 
   const filtered = useMemo(() => {
     return emergencyItems.filter(

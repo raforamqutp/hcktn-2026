@@ -37,6 +37,8 @@ export const HostConfigView: React.FC<HostConfigViewProps> = ({ onExit }) => {
     activeTab,
     setActiveTab,
     setIsOnboardingActive,
+    designVariant,
+    setDesignVariant,
   } = useApp();
 
   const [customDni, setCustomDni] = useState('');
@@ -350,6 +352,66 @@ export const HostConfigView: React.FC<HostConfigViewProps> = ({ onExit }) => {
                   }`}
                 >
                   {!currentUser.isVerifiedAdult ? 'Activo' : 'Inactivo'}
+                </button>
+              </div>
+            </div>
+
+            {/* Selector de Motor de Diseño / Layout Engine */}
+            <div className="rounded-3xl bg-slate-800/80 border border-slate-700 p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-emerald-400">
+                  <Sparkles className="h-5 w-5" />
+                  <h3 className="text-sm font-black text-white">Motor de Diseño y Experiencia</h3>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800">
+                  {designVariant === 'craft' ? 'Diseño Artesanal Activo' : 'Diseño Clásico'}
+                </span>
+              </div>
+              <p className="text-xs text-slate-400">
+                Alterna entre el nuevo diseño nativo móvil y de escritorio basado en OpenDesign y Apple HIG, o regresa al diseño clásico anterior.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDesignVariant('craft');
+                    showToast('Cambiado a diseño Apple Craft (Doble Layout + Hold-to-Call)');
+                  }}
+                  className={`p-3 rounded-2xl border text-left transition ${
+                    designVariant === 'craft'
+                      ? 'bg-emerald-950/80 border-emerald-500 text-white shadow-lg ring-1 ring-emerald-500/50'
+                      : 'bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-black text-xs text-emerald-400">🎨 Apple Craft (Nuevo)</span>
+                    {designVariant === 'craft' && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Shell móvil nativo con Segmented Control, Hold-to-Call 1s en emergencias y canvas de escritorio asimétrico.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDesignVariant('classic');
+                    showToast('Cambiado a diseño Clásico (Anterior)');
+                  }}
+                  className={`p-3 rounded-2xl border text-left transition ${
+                    designVariant === 'classic'
+                      ? 'bg-indigo-950/80 border-indigo-500 text-white shadow-lg ring-1 ring-indigo-500/50'
+                      : 'bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-black text-xs text-indigo-400">🏛 Clásico (Anterior)</span>
+                    {designVariant === 'classic' && <CheckCircle2 className="h-4 w-4 text-indigo-400" />}
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Diseño previo con tarjetas estándar y panel de acompañamiento clásico.
+                  </p>
                 </button>
               </div>
             </div>
