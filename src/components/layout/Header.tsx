@@ -54,11 +54,12 @@ export const Header: React.FC = () => {
       logoClickCountRef.current = 0;
     }, 1800);
 
-    if (logoClickCountRef.current >= 4) {
+    if (logoClickCountRef.current >= 5) {
       logoClickCountRef.current = 0;
       window.location.hash = '#/config';
     } else {
       setActiveTab('services');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 

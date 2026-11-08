@@ -179,7 +179,7 @@ export const HostConfigView: React.FC<HostConfigViewProps> = ({ onExit }) => {
                 HOST ENDPOINT · /config
               </span>
               <span className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800">
-                Solo Anfitrión / Jurado
+                dev
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1">
@@ -427,7 +427,7 @@ export const HostConfigView: React.FC<HostConfigViewProps> = ({ onExit }) => {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-black text-xs text-emerald-400">🎨 Apple Craft (Nuevo)</span>
+                    <span className="font-black text-xs text-emerald-400">Apple Craft (Nuevo)</span>
                     {designVariant === 'craft' && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
@@ -448,7 +448,7 @@ export const HostConfigView: React.FC<HostConfigViewProps> = ({ onExit }) => {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-black text-xs text-indigo-400">🏛 Clásico (Anterior)</span>
+                    <span className="font-black text-xs text-indigo-400">Clásico (Anterior)</span>
                     {designVariant === 'classic' && <CheckCircle2 className="h-4 w-4 text-indigo-400" />}
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">

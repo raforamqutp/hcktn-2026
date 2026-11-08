@@ -147,11 +147,7 @@ export const QuickPublishSheet: React.FC = () => {
   const [description, setDescription] = useState('');
   const [barterText, setBarterText] = useState('');
   const [safeMeetingPoint, setSafeMeetingPoint] = useState('Parque Central Los Perales');
-  const [payments, setPayments] = useState<PaymentMethod[]>([
-    'efectivo',
-    'billetera_virtual',
-    'trueque',
-  ]);
+  const [payments, setPayments] = useState<PaymentMethod[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<QuickTemplate | null>(null);
 
   // Sincronizar estado inicial al abrir el modal
@@ -164,10 +160,11 @@ export const QuickPublishSheet: React.FC = () => {
       setIntent(publishDefaultType);
     }
 
-    // Comenzar con campos en blanco limpios para no obligar a borrar textos
+    // Comenzar con campos en blanco limpios y sin métodos preseleccionados
     setTitle('');
     setDescription('');
     setBarterText('');
+    setPayments([]);
     setSafeMeetingPoint('Parque Central Los Perales');
     setSelectedTemplate(null);
   }, [publishDefaultType, isPublishOpen, isMinor]);
@@ -217,7 +214,7 @@ export const QuickPublishSheet: React.FC = () => {
         description: description.trim() || 'Disponible para vecinos de la cuadra.',
         phone: currentUser.phone || '958001122',
         priceRange: selectedTemplate?.priceRange || 'A tratar',
-        paymentMethods: payments.length > 0 ? payments : ['efectivo', 'billetera_virtual', 'trueque'],
+        paymentMethods: payments,
         barterInterest: payments.includes('trueque') && barterText.trim() ? barterText : undefined,
         trustBadges: ['Vecino Verificado'],
         isEmergencySupport: false,
@@ -494,7 +491,7 @@ export const QuickPublishSheet: React.FC = () => {
                 {[
                   { id: 'efectivo', label: 'Efectivo' },
                   { id: 'billetera_virtual', label: 'Yape / Plin' },
-                  { id: 'trueque', label: 'Trueque 🤝' },
+                  { id: 'trueque', label: 'Trueque' },
                 ].map((pm) => {
                   const active = payments.includes(pm.id as PaymentMethod);
                   return (

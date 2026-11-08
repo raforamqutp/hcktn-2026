@@ -56,6 +56,9 @@ export const MobileLayout: React.FC = () => {
     if (logoClickCountRef.current >= 5) {
       logoClickCountRef.current = 0;
       window.location.hash = '#/config';
+    } else {
+      setActiveTab('services');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -102,10 +105,13 @@ export const MobileLayout: React.FC = () => {
               <VecinosBrandLogo isEmergency={isEmergency} size="sm" />
             </button>
 
-            {/* Texto del logo: clic normal va a inicio de servicios */}
+            {/* Texto del logo: clic normal va a inicio de servicios y arriba */}
             <button
               type="button"
-              onClick={() => setActiveTab('services')}
+              onClick={() => {
+                setActiveTab('services');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               className="text-left active:opacity-80 transition min-w-0"
               title="Ir a inicio de VecinOS"
               aria-label="Ir a inicio de VecinOS"

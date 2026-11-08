@@ -62,7 +62,7 @@ export const INITIAL_SERVICES: LocalService[] = [
     ratings: [
       {
         userId: 'usr-10',
-        userName: 'Elena Zeballos (Mz. B)',
+        userName: 'Elena Zeballos Farfán',
         userTier: 'referente',
         sentiment: 'happy',
         weightApplied: 1.5,
@@ -71,7 +71,7 @@ export const INITIAL_SERVICES: LocalService[] = [
       },
       {
         userId: 'usr-11',
-        userName: 'Carlos Medina (Cdra. 2)',
+        userName: 'Carlos Medina Vizcarra',
         userTier: 'activo',
         sentiment: 'happy',
         weightApplied: 1.0,
@@ -90,7 +90,7 @@ export const INITIAL_SERVICES: LocalService[] = [
   },
   {
     id: 'srv-2',
-    providerName: 'Jorge Luis Huanca (Maestro Cerrajero)',
+    providerName: 'Jorge Luis Huanca',
     providerTier: 'referente',
     tradeTitle: 'Cerrajería Segura 24h y Apertura de Puertas sin Daño',
     category: 'oficio_hogar',
@@ -113,7 +113,7 @@ export const INITIAL_SERVICES: LocalService[] = [
       },
       {
         userId: 'usr-13',
-        userName: 'Patricia Paredes (Mz. I)',
+        userName: 'Patricia Paredes Cáceres',
         userTier: 'activo',
         sentiment: 'happy',
         weightApplied: 1.0,
@@ -132,7 +132,7 @@ export const INITIAL_SERVICES: LocalService[] = [
   },
   {
     id: 'srv-3',
-    providerName: 'Prof. Mario Cortéz Salas',
+    providerName: 'Mario Cortéz Salas',
     providerTier: 'activo',
     tradeTitle: 'Clases de Matemáticas, Física y Nivelación Escolar',
     category: 'educacion_clases',
@@ -146,7 +146,7 @@ export const INITIAL_SERVICES: LocalService[] = [
     ratings: [
       {
         userId: 'usr-14',
-        userName: 'Rosa Delgado (Mz. C)',
+        userName: 'Rosa Delgado Paredes',
         userTier: 'referente',
         sentiment: 'happy',
         weightApplied: 1.5,
@@ -165,7 +165,7 @@ export const INITIAL_SERVICES: LocalService[] = [
   },
   {
     id: 'srv-4',
-    providerName: 'Lic. Claudia Benavente (Enfermera)',
+    providerName: 'Claudia Benavente',
     providerTier: 'referente',
     tradeTitle: 'Tópico Vecinal: Inyectables, Presión y Primeros Auxilios',
     category: 'salud_auxilio',
@@ -178,7 +178,7 @@ export const INITIAL_SERVICES: LocalService[] = [
     ratings: [
       {
         userId: 'usr-15',
-        userName: 'Don Alberto Quiroz (Mz. A)',
+        userName: 'Alberto Quiroz Medina',
         userTier: 'referente',
         sentiment: 'happy',
         weightApplied: 1.5,
@@ -200,7 +200,7 @@ export const INITIAL_SERVICES: LocalService[] = [
 export const INITIAL_FAVORS: CommunityFavor[] = [
   {
     id: 'fav-1',
-    authorName: 'Juan Carlos Mamani (Mz. D)',
+    authorName: 'Juan Carlos Mamani',
     authorTier: 'referente',
     direction: 'ofrezco',
     category: 'prestamo_salud_herramienta',
@@ -217,7 +217,7 @@ export const INITIAL_FAVORS: CommunityFavor[] = [
   },
   {
     id: 'fav-2',
-    authorName: 'Andrea Cornejo (Mamá de 4to grado)',
+    authorName: 'Andrea Cornejo',
     authorTier: 'referente',
     direction: 'ofrezco',
     category: 'movilidad_pool',
@@ -251,7 +251,7 @@ export const INITIAL_FAVORS: CommunityFavor[] = [
   },
   {
     id: 'fav-4',
-    authorName: 'Rosa Valdivia (Vecina Mz. B)',
+    authorName: 'Rosa Valdivia',
     authorTier: 'activo',
     direction: 'solicito',
     category: 'movilidad_pool',
@@ -288,7 +288,7 @@ export const INITIAL_FAVORS: CommunityFavor[] = [
 export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
   {
     id: 'emg-1',
-    authorName: 'Familia Salazar (Reporte Verificado)',
+    authorName: 'Miguel Salazar Ramos',
     type: 'vecino_vulnerable',
     edanCategory: 'salud_vida',
     urgency: 'critica',
@@ -296,7 +296,7 @@ export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
     description:
       'Nuestro abuelito vive en el primer piso y tras el corte de fluido eléctrico necesitamos un cooler con hielo o batería portátil para mantener su insulina refrigerada.',
     resourceTags: ['Insulina / Frío', 'Adulto Mayor', 'Batería / Hielo'],
-    responders: ['Lic. Claudia Benavente', 'Rafael Ramirez'],
+    responders: ['Claudia Benavente', 'Rafael Ramirez'],
     isSensitiveProtected: true,
     expiresInHours: 72,
     status: 'activo',
@@ -306,7 +306,7 @@ export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
   },
   {
     id: 'emg-2',
-    authorName: 'Gustavo Mendoza (Vecino Mz. E)',
+    authorName: 'Gustavo Mendoza',
     type: 'alerta_peligro',
     edanCategory: 'inundacion_lluvia',
     urgency: 'alta',
@@ -342,7 +342,7 @@ export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
   },
   {
     id: 'emg-4',
-    authorName: 'Don Manuel (Gasfitero Mz. B)',
+    authorName: 'Manuel Flores Vilca',
     type: 'alerta_peligro',
     edanCategory: 'infraestructura_energia',
     urgency: 'alta',
@@ -350,7 +350,7 @@ export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
     description:
       'Corte preventivo de llave general de la manzana realizado. Se requiere señalización reflectiva y apoyo para acordonar el paso peatonal hasta la llegada de cuadrilla municipal.',
     resourceTags: ['Sismo', 'Corte Preventivo', 'Defensa Civil', 'Paso Peatonal'],
-    responders: ['Gustavo Mendoza', 'Don Manuel', 'Bryan Mango'],
+    responders: ['Gustavo Mendoza', 'Manuel Flores Vilca', 'Bryan Mango'],
     isSensitiveProtected: false,
     expiresInHours: 72,
     status: 'activo',
@@ -360,7 +360,7 @@ export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
   },
   {
     id: 'emg-5',
-    authorName: 'Don Lucho Paredes (Ferretería El Peral)',
+    authorName: 'Luis Paredes Zeballos',
     type: 'recurso_compartido',
     edanCategory: 'inundacion_lluvia',
     urgency: 'alta',
@@ -368,7 +368,7 @@ export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
     description:
       'A disposición de vecinos de pasajes bajos con filtración de agua por lluvias intensas del Fenómeno El Niño. Incluye manguera de descarga de 15 metros.',
     resourceTags: ['Motobomba', 'Fenómeno El Niño', 'Sacos Terreros', 'Achique'],
-    responders: ['Don Lucho Paredes', 'Gustavo Mendoza', 'Anthony Luque'],
+    responders: ['Luis Paredes Zeballos', 'Gustavo Mendoza', 'Anthony Luque'],
     isSensitiveProtected: false,
     expiresInHours: 72,
     status: 'activo',
@@ -378,7 +378,7 @@ export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
   },
   {
     id: 'emg-6',
-    authorName: 'Familia Quispe (Mz. F)',
+    authorName: 'Carlos Quispe Huamán',
     type: 'vecino_vulnerable',
     edanCategory: 'salud_vida',
     urgency: 'critica',
@@ -386,7 +386,7 @@ export const INITIAL_EMERGENCY_ITEMS: EmergencyItem[] = [
     description:
       'Vecina de 76 años dependiente de concentrador eléctrico de oxígeno. Con el corte de fluido se requiere generador de apoyo o recambio de balón de 1m3.',
     resourceTags: ['Oxígeno', 'Paciente Crítico', 'Adulto Mayor', 'Generador'],
-    responders: ['Lic. Claudia Benavente'],
+    responders: ['Claudia Benavente'],
     isSensitiveProtected: true,
     expiresInHours: 72,
     status: 'activo',

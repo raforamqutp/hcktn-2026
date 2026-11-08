@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
 import { RatingFaceIcon } from '../common/RatingFaceIcon';
 import { useApp } from '../../context/AppContext';
@@ -29,6 +29,7 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
   onOpenSos,
 }) => {
   const { currentUser, services, favors, setActiveTab } = useApp();
+  const [transitioningId, setTransitioningId] = useState<string | null>(null);
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
@@ -51,11 +52,15 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       cardBg: 'bg-[#FFF3EB] hover:bg-[#FFE8DA]',
       cardBorder: 'border-[#FDE0D0]',
       action: () => {
-        if (onSelectCategory) onSelectCategory('gastronomia_vecinal');
+        setTransitioningId('cocina');
         setTimeout(() => {
-          const el = document.getElementById('servicios-feed');
-          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 50);
+          if (onSelectCategory) onSelectCategory('gastronomia_vecinal');
+          setTransitioningId(null);
+          setTimeout(() => {
+            const el = document.getElementById('servicios-feed');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 50);
+        }, 120);
       },
     },
     {
@@ -69,11 +74,15 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       cardBg: 'bg-[#FEF9E7] hover:bg-[#FDF3CC]',
       cardBorder: 'border-[#FDEEB4]',
       action: () => {
-        if (onSelectCategory) onSelectCategory('oficio_hogar');
+        setTransitioningId('oficios');
         setTimeout(() => {
-          const el = document.getElementById('servicios-feed');
-          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 50);
+          if (onSelectCategory) onSelectCategory('oficio_hogar');
+          setTransitioningId(null);
+          setTimeout(() => {
+            const el = document.getElementById('servicios-feed');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 50);
+        }, 120);
       },
     },
     {
@@ -87,12 +96,16 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       cardBg: 'bg-[#EFF6FF] hover:bg-[#DBEAFE]',
       cardBorder: 'border-[#BFDBFE]',
       action: () => {
-        setActiveTab('favors');
-        if (onSelectFavorCategory) onSelectFavorCategory('movilidad_pool');
+        setTransitioningId('pool');
         setTimeout(() => {
-          const el = document.getElementById('favores-feed');
-          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
+          setActiveTab('favors');
+          if (onSelectFavorCategory) onSelectFavorCategory('movilidad_pool');
+          setTransitioningId(null);
+          setTimeout(() => {
+            const el = document.getElementById('favores-feed');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 80);
+        }, 180);
       },
     },
     {
@@ -106,12 +119,16 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       cardBg: 'bg-[#F0FDF4] hover:bg-[#DCFCE7]',
       cardBorder: 'border-[#BBF7D0]',
       action: () => {
-        setActiveTab('favors');
-        if (onSelectFavorCategory) onSelectFavorCategory('prestamo_salud_herramienta');
+        setTransitioningId('herramientas');
         setTimeout(() => {
-          const el = document.getElementById('favores-feed');
-          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
+          setActiveTab('favors');
+          if (onSelectFavorCategory) onSelectFavorCategory('prestamo_salud_herramienta');
+          setTransitioningId(null);
+          setTimeout(() => {
+            const el = document.getElementById('favores-feed');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 80);
+        }, 180);
       },
     },
     {
@@ -125,12 +142,16 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       cardBg: 'bg-[#F5F3FF] hover:bg-[#EDE9FE]',
       cardBorder: 'border-[#DDD6FE]',
       action: () => {
-        setActiveTab('favors');
-        if (onSelectFavorCategory) onSelectFavorCategory('intercambio_trueque');
+        setTransitioningId('trueque');
         setTimeout(() => {
-          const el = document.getElementById('favores-feed');
-          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
+          setActiveTab('favors');
+          if (onSelectFavorCategory) onSelectFavorCategory('intercambio_trueque');
+          setTransitioningId(null);
+          setTimeout(() => {
+            const el = document.getElementById('favores-feed');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 80);
+        }, 180);
       },
     },
     {
@@ -144,15 +165,19 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       cardBg: 'bg-[#FFF1F2] hover:bg-[#FFE4E6]',
       cardBorder: 'border-[#FECDD3]',
       action: () => {
-        if (onOpenSos) {
-          onOpenSos();
-        } else {
-          setActiveTab('emergency');
-          setTimeout(() => {
-            const el = document.getElementById('emergencia-feed');
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 100);
-        }
+        setTransitioningId('sos');
+        setTimeout(() => {
+          if (onOpenSos) {
+            onOpenSos();
+          } else {
+            setActiveTab('emergency');
+            setTimeout(() => {
+              const el = document.getElementById('emergencia-feed');
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 80);
+          }
+          setTransitioningId(null);
+        }, 180);
       },
     },
   ];
@@ -179,38 +204,78 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
         </p>
       </div>
 
-      {/* 2. Anchor Bento Card: Pulso del Barrio (Compacto y estilizado) */}
+      {/* 2. Anchor Bento Card: Pulso del Barrio */}
       <div className="rounded-2xl sm:rounded-3xl bg-[#181816] text-white p-3.5 sm:p-4 shadow-md border border-neutral-800">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-[#E45826] text-white font-extrabold text-sm shadow-inner">
-              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6" />
+        {/* Vista Móvil (sm:hidden) - Fiel a Imagen 3 B */}
+        <div className="sm:hidden flex items-stretch justify-between gap-3">
+          <div className="flex items-start gap-3 min-w-0 flex-1">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#E45826] text-white font-extrabold text-sm shadow-inner mt-0.5">
+              <ShieldCheck className="h-5 w-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-                  DNI Verificado RENIEC
+            <div className="min-w-0 flex-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block leading-tight">
+                DNI Verificado RENIEC
+              </span>
+              <h2 className="text-sm font-bold text-neutral-100 tracking-tight truncate mt-0.5">
+                {currentUser.neighborhood}
+              </h2>
+              <div className="mt-2 pt-2 border-t border-neutral-800/80">
+                <span className="block text-[9.5px] uppercase text-neutral-400 tracking-wider font-sans leading-none mb-0.5">
+                  A tu alrededor
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold text-emerald-300 border border-emerald-500/30">
-                  <RatingFaceIcon sentiment="happy" size="sm" bare={true} />
-                  <span>Reputación Ejemplar</span>
+                <span className="font-bold text-emerald-400 text-xs font-mono">
+                  {services.length} oficios · {favors.length} favores
                 </span>
               </div>
-              <h2 className="text-sm sm:text-base font-bold text-neutral-100 tracking-tight">
+            </div>
+          </div>
+
+          {/* Bloque Reputación Móvil (Cuadrante vertical derecho - Imagen 3 B) */}
+          <div className="shrink-0 flex flex-col items-center justify-center rounded-2xl bg-[#12231C] border border-emerald-600/40 px-3.5 py-2 text-center min-w-[96px] shadow-inner">
+            <span className="text-[10.5px] font-black uppercase tracking-wider text-emerald-400 mb-1">
+              Reputación
+            </span>
+            <div className="drop-shadow-xs">
+              <RatingFaceIcon sentiment="happy" size="md" bare={true} />
+            </div>
+          </div>
+        </div>
+
+        {/* Vista Web / Desktop (hidden sm:flex) - Fiel a Imagen 1 B */}
+        <div className="hidden sm:flex items-center justify-between gap-4">
+          {/* Lado Izquierdo: Escudo + DNI Verificado + Ubicación (sin pastilla adyacente) */}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#E45826] text-white font-extrabold text-sm shadow-inner">
+              <ShieldCheck className="h-6 w-6" />
+            </div>
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">
+                DNI Verificado RENIEC
+              </span>
+              <h2 className="text-base font-bold text-neutral-100 tracking-tight">
                 {currentUser.neighborhood}
               </h2>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 sm:border-l sm:border-neutral-800 sm:pl-4 text-xs font-mono">
-            <div>
-              <span className="block text-[10px] uppercase text-neutral-400 tracking-wider font-sans">
-                A tu alrededor
-              </span>
-              <span className="font-bold text-emerald-400 text-sm">
-                {services.length} oficios · {favors.length} favores
+          {/* Centro: Pastilla destacada Reputación Ejemplar con carita (Imagen 1 B) */}
+          <div className="flex items-center justify-center flex-1">
+            <div className="inline-flex items-center gap-2.5 rounded-full bg-[#12231C] px-5 py-2 border-2 border-emerald-500/50 text-emerald-300 shadow-md">
+              <RatingFaceIcon sentiment="happy" size="sm" bare={true} />
+              <span className="text-xs sm:text-sm font-black tracking-wide text-emerald-300">
+                Reputación Ejemplar
               </span>
             </div>
+          </div>
+
+          {/* Lado Derecho: A tu alrededor */}
+          <div className="border-l border-neutral-800 pl-4 text-xs font-mono shrink-0">
+            <span className="block text-[10px] uppercase text-neutral-400 tracking-wider font-sans">
+              A tu alrededor
+            </span>
+            <span className="font-bold text-emerald-400 text-sm">
+              {services.length} oficios · {favors.length} favores
+            </span>
           </div>
         </div>
       </div>
@@ -230,7 +295,11 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
               key={item.id}
               type="button"
               onClick={item.action}
-              className={`rounded-2xl border p-3 text-left transition-all duration-200 active:scale-95 flex flex-col justify-between min-h-[96px] sm:min-h-[102px] ${item.cardBg} ${item.cardBorder} shadow-2xs hover:shadow-xs group`}
+              className={`rounded-2xl border p-3 text-left transition-all duration-200 ${
+                transitioningId === item.id
+                  ? 'scale-95 ring-2 ring-emerald-500/60 shadow-inner brightness-95'
+                  : 'active:scale-95 hover:shadow-xs shadow-2xs'
+              } flex flex-col justify-between min-h-[96px] sm:min-h-[102px] ${item.cardBg} ${item.cardBorder} group`}
             >
               <div className="flex items-start justify-between">
                 <span

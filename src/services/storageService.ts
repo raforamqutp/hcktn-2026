@@ -20,7 +20,17 @@ export const storageService = {
   loadServices(fallback: LocalService[]): LocalService[] {
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.SERVICES);
-      return raw ? JSON.parse(raw) : fallback;
+      if (!raw) return fallback;
+      const parsed: LocalService[] = JSON.parse(raw);
+      return parsed.map((item) => ({
+        ...item,
+        providerName: item.providerName
+          .replace('Jorge Luis Huanca (Maestro Cerrajero)', 'Jorge Luis Huanca')
+          .replace('Prof. Mario Cortéz Salas', 'Mario Cortéz Salas')
+          .replace('Prof. Mario Cortz Salas', 'Mario Cortéz Salas')
+          .replace('Lic. Claudia Benavente (Enfermera)', 'Claudia Benavente')
+          .replace('Lic. Claudia Benavente', 'Claudia Benavente'),
+      }));
     } catch {
       return fallback;
     }
@@ -40,7 +50,15 @@ export const storageService = {
   loadFavors(fallback: CommunityFavor[]): CommunityFavor[] {
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.FAVORS);
-      return raw ? JSON.parse(raw) : fallback;
+      if (!raw) return fallback;
+      const parsed: CommunityFavor[] = JSON.parse(raw);
+      return parsed.map((item) => ({
+        ...item,
+        authorName: item.authorName
+          .replace('Juan Carlos Mamani (Mz. D)', 'Juan Carlos Mamani')
+          .replace('Andrea Cornejo (Mamá de 4to grado)', 'Andrea Cornejo')
+          .replace('Rosa Valdivia (Vecina Mz. B)', 'Rosa Valdivia'),
+      }));
     } catch {
       return fallback;
     }
@@ -60,7 +78,23 @@ export const storageService = {
   loadEmergencyItems(fallback: EmergencyItem[]): EmergencyItem[] {
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.EMERGENCY);
-      return raw ? JSON.parse(raw) : fallback;
+      if (!raw) return fallback;
+      const parsed: EmergencyItem[] = JSON.parse(raw);
+      return parsed.map((item) => ({
+        ...item,
+        authorName: item.authorName
+          .replace('Familia Salazar (Reporte Verificado)', 'Miguel Salazar Ramos')
+          .replace('Gustavo Mendoza (Vecino Mz. E)', 'Gustavo Mendoza')
+          .replace('Don Manuel (Gasfitero Mz. B)', 'Manuel Flores Vilca')
+          .replace('Don Lucho Paredes (Ferretería El Peral)', 'Luis Paredes Zeballos')
+          .replace('Familia Quispe (Mz. F)', 'Carlos Quispe Huamán'),
+        responders: item.responders.map((r) =>
+          r
+            .replace('Lic. Claudia Benavente', 'Claudia Benavente')
+            .replace('Don Manuel', 'Manuel Flores Vilca')
+            .replace('Don Lucho Paredes', 'Luis Paredes Zeballos')
+        ),
+      }));
     } catch {
       return fallback;
     }
