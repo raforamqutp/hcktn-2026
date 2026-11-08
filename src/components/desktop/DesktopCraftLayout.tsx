@@ -47,22 +47,20 @@ export const DesktopCraftLayout: React.FC = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const isEmergency = mode === 'emergency' || activeTab === 'emergency';
 
-  // 4 clics en el logo para ir al panel host secreto (/config)
+  // 5 clics consecutivos rápidos exclusivamente sobre el cuadrado del logo para ir a /config
   const logoClickCountRef = useRef(0);
   const logoClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleLogoClick = () => {
+  const handleLogoSquareClick = () => {
     logoClickCountRef.current += 1;
     if (logoClickTimerRef.current) clearTimeout(logoClickTimerRef.current);
     logoClickTimerRef.current = setTimeout(() => {
       logoClickCountRef.current = 0;
     }, 1800);
 
-    if (logoClickCountRef.current >= 4) {
+    if (logoClickCountRef.current >= 5) {
       logoClickCountRef.current = 0;
       window.location.hash = '#/config';
-    } else {
-      setActiveTab('services');
     }
   };
 
@@ -104,33 +102,42 @@ export const DesktopCraftLayout: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
           {/* Logo y Distrito */}
           <div className="flex items-center gap-3">
+            {/* Cuadrado del logo: 5 clics rápidos abren /config */}
             <button
               type="button"
-              onClick={handleLogoClick}
-              className="flex items-center gap-3 text-left group focus:outline-none"
-              title="VecinOS — Yanahuara, Arequipa (Clic para inicio)"
-              aria-label="Ir a inicio de VecinOS"
+              onClick={handleLogoSquareClick}
+              className="focus:outline-none transition transform active:scale-95 shrink-0"
+              title="VecinOS"
+              aria-label="Logo VecinOS (5 clics rápidos para configuración)"
             >
               <VecinosBrandLogo isEmergency={isEmergency} />
-              <div>
-                <div className="flex items-baseline tracking-tight leading-none">
-                  <span className={`text-[21px] font-black tracking-tight ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
-                    Vecin
+            </button>
+
+            {/* Texto del logo: clic normal va a inicio de servicios */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('services')}
+              className="text-left group focus:outline-none"
+              title="Ir a inicio de VecinOS"
+              aria-label="Ir a inicio de VecinOS"
+            >
+              <div className="flex items-baseline tracking-tight leading-none">
+                <span className={`text-[21px] font-black tracking-tight ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
+                  Vecin
+                </span>
+                <span className={`text-[21px] font-black tracking-tight ${isEmergency ? 'text-red-400' : 'text-emerald-600'}`}>
+                  OS
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className={`block text-[11px] font-black tracking-wide leading-tight ${isEmergency ? 'text-slate-300' : 'text-emerald-800'}`}>
+                  Tu barrio conectado
+                </span>
+                {!isOnline && (
+                  <span className="text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded-full leading-none">
+                    P2P ({pendingSyncCount})
                   </span>
-                  <span className={`text-[21px] font-black tracking-tight ${isEmergency ? 'text-red-400' : 'text-emerald-600'}`}>
-                    OS
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className={`block text-[11px] font-black tracking-wide leading-tight ${isEmergency ? 'text-slate-300' : 'text-emerald-800'}`}>
-                    Tu barrio conectado
-                  </span>
-                  {!isOnline && (
-                    <span className="text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded-full leading-none">
-                      P2P ({pendingSyncCount})
-                    </span>
-                  )}
-                </div>
+                )}
               </div>
             </button>
 

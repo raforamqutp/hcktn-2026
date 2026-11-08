@@ -7,6 +7,7 @@ import {
   RefreshCw,
   RotateCcw,
   Sparkles,
+  Trash2,
   Type,
   Users,
   Wifi,
@@ -14,7 +15,12 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { OFFLINE_DNI_DIRECTORY } from '../../services/dniService';
+import {
+  getActiveDniDirectory,
+  OFFLINE_DNI_DIRECTORY,
+  removeDniFromDirectory,
+  resetDniDirectoryToDefault,
+} from '../../services/dniService';
 import { storageService } from '../../services/storageService';
 import { AccountTier, ActiveTab, UserProfile } from '../../types';
 
@@ -45,6 +51,20 @@ export const HostConfigView: React.FC<HostConfigViewProps> = ({ onExit }) => {
   const [customName, setCustomName] = useState('');
   const [customIsAdult, setCustomIsAdult] = useState(true);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [, setDirectoryTick] = useState(0);
+
+  const handleDeleteDni = (e: React.MouseEvent, dniToDelete: string) => {
+    e.stopPropagation();
+    removeDniFromDirectory(dniToDelete);
+    setDirectoryTick((t) => t + 1);
+    showToast(`DNI ${dniToDelete} eliminado del padrón.`);
+  };
+
+  const handleResetDirectory = () => {
+    resetDniDirectoryToDefault();
+    setDirectoryTick((t) => t + 1);
+    showToast('Directorio de DNIs de integrantes restaurado.');
+  };
 
   const showToast = (msg: string) => {
     setActionMessage(msg);
@@ -222,35 +242,57 @@ export const HostConfigView: React.FC<HostConfigViewProps> = ({ onExit }) => {
               Selecciona cualquiera de las identidades precargadas del equipo o padrón:
             </p>
 
-            <div className="space-y-2">
-              {Object.entries(OFFLINE_DNI_DIRECTORY).map(([dni, entry]) => {
+            <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+              {Object.entries(getActiveDniDirectory()).map(([dni, entry]) => {
                 const isSelected = currentUser.dni === dni;
                 return (
-                  <button
+                  <div
                     key={dni}
-                    type="button"
-                    onClick={() => selectPredefinedUser(dni)}
-                    className={`w-full text-left p-3 rounded-2xl border transition flex items-center justify-between ${
+                    className={`w-full p-2.5 rounded-2xl border transition flex items-center justify-between gap-2 ${
                       isSelected
                         ? 'bg-indigo-950/90 border-indigo-500 text-white ring-1 ring-indigo-500'
                         : 'bg-slate-900/60 border-slate-700/80 text-slate-300 hover:bg-slate-900 hover:border-slate-600'
                     }`}
                   >
-                    <div>
-                      <p className="text-xs font-bold text-white leading-tight">
+                    <button
+                      type="button"
+                      onClick={() => selectPredefinedUser(dni)}
+                      className="text-left flex-1 min-w-0"
+                    >
+                      <p className="text-xs font-bold text-white leading-tight truncate">
                         {entry.fullName}
                       </p>
-                      <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+                      <p className="text-[11px] text-slate-400 font-mono mt-0.5 truncate">
                         DNI {dni} · {entry.roleDescription || 'Vecino'}
                       </p>
+                    </button>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {isSelected && (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteDni(e, dni)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-950/50 transition"
+                        title={`Eliminar DNI ${dni} del padrón`}
+                        aria-label={`Eliminar DNI ${dni}`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
-                    {isSelected && (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                    )}
-                  </button>
+                  </div>
                 );
               })}
             </div>
+
+            <button
+              type="button"
+              onClick={handleResetDirectory}
+              className="w-full py-2.5 rounded-xl border border-slate-700 bg-slate-900/60 hover:bg-slate-900 text-xs text-slate-300 font-bold transition flex items-center justify-center gap-2 active:scale-98"
+            >
+              <RotateCcw className="h-3.5 w-3.5 text-indigo-400" />
+              <span>Restaurar DNIs originales del equipo</span>
+            </button>
 
             {/* Crear Vecino al vuelo */}
             <form onSubmit={handleCreateCustom} className="pt-3 border-t border-slate-700 space-y-2.5">

@@ -44,22 +44,20 @@ export const MobileLayout: React.FC = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const isEmergency = mode === 'emergency' || activeTab === 'emergency';
 
-  // 4 clics en el logo para ir al panel host secreto (/config)
+  // 5 clics consecutivos rápidos exclusivamente sobre el cuadrado del logo para ir a /config
   const logoClickCountRef = useRef(0);
   const logoClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleLogoClick = () => {
+  const handleLogoSquareClick = () => {
     logoClickCountRef.current += 1;
     if (logoClickTimerRef.current) clearTimeout(logoClickTimerRef.current);
     logoClickTimerRef.current = setTimeout(() => {
       logoClickCountRef.current = 0;
     }, 1800);
 
-    if (logoClickCountRef.current >= 4) {
+    if (logoClickCountRef.current >= 5) {
       logoClickCountRef.current = 0;
       window.location.hash = '#/config';
-    } else {
-      setActiveTab('services');
     }
   };
 
@@ -101,34 +99,43 @@ export const MobileLayout: React.FC = () => {
       >
         <div className="px-4 py-2.5 flex items-center justify-between gap-2">
           {/* Logo y Ubicación */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            {/* Cuadrado del logo: 5 clics rápidos abren /config */}
             <button
               type="button"
-              onClick={handleLogoClick}
-              className="flex items-center gap-2 text-left active:scale-95 transition min-w-0"
-              title="VecinOS Yanahuara (Clic para inicio)"
-              aria-label="Ir a inicio de VecinOS"
+              onClick={handleLogoSquareClick}
+              className="focus:outline-none transition transform active:scale-95 shrink-0"
+              title="VecinOS"
+              aria-label="Logo VecinOS (5 clics rápidos para configuración)"
             >
               <VecinosBrandLogo isEmergency={isEmergency} size="sm" />
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 leading-none">
-                  <span className={`text-[19px] font-black tracking-tight leading-none ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
-                    Vecin<span className={isEmergency ? 'text-red-400' : 'text-emerald-600'}>OS</span>
-                  </span>
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-1 py-0.5 rounded-sm">
-                    Yanahuara
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <span className={`text-[10px] font-semibold leading-none ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
-                    Tu barrio conectado
-                  </span>
-                  <span className="text-slate-300">·</span>
-                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-                  <span className={`text-[9px] font-medium leading-none ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
-                    {isOnline ? 'Activo' : `Offline (${pendingSyncCount})`}
-                  </span>
-                </div>
+            </button>
+
+            {/* Texto del logo: clic normal va a inicio de servicios */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('services')}
+              className="text-left active:opacity-80 transition min-w-0"
+              title="Ir a inicio de VecinOS"
+              aria-label="Ir a inicio de VecinOS"
+            >
+              <div className="flex items-center gap-1.5 leading-none">
+                <span className={`text-[19px] font-black tracking-tight leading-none ${isEmergency ? 'text-white' : 'text-slate-950'}`}>
+                  Vecin<span className={isEmergency ? 'text-red-400' : 'text-emerald-600'}>OS</span>
+                </span>
+                <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-1 py-0.5 rounded-sm">
+                  Yanahuara
+                </span>
+              </div>
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className={`text-[10px] font-semibold leading-none ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
+                  Tu barrio conectado
+                </span>
+                <span className="text-slate-300">·</span>
+                <span className={`inline-block h-1.5 w-1.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+                <span className={`text-[9px] font-medium leading-none ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
+                  {isOnline ? 'Activo' : `Offline (${pendingSyncCount})`}
+                </span>
               </div>
             </button>
           </div>

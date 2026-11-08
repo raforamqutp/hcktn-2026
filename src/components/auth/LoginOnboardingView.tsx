@@ -11,10 +11,11 @@ import {
   Smartphone,
   UserCheck,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { OFFLINE_DNI_DIRECTORY, validatePeruvianDni } from '../../services/dniService';
 import { storageService } from '../../services/storageService';
+import { VecinosBrandLogo } from '../common/VecinosBrandLogo';
 import { TermsModal } from './TermsModal';
 
 interface LoginOnboardingViewProps {
@@ -43,6 +44,23 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [recoveryNotice, setRecoveryNotice] = useState<string | null>(null);
 
+  // 5 clics rápidos en el cuadrado del logo para acceder a /config
+  const logoClickCountRef = useRef(0);
+  const logoClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleLogoSquareClick = () => {
+    logoClickCountRef.current += 1;
+    if (logoClickTimerRef.current) clearTimeout(logoClickTimerRef.current);
+    logoClickTimerRef.current = setTimeout(() => {
+      logoClickCountRef.current = 0;
+    }, 1800);
+
+    if (logoClickCountRef.current >= 5) {
+      logoClickCountRef.current = 0;
+      window.location.hash = '#/config';
+    }
+  };
+
   // Consulta automática en tiempo real al ingresar 8 dígitos en modo Registro
   useEffect(() => {
     if (authMode === 'register' && dni.length === 8) {
@@ -69,7 +87,7 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
         } else {
           setIsMinor(false);
           setLivePreview(null);
-          setGeneralError(res.errorMessage || 'No se pudo verificar el DNI en el padrón.');
+          setGeneralError(res.errorMessage || 'No se pudo verificar el DNI.');
         }
       });
 
@@ -194,23 +212,41 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
       <div className="w-full max-w-[420px] mx-auto my-auto py-6">
         <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xl border-2 border-slate-200 space-y-5 animate-scale-in">
           {/* Logo y Encabezado */}
-          <div className="space-y-1">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black text-emerald-700 uppercase tracking-widest">
-                VecinOS · Yanahuara
-              </span>
-              <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
-                Padrón Oficial 2026
-              </span>
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleLogoSquareClick}
+                  className="focus:outline-none transition transform active:scale-95"
+                  title="VecinOS"
+                  aria-label="Logo VecinOS (5 clics rápidos para configuración)"
+                >
+                  <VecinosBrandLogo size="sm" />
+                </button>
+                <div>
+                  <div className="flex items-baseline tracking-tight leading-none">
+                    <span className="text-[17px] font-black text-slate-950">
+                      Vecin<span className="text-emerald-600">OS</span>
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-500 leading-none block mt-0.5">
+                    Yanahuara · Arequipa
+                  </span>
+                </div>
+              </div>
             </div>
-            <h1 className="text-2xl font-black text-slate-950 tracking-tight">
-              {authMode === 'login' ? 'Bienvenido a tu barrio' : 'Registro de nuevo vecino'}
-            </h1>
-            <p className="text-xs font-medium text-slate-600 leading-relaxed">
-              {authMode === 'login'
-                ? 'Ingresa tu DNI y contraseña para conectarte con tu cuadra.'
-                : 'Identifícate con tu DNI para verificar tu cuenta de forma segura.'}
-            </p>
+
+            <div>
+              <h1 className="text-2xl font-black text-slate-950 tracking-tight">
+                {authMode === 'login' ? 'Bienvenido a tu barrio' : 'Registro de nuevo vecino'}
+              </h1>
+              <p className="text-xs font-medium text-slate-600 leading-relaxed mt-1">
+                {authMode === 'login'
+                  ? 'Ingresa tu DNI y contraseña para conectarte con tu cuadra.'
+                  : 'Identifícate con tu DNI para verificar tu cuenta de forma segura.'}
+              </p>
+            </div>
           </div>
 
           {/* Selector de Pestañas: Iniciar Sesión vs Crear Cuenta */}
@@ -378,7 +414,7 @@ export const LoginOnboardingView: React.FC<LoginOnboardingViewProps> = ({ onSucc
                 {loading && (
                   <div className="flex items-center gap-2 pt-1 text-[11px] text-slate-500 font-medium animate-pulse">
                     <div className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-ping" />
-                    <span>Consultando padrón oficial...</span>
+                    <span>Validando identidad vecinal...</span>
                   </div>
                 )}
 

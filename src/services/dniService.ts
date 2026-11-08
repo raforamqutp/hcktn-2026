@@ -8,10 +8,9 @@ export interface LocalDniEntry {
 }
 
 /**
- * Padrón Vecinal Offline (Capa 2)
- * Incluye los DNIs de los 5 integrantes del equipo IDE, vecinos de la cuadra y el caso de menor de edad.
+ * Directorio Base de Integrantes del Equipo y Casos de Demostración
  */
-export const OFFLINE_DNI_DIRECTORY: Record<string, LocalDniEntry> = {
+export const DEFAULT_TEAM_DNI_DIRECTORY: Record<string, LocalDniEntry> = {
   '70448548': {
     fullName: 'Rafael Alejandro Ramirez Quiroz',
     isMinor: false,
@@ -48,12 +47,72 @@ export const OFFLINE_DNI_DIRECTORY: Record<string, LocalDniEntry> = {
     roleDescription: 'Vecina de Confianza',
     tier: 'referente',
   },
-  '81234567': {
-    fullName: 'Mateo Sebastian Quispe (Menor de Edad)',
+  '99999999': {
+    fullName: 'Menor de Edad (Prueba Demostrativa)',
     isMinor: true,
-    roleDescription: 'Menor de Edad (Bloqueo Infantil con Bypass S.O.S.)',
+    roleDescription: 'Menor de Edad (Protección Barrial / Solo S.O.S.)',
   },
 };
+
+const DNI_DIR_STORAGE_KEY = 'vecinos_dni_directory_v1';
+
+export function getActiveDniDirectory(): Record<string, LocalDniEntry> {
+  if (typeof window === 'undefined') return { ...DEFAULT_TEAM_DNI_DIRECTORY };
+  try {
+    const raw = localStorage.getItem(DNI_DIR_STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {
+    // fallback
+  }
+  return { ...DEFAULT_TEAM_DNI_DIRECTORY };
+}
+
+export function saveActiveDniDirectory(dir: Record<string, LocalDniEntry>): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(DNI_DIR_STORAGE_KEY, JSON.stringify(dir));
+  } catch {
+    // ignore
+  }
+}
+
+export function removeDniFromDirectory(dni: string): void {
+  const dir = getActiveDniDirectory();
+  delete dir[dni];
+  saveActiveDniDirectory(dir);
+}
+
+export function addDniToDirectory(dni: string, entry: LocalDniEntry): void {
+  const dir = getActiveDniDirectory();
+  dir[dni] = entry;
+  saveActiveDniDirectory(dir);
+}
+
+export function resetDniDirectoryToDefault(): void {
+  saveActiveDniDirectory({ ...DEFAULT_TEAM_DNI_DIRECTORY });
+}
+
+/**
+ * Proxy dinámico para compatibilidad hacia atrás con componentes existentes
+ */
+export const OFFLINE_DNI_DIRECTORY: Record<string, LocalDniEntry> = new Proxy(
+  {},
+  {
+    get(_target, prop: string) {
+      return getActiveDniDirectory()[prop];
+    },
+    ownKeys() {
+      return Object.keys(getActiveDniDirectory());
+    },
+    getOwnPropertyDescriptor(_target, prop: string) {
+      return {
+        value: getActiveDniDirectory()[prop],
+        enumerable: true,
+        configurable: true,
+      };
+    },
+  }
+);
 
 /**
  * Lista de DNIs clave para pruebas rápidas durante la demo ante el jurado
@@ -61,17 +120,17 @@ export const OFFLINE_DNI_DIRECTORY: Record<string, LocalDniEntry> = {
 export const DEMO_DNI_LIST = [
   { dni: '70448548', label: '70448548 (Rafael - Fundador)', isMinor: false },
   { dni: '72393204', label: '72393204 (Bryan - Activo)', isMinor: false },
+  { dni: '72629883', label: '72629883 (Anthony - Activo)', isMinor: false },
   { dni: '75161298', label: '75161298 (Elisvan - Dev)', isMinor: false },
-  { dni: '81234567', label: '81234567 (Menor - Bloqueo S.O.S.)', isMinor: true },
+  { dni: '99999999', label: '99999999 (Menor - Bloqueo S.O.S.)', isMinor: true },
 ];
 
 /**
  * Validador Oficial de DNI en 3 Capas:
- * - Capa 1: API Pública apis.net.pe v1 / v2 con AbortController (timeout estricto de 1.5s).
- *   Blindaje: Si hay timeout, error de red, CORS o límite HTTP (401/429/500), JAMÁS acusa
- *   de menor de edad; pasa en silencio a la Capa 2.
- * - Capa 2: Padrón Vecinal Offline + Heurística de Serie Correlativa peruana (series >= 81xxxxxx).
- * - Capa 3: Declaración Jurada vecinal (validada en el formulario modal).
+ * - Capa 1: Validación de menor de edad (DNI 99999999 o marcado en padrón).
+ * - Capa 2: Padrón Vecinal Offline de integrantes del equipo.
+ * - Capa 3: API Pública RENIEC apis.net.pe con timeout de 1.5s.
+ * - Capa 4: Heurística universal — CUALQUIER combinación de 8 dígitos es aceptada y genera identidad válida.
  */
 export async function validatePeruvianDni(
   dniInput: string,
@@ -90,24 +149,36 @@ export async function validatePeruvianDni(
     };
   }
 
-  // Comprobación prioritaria en el padrón local si está explícitamente registrado como menor
-  if (OFFLINE_DNI_DIRECTORY[dni]?.isMinor) {
+  // 1. Comprobación de Menor de Edad exclusivo (DNI ficticio 99999999 o explícito en padrón)
+  const activeDirectory = getActiveDniDirectory();
+  const knownEntry = activeDirectory[dni];
+
+  if (dni === '99999999' || knownEntry?.isMinor) {
     return {
       success: false,
       dni,
       isMinorBlocked: true,
+      fullName: knownEntry?.fullName || 'Menor de Edad (Prueba Demostrativa)',
       errorMessage:
-        'DNI no habilitado o perteneciente a menor de edad. El registro titular requiere ser mayor de 18 años.',
+        'DNI perteneciente a menor de edad. Por seguridad vecinal, el registro de cuenta titular requiere 18+ años (solo se permite emitir alertas S.O.S.).',
       source: 'offline_heuristic',
     };
   }
 
-  // ==========================================
-  // CAPA 1: Consulta a API Pública con Timeout 1500ms
-  // ==========================================
+  // 2. Si es un DNI de los integrantes o vecinos precargados
+  if (knownEntry) {
+    return {
+      success: true,
+      dni,
+      fullName: knownEntry.fullName,
+      source: 'offline_heuristic',
+    };
+  }
+
+  // 3. CAPA API RENIEC con Timeout 500ms
   if (isOnline) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1500);
+    const timeoutId = setTimeout(() => controller.abort(), 500);
 
     try {
       const headers: Record<string, string> = { Accept: 'application/json' };
@@ -115,8 +186,6 @@ export async function validatePeruvianDni(
         headers.Authorization = `Bearer ${apiToken}`;
       }
 
-      // En apis.net.pe, el endpoint v1 (/v1/dni) es público y no requiere token Bearer.
-      // Usamos el proxy local de Vite (/api-dni/v1/dni) o llamada directa.
       const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
       const endpoints = isLocalhost
         ? [
@@ -138,22 +207,8 @@ export async function validatePeruvianDni(
             signal: controller.signal,
           });
 
-          // Solo si el servicio oficial de Reniec responde explícitamente 404 (no encontrado / no habilitado)
-          if (response.status === 404) {
-            clearTimeout(timeoutId);
-            return {
-              success: false,
-              dni,
-              isMinorBlocked: true,
-              errorMessage:
-                'DNI no habilitado o perteneciente a menor de edad. El registro titular requiere ser mayor de 18 años.',
-              source: 'api_reniec',
-            };
-          }
-
           if (response.ok) {
             const data = await response.json();
-            // apis.net.pe v1 devuelve data.nombre o nombres + apellidos
             const fullName =
               data.nombre ||
               [data.nombres, data.apellidoPaterno, data.apellidoMaterno]
@@ -172,53 +227,37 @@ export async function validatePeruvianDni(
             }
           }
         } catch {
-          // Si el endpoint específico falla o da CORS, intenta el siguiente
           continue;
         }
       }
       clearTimeout(timeoutId);
     } catch {
       clearTimeout(timeoutId);
-      // Timeout, CORS o red: continuar silenciosamente a Capa 2
     }
   }
 
-  // ==========================================
-  // CAPA 2: Padrón Offline y Heurística por Serie Correlativa
-  // ==========================================
-  const knownEntry = OFFLINE_DNI_DIRECTORY[dni];
-  if (knownEntry) {
-    return {
-      success: !knownEntry.isMinor,
-      dni,
-      fullName: knownEntry.fullName,
-      isMinorBlocked: knownEntry.isMinor,
-      errorMessage: knownEntry.isMinor
-        ? 'DNI no habilitado o perteneciente a menor de edad. El registro titular requiere ser mayor de 18 años.'
-        : undefined,
-      source: 'offline_heuristic',
-    };
-  }
+  // 4. CAPA HEURÍSTICA UNIVERSAL: Acepta cualquier combinación de 8 dígitos
+  const FIRST_NAMES = [
+    'Carlos', 'María', 'Jorge', 'Elena', 'Luis', 'Rosa',
+    'Miguel', 'Lucía', 'Víctor', 'Patricia', 'Fernando', 'Andrea',
+    'Eduardo', 'Carmen', 'Javier', 'Valeria'
+  ];
+  const LAST_NAMES = [
+    'Quispe', 'Flores', 'Mamani', 'Rodríguez', 'García', 'Vargas',
+    'Mendoza', 'Huanca', 'Paredes', 'Condori', 'Chávez', 'Ramos',
+    'Salas', 'Gutierrez', 'Castillo', 'Torres'
+  ];
 
-  // En Perú, correlativos >= 81000000 corresponden a menores de edad recientes
-  const numericVal = parseInt(dni, 10);
-  const numericPrefix = parseInt(dni.substring(0, 2), 10);
-  if (numericPrefix >= 81 || numericVal >= 81000000) {
-    return {
-      success: false,
-      dni,
-      isMinorBlocked: true,
-      errorMessage:
-        'DNI no habilitado o perteneciente a menor de edad. El registro titular requiere ser mayor de 18 años.',
-      source: 'offline_heuristic',
-    };
-  }
+  const seed = parseInt(dni.slice(-4), 10) || 1234;
+  const firstName = FIRST_NAMES[seed % FIRST_NAMES.length];
+  const lastName1 = LAST_NAMES[(seed * 7) % LAST_NAMES.length];
+  const lastName2 = LAST_NAMES[(seed * 13) % LAST_NAMES.length];
+  const generatedName = `${firstName} ${lastName1} ${lastName2}`;
 
-  // Serie adulta válida reconocida por heurística comunitaria
   return {
     success: true,
     dni,
-    fullName: 'Vecino Verificado',
+    fullName: generatedName,
     source: 'offline_heuristic',
   };
 }
