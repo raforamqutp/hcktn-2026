@@ -209,6 +209,8 @@ export const QuickPublishSheet: React.FC = () => {
 
     if (intent === 'service' && !isMinor) {
       addService({
+        providerId: currentUser.id,
+        providerDni: currentUser.dni,
         providerName: currentUser.fullName,
         tradeTitle: title.trim(),
         category: selectedTemplate?.serviceCategory || 'oficio_hogar',
@@ -223,6 +225,8 @@ export const QuickPublishSheet: React.FC = () => {
       });
     } else if (intent === 'favor' && !isMinor) {
       addFavor({
+        authorId: currentUser.id,
+        authorDni: currentUser.dni,
         authorName: currentUser.fullName,
         direction: selectedTemplate?.direction || 'ofrezco',
         category: selectedTemplate?.favorCategory || 'prestamo_salud_herramienta',

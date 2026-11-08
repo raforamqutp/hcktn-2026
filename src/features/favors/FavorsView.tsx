@@ -11,6 +11,7 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
+  Trash2,
   UserCheck,
   Wrench,
 } from 'lucide-react';
@@ -28,7 +29,16 @@ const FAVOR_CATEGORIES: { id: 'all' | FavorCategory; label: string; icon: React.
 ];
 
 export const FavorsView: React.FC = () => {
-  const { favors, markFavorStatus, isSeniorMode, openPublishModal, mode, activeTab, currentUser } = useApp();
+  const {
+    favors,
+    markFavorStatus,
+    deleteFavor,
+    isSeniorMode,
+    openPublishModal,
+    mode,
+    activeTab,
+    currentUser,
+  } = useApp();
   const isMinor = !currentUser.isVerifiedAdult;
   const [directionFilter, setDirectionFilter] = useState<'all' | 'ofrezco' | 'solicito'>('all');
   const [categoryFilter, setCategoryFilter] = useState<'all' | FavorCategory>('all');
@@ -121,7 +131,7 @@ export const FavorsView: React.FC = () => {
       )}
 
       {/* 1. Header Principal y Resumen */}
-      <div className="space-y-3">
+      <div id="favores-feed" className="space-y-3 scroll-mt-20">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
@@ -293,6 +303,11 @@ export const FavorsView: React.FC = () => {
       {/* 4. Feed de Favores en Inset Grouped Swiss Cards */}
       <div className="space-y-3">
         {filtered.map((fav) => {
+          const isOwnFavor = Boolean(
+            (fav.authorDni && fav.authorDni === currentUser.dni) ||
+            (fav.authorId && fav.authorId === currentUser.id) ||
+            (fav.authorName && fav.authorName.trim().toLowerCase() === currentUser.fullName.trim().toLowerCase())
+          );
           const tier = getTierInfo(fav.authorTier);
           const isPool = fav.category === 'movilidad_pool';
           const isTool = fav.category === 'prestamo_salud_herramienta';
@@ -317,10 +332,15 @@ export const FavorsView: React.FC = () => {
                     {fav.authorName.charAt(0)}
                   </div>
                   <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span className={`text-xs font-bold truncate ${isEmergency ? 'text-slate-200' : 'text-slate-900'}`}>
                         {fav.authorName}
                       </span>
+                      {isOwnFavor && (
+                        <span className="px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase bg-emerald-100 text-emerald-900 border border-emerald-300">
+                          Tú
+                        </span>
+                      )}
                       <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${tier.badgeClass}`}>
                         {tier.label}
                       </span>
@@ -403,7 +423,27 @@ export const FavorsView: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {isMinor ? (
+                  {isOwnFavor ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-semibold text-neutral-500 italic">
+                        Tu publicación
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`¿Eliminar este favor "${fav.title}"?`)) {
+                            deleteFavor(fav.id);
+                            setActionNotice(`Favor "${fav.title}" eliminado.`);
+                            setTimeout(() => setActionNotice(null), 3500);
+                          }
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition active:scale-95"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        <span>Eliminar mi favor</span>
+                      </button>
+                    </div>
+                  ) : isMinor ? (
                     <span
                       className="inline-flex items-center gap-1.5 rounded-xl bg-amber-50 border border-amber-200 px-3 py-1 text-[11px] font-bold text-amber-900"
                       title="Modo Protegido: Los favores y coordinación directa están reservados para cuentas de adultos"

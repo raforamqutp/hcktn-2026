@@ -68,6 +68,8 @@ export type ServiceCategory =
 
 export interface LocalService {
   id: string;
+  providerId?: string;
+  providerDni?: string;
   providerName: string;
   providerTier: AccountTier;
   tradeTitle: string;
@@ -100,6 +102,8 @@ export type FavorCategory =
 
 export interface CommunityFavor {
   id: string;
+  authorId?: string;
+  authorDni?: string;
   authorName: string;
   authorTier: AccountTier;
   direction: 'ofrezco' | 'solicito';

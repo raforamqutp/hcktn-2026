@@ -77,6 +77,7 @@ export interface AppContextType {
   rateServiceWithFace: (serviceId: string, sentiment: SentimentScore, comment?: string) => void;
   submitBarterProposal: (serviceId: string, offeredExchangeText: string) => void;
   reportItem: (id: string, reason: string) => void;
+  deleteService: (serviceId: string) => void;
 
   favors: CommunityFavor[];
   addFavor: (
@@ -86,6 +87,7 @@ export interface AppContextType {
     >
   ) => void;
   markFavorStatus: (favorId: string, status: CommunityFavor['status']) => void;
+  deleteFavor: (favorId: string) => void;
 
   emergencyItems: EmergencyItem[];
   addEmergencyItem: (
@@ -121,7 +123,13 @@ function computeWeightedMetrics(ratings: ServiceRating[]) {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<UserProfile>(DEMO_USERS.referente);
+  const [currentUser, setCurrentUser] = useState<UserProfile>(() =>
+    storageService.loadUserProfile(DEMO_USERS.referente)
+  );
+
+  useEffect(() => {
+    storageService.saveUserProfile(currentUser);
+  }, [currentUser]);
   const [mode, setMode] = useState<AppMode>('normal');
   const [isOnline, setIsOnline] = useState<boolean>(true);
   const [isSeniorMode, setIsSeniorMode] = useState<boolean>(false);
@@ -219,7 +227,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [isOnline, pendingSyncCount]);
 
   const switchDemoUserTier = (tier: AccountTier) => {
-    setCurrentUser(DEMO_USERS[tier]);
+    const nextUser = DEMO_USERS[tier];
+    setCurrentUser(nextUser);
+    storageService.saveUserProfile(nextUser);
   };
 
   const toggleEmergencyMode = () => {
@@ -259,28 +269,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const addService: AppContextType['addService'] = (data) => {
-    const initialRating: ServiceRating = {
-      userId: currentUser.id,
-      userName: currentUser.fullName,
-      userTier: currentUser.accountTier,
-      sentiment: 'happy',
-      weightApplied: currentUser.reputationWeight,
-      comment: 'Vecino registrado en el directorio del barrio.',
-      createdAt: 'Ahora mismo',
-    };
     const newItem: LocalService = {
       ...data,
       id: `srv-${Date.now()}`,
+      providerId: currentUser.id,
+      providerDni: currentUser.dni,
       providerTier: currentUser.accountTier,
       barterProposals: [],
-      ratings: [initialRating],
+      ratings: [],
       weightedScore: 100,
-      happyCount: 1,
+      happyCount: 0,
       neutralCount: 0,
       angryCount: 0,
       syncStatus: isOnline ? 'synced' : 'pending',
     };
     setServices((prev) => [newItem, ...prev]);
+  };
+
+  const deleteService: AppContextType['deleteService'] = (serviceId) => {
+    setServices((prev) => prev.filter((srv) => srv.id !== serviceId));
   };
 
   const rateServiceWithFace: AppContextType['rateServiceWithFace'] = (
@@ -353,6 +360,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const newFavor: CommunityFavor = {
       ...data,
       id: `fav-${Date.now()}`,
+      authorId: currentUser.id,
+      authorDni: currentUser.dni,
       authorTier: currentUser.accountTier,
       createdAt: 'Ahora mismo',
       status: 'disponible',
@@ -360,6 +369,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       syncStatus: isOnline ? 'synced' : 'pending',
     };
     setFavors((prev) => [newFavor, ...prev]);
+  };
+
+  const deleteFavor: AppContextType['deleteFavor'] = (favorId) => {
+    setFavors((prev) => prev.filter((fav) => fav.id !== favorId));
   };
 
   const markFavorStatus: AppContextType['markFavorStatus'] = (favorId, status) => {
@@ -439,11 +452,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         closePublishModal,
         services,
         addService,
+        deleteService,
         rateServiceWithFace,
         submitBarterProposal,
         reportItem,
         favors,
         addFavor,
+        deleteFavor,
         markFavorStatus,
         emergencyItems,
         addEmergencyItem,

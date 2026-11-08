@@ -85,11 +85,11 @@ export const QuickGuideModal: React.FC = () => {
         </div>
 
         {/* Indicador de 3 Pasos */}
-        <div className="mt-3.5 grid grid-cols-3 gap-2">
+        <div className="mt-3.5 grid grid-cols-3 gap-1.5 sm:gap-2">
           {[
-            { step: 1, title: '1. Servicios & Trueque' },
-            { step: 2, title: '2. Favores & Pool' },
-            { step: 3, title: '3. S.O.S. & Emergencias' },
+            { step: 1, label: '1. Servicios' },
+            { step: 2, label: '2. Favores' },
+            { step: 3, label: '3. S.O.S.' },
           ].map((item) => {
             const isActive = currentStep === item.step;
             const isCompleted = currentStep > item.step;
@@ -98,7 +98,7 @@ export const QuickGuideModal: React.FC = () => {
                 key={item.step}
                 type="button"
                 onClick={() => setCurrentStep(item.step)}
-                className={`flex flex-col items-center gap-1 rounded-xl p-2 text-left transition border ${
+                className={`flex flex-col items-center gap-1 rounded-xl p-1.5 sm:p-2 text-center transition border min-w-0 ${
                   isActive
                     ? 'bg-emerald-50 border-emerald-400 text-emerald-950 font-black'
                     : isCompleted
@@ -106,19 +106,21 @@ export const QuickGuideModal: React.FC = () => {
                     : 'bg-white border-slate-200 text-slate-400 font-medium'
                 }`}
               >
-                <div className="flex items-center gap-1">
+                <div className="flex items-center justify-center gap-1 min-w-0 w-full">
                   {isCompleted ? (
-                    <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" />
+                    <Check className="h-3 w-3 text-emerald-600 stroke-[3] shrink-0" />
                   ) : (
                     <span
-                      className={`flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-black ${
+                      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-black ${
                         isActive ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
                       }`}
                     >
                       {item.step}
                     </span>
                   )}
-                  <span className="text-[11px] truncate">{item.title.split('. ')[1]}</span>
+                  <span className="text-[10.5px] sm:text-[11px] font-bold truncate">
+                    {item.label.split('. ')[1]}
+                  </span>
                 </div>
                 <div
                   className={`h-1 w-full rounded-full ${
@@ -148,13 +150,13 @@ export const QuickGuideModal: React.FC = () => {
             </div>
 
             {/* Reputación Vecinal */}
-            <div className="rounded-2xl bg-slate-900 p-4 border border-slate-800 text-slate-200">
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
-                <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
-                  Reputación Vecinal Basada en Confianza
+            <div className="rounded-2xl bg-slate-900 p-3.5 sm:p-4 border border-slate-800 text-slate-200">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-2 mb-2 border-b border-slate-800">
+                <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5 min-w-0">
+                  <Sparkles className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                  <span className="truncate">Reputación Vecinal Confiable</span>
                 </span>
-                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800">
+                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800 shrink-0 self-start sm:self-auto">
                   Opinión comunitaria real
                 </span>
               </div>
@@ -171,21 +173,21 @@ export const QuickGuideModal: React.FC = () => {
             {/* Métodos de Pago y Trueque */}
             <div className="rounded-2xl bg-white p-3.5 shadow-xs border border-slate-200">
               <p className="font-black text-slate-900 text-xs mb-2 flex items-center gap-1.5">
-                <Repeat className="h-4 w-4 text-emerald-600" />
-                <span>3 Formas de Pago: Efectivo, Yape y Trueque Solidario</span>
+                <Repeat className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span className="truncate">3 Formas de Pago: Efectivo, Yape y Trueque</span>
               </p>
-              <div className="grid grid-cols-3 gap-2 text-center text-[11px] font-bold">
-                <div className="rounded-xl bg-slate-50 border border-slate-200 p-2 text-slate-700">
+              <div className="grid grid-cols-3 gap-1.5 text-center text-[11px] font-bold">
+                <div className="rounded-xl bg-slate-50 border border-slate-200 p-2 text-slate-700 truncate">
                   💵 Efectivo
                 </div>
-                <div className="rounded-xl bg-purple-50 border border-purple-200 p-2 text-purple-800">
+                <div className="rounded-xl bg-purple-50 border border-purple-200 p-2 text-purple-800 truncate">
                   📱 Yape / Plin
                 </div>
-                <div className="rounded-xl bg-emerald-50 border border-emerald-300 p-2 text-emerald-800">
-                  🤝 Trueque / Favor
+                <div className="rounded-xl bg-emerald-50 border border-emerald-300 p-2 text-emerald-800 truncate">
+                  🤝 Trueque
                 </div>
               </div>
-              <p className="mt-2 text-[11px] text-slate-500 font-medium">
+              <p className="mt-2 text-[11px] text-slate-500 font-medium leading-relaxed">
                 Al elegir Trueque se despliega un espacio para proponer qué producto, favor o habilidad ofreces a cambio.
               </p>
             </div>

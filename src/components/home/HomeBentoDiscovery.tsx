@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { ShieldCheck } from 'lucide-react';
+import { RatingFaceIcon } from '../common/RatingFaceIcon';
 import { useApp } from '../../context/AppContext';
 import { FavorCategory, ServiceCategory } from '../../types';
 
@@ -51,6 +52,10 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       cardBorder: 'border-[#FDE0D0]',
       action: () => {
         if (onSelectCategory) onSelectCategory('gastronomia_vecinal');
+        setTimeout(() => {
+          const el = document.getElementById('servicios-feed');
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
       },
     },
     {
@@ -65,6 +70,10 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       cardBorder: 'border-[#FDEEB4]',
       action: () => {
         if (onSelectCategory) onSelectCategory('oficio_hogar');
+        setTimeout(() => {
+          const el = document.getElementById('servicios-feed');
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
       },
     },
     {
@@ -80,6 +89,10 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       action: () => {
         setActiveTab('favors');
         if (onSelectFavorCategory) onSelectFavorCategory('movilidad_pool');
+        setTimeout(() => {
+          const el = document.getElementById('favores-feed');
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
       },
     },
     {
@@ -95,6 +108,10 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       action: () => {
         setActiveTab('favors');
         if (onSelectFavorCategory) onSelectFavorCategory('prestamo_salud_herramienta');
+        setTimeout(() => {
+          const el = document.getElementById('favores-feed');
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
       },
     },
     {
@@ -110,6 +127,10 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       action: () => {
         setActiveTab('favors');
         if (onSelectFavorCategory) onSelectFavorCategory('intercambio_trueque');
+        setTimeout(() => {
+          const el = document.getElementById('favores-feed');
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
       },
     },
     {
@@ -123,8 +144,15 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
       cardBg: 'bg-[#FFF1F2] hover:bg-[#FFE4E6]',
       cardBorder: 'border-[#FECDD3]',
       action: () => {
-        if (onOpenSos) onOpenSos();
-        else setActiveTab('emergency');
+        if (onOpenSos) {
+          onOpenSos();
+        } else {
+          setActiveTab('emergency');
+          setTimeout(() => {
+            const el = document.getElementById('emergencia-feed');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
       },
     },
   ];
@@ -163,8 +191,9 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
                 <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
                   DNI Verificado RENIEC
                 </span>
-                <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold text-emerald-300 border border-emerald-500/30">
-                  Referente 1.5x
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold text-emerald-300 border border-emerald-500/30">
+                  <RatingFaceIcon sentiment="happy" size="sm" bare={true} />
+                  <span>Reputación Ejemplar</span>
                 </span>
               </div>
               <h2 className="text-sm sm:text-base font-bold text-neutral-100 tracking-tight">
@@ -201,24 +230,24 @@ export const HomeBentoDiscovery: React.FC<HomeBentoDiscoveryProps> = ({
               key={item.id}
               type="button"
               onClick={item.action}
-              className={`rounded-2xl border p-3.5 text-left transition-all duration-200 active:scale-95 flex flex-col justify-between min-h-[118px] ${item.cardBg} ${item.cardBorder} shadow-2xs hover:shadow-xs group`}
+              className={`rounded-2xl border p-3 text-left transition-all duration-200 active:scale-95 flex flex-col justify-between min-h-[96px] sm:min-h-[102px] ${item.cardBg} ${item.cardBorder} shadow-2xs hover:shadow-xs group`}
             >
               <div className="flex items-start justify-between">
                 <span
-                  className={`flex h-8 w-8 items-center justify-center rounded-xl font-extrabold text-sm shadow-xs ${item.badgeBg} ${item.badgeText}`}
+                  className={`flex h-7 w-7 items-center justify-center rounded-lg font-extrabold text-xs shadow-xs ${item.badgeBg} ${item.badgeText}`}
                 >
                   {item.badgeLetter}
                 </span>
-                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-white/80 text-neutral-800 border border-black/5">
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-white/85 text-neutral-800 border border-black/5">
                   {item.tag}
                 </span>
               </div>
 
-              <div className="mt-3">
-                <h3 className="font-extrabold text-sm text-[#1A1917] tracking-tight leading-snug group-hover:text-[#E45826] transition-colors">
+              <div className="mt-2">
+                <h3 className="font-extrabold text-xs sm:text-sm text-[#1A1917] tracking-tight leading-snug group-hover:text-[#E45826] transition-colors">
                   {item.title}
                 </h3>
-                <p className="text-[11px] text-neutral-600 line-clamp-1 mt-0.5 leading-tight">
+                <p className="text-[10.5px] sm:text-[11px] text-neutral-600 line-clamp-1 mt-0.5 leading-tight">
                   {item.subtitle}
                 </p>
               </div>

@@ -16,6 +16,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { EmergencyHotlinePanel } from '../common/EmergencyHotlinePanel';
 import { VecinosBrandLogo } from '../common/VecinosBrandLogo';
+import { RatingFaceIcon } from '../common/RatingFaceIcon';
 import { CommunityMap } from '../map/CommunityMap';
 import { ServicesView } from '../../features/services/ServicesView';
 import { FavorsView } from '../../features/favors/FavorsView';
@@ -351,13 +352,21 @@ export const MobileLayout: React.FC = () => {
             <div className="py-4 space-y-3 text-xs">
               <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-start gap-2.5">
                 <ShieldCheck className="h-5 w-5 text-emerald-700 shrink-0 mt-0.5" />
-                <div>
+                <div className="flex-1 min-w-0">
                   <span className="font-bold text-emerald-950 block">
-                    Identidad Verificada
+                    Identidad Verificada RENIEC
                   </span>
-                  <span className="text-emerald-900/80 text-[11px] leading-relaxed">
-                    Vecino registrado en Yanahuara con DNI validado. Nivel: {currentUser.accountTier} • Antigüedad: {currentUser.seniorityMonths} meses • Peso reputacional: {currentUser.reputationWeight}x.
+                  <span className="text-emerald-900/80 text-[11px] leading-relaxed block">
+                    Vecino registrado en Yanahuara • Residencia: {currentUser.seniorityMonths} meses en el barrio.
                   </span>
+
+                  <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-emerald-200/80 flex-wrap">
+                    <span className="text-[11px] font-bold text-emerald-950">Reputación:</span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white text-emerald-950 border border-emerald-300 font-extrabold text-[10.5px] shadow-2xs">
+                      <RatingFaceIcon sentiment="happy" size="sm" bare={true} />
+                      <span>Conducta Ejemplar</span>
+                    </span>
+                  </div>
                 </div>
               </div>
 

@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import {
   AlertOctagon,
   ArrowRight,
-  ChevronRight,
   HeartHandshake,
   HelpCircle,
   LogOut,
@@ -20,6 +19,7 @@ import { useApp } from '../../context/AppContext';
 import { ActiveTab } from '../../types';
 import { EmergencyHotlinePanel } from '../common/EmergencyHotlinePanel';
 import { VecinosBrandLogo } from '../common/VecinosBrandLogo';
+import { RatingFaceIcon } from '../common/RatingFaceIcon';
 import { CommunityMap } from '../map/CommunityMap';
 import { ServicesView } from '../../features/services/ServicesView';
 import { FavorsView } from '../../features/favors/FavorsView';
@@ -403,34 +403,23 @@ export const DesktopCraftLayout: React.FC = () => {
             <div className="py-4 space-y-3 text-xs">
               <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-start gap-2.5">
                 <ShieldCheck className="h-5 w-5 text-emerald-700 shrink-0 mt-0.5" />
-                <div>
+                <div className="flex-1 min-w-0">
                   <span className="font-bold text-emerald-950 block">
-                    Vecino Verificado de Yanahuara
+                    Vecino Verificado RENIEC
                   </span>
-                  <span className="text-emerald-900/80 text-[11px] leading-relaxed">
-                    Nivel vecinal: {currentUser.accountTier} • Antigüedad: {currentUser.seniorityMonths} meses • Peso reputacional: {currentUser.reputationWeight}x.
+                  <span className="text-emerald-900/80 text-[11px] leading-relaxed block">
+                    Residencia: {currentUser.seniorityMonths} meses en Yanahuara.
                   </span>
+
+                  <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-emerald-200/80 flex-wrap">
+                    <span className="text-[11px] font-bold text-emerald-950">Reputación:</span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white text-emerald-950 border border-emerald-300 font-extrabold text-[10.5px] shadow-2xs">
+                      <RatingFaceIcon sentiment="happy" size="sm" bare={true} />
+                      <span>Conducta Ejemplar</span>
+                    </span>
+                  </div>
                 </div>
               </div>
-
-              {/* Botón para abrir ajustes del demo / host config */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsProfileOpen(false);
-                  window.location.hash = '#/config';
-                }}
-                className={`w-full flex items-center justify-between p-3 rounded-2xl border transition ${
-                  isEmergency
-                    ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
-                    : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
-                }`}
-              >
-                <span className="font-bold">
-                  Ajustes y Opciones del Demo
-                </span>
-                <ChevronRight className="h-4 w-4 text-slate-400" />
-              </button>
 
               {/* Simular estado de red */}
               <div className={`flex items-center justify-between p-3 rounded-2xl border ${

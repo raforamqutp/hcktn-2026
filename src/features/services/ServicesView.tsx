@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Smartphone,
   Sparkles,
+  Trash2,
   Users,
   Utensils,
   Wrench,
@@ -126,6 +127,7 @@ export const ServicesView: React.FC = () => {
     rateServiceWithFace,
     submitBarterProposal,
     reportItem,
+    deleteService,
   } = useApp();
 
   const [search, setSearch] = useState('');
@@ -138,6 +140,7 @@ export const ServicesView: React.FC = () => {
   const [openRatingServiceId, setOpenRatingServiceId] = useState<string | null>(null);
   const [reportedIds, setReportedIds] = useState<Record<string, boolean>>({});
   const [proposalSentNotice, setProposalSentNotice] = useState<string | null>(null);
+  const [toastNotice, setToastNotice] = useState<string | null>(null);
 
   const isEmergency = mode === 'emergency' || activeTab === 'emergency';
   const isMinor = !currentUser.isVerifiedAdult;
@@ -186,13 +189,29 @@ export const ServicesView: React.FC = () => {
 
   return (
     <section aria-label="Directorio de servicios del barrio" className="space-y-6">
+      {/* Toast Notificación de eliminación */}
+      {toastNotice && (
+        <div
+          role="status"
+          className="fixed top-20 right-4 z-50 max-w-sm rounded-2xl bg-neutral-900 text-white p-4 shadow-xl border border-neutral-700 flex items-start gap-3 animate-scale-in"
+        >
+          <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5 text-emerald-400" />
+          <div className="flex-1">
+            <p className="text-xs font-black uppercase tracking-wider text-neutral-300">
+              Directorio Vecinal
+            </p>
+            <p className="text-xs font-bold mt-0.5 leading-snug">{toastNotice}</p>
+          </div>
+        </div>
+      )}
+
       {/* 0. Descubrimiento Macro Bento (Fiel a la jerarquía editorial humana) */}
       {!isEmergency && (
         <HomeBentoDiscovery onSelectCategory={(cat) => setSelectedCategory(cat)} />
       )}
 
       {/* 1. Header de sección y búsqueda */}
-      <div className="space-y-3 pt-1">
+      <div id="servicios-feed" className="space-y-3 pt-1 scroll-mt-20">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <div className="flex items-center gap-2">
@@ -323,6 +342,11 @@ export const ServicesView: React.FC = () => {
       {/* 2. Feed de Servicios: Formato Inset Grouped / Swiss Cards */}
       <div className="space-y-3">
         {filtered.map((srv) => {
+          const isOwnPost = Boolean(
+            (srv.providerDni && srv.providerDni === currentUser.dni) ||
+            (srv.providerId && srv.providerId === currentUser.id) ||
+            (srv.providerName && srv.providerName.trim().toLowerCase() === currentUser.fullName.trim().toLowerCase())
+          );
           const isReported = reportedIds[srv.id] || srv.isReported;
           const isBarterActive = activeBarterServiceId === srv.id;
           const isReviewsOpen = expandedReviewsId === srv.id;
@@ -360,10 +384,15 @@ export const ServicesView: React.FC = () => {
                     {srv.providerName.charAt(0)}
                   </div>
                   <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span className={`text-xs font-bold truncate ${isEmergency ? 'text-slate-200' : 'text-slate-900'}`}>
                         {srv.providerName}
                       </span>
+                      {isOwnPost && (
+                        <span className="px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase bg-emerald-100 text-emerald-900 border border-emerald-300">
+                          Tú
+                        </span>
+                      )}
                       <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                     </div>
                     <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-0.5">
@@ -436,146 +465,194 @@ export const ServicesView: React.FC = () => {
                 </div>
               )}
 
-              {/* Medallón de Reputación y Calificación 3D con Caritas (Anthony UI Polish) */}
-              <div className="mt-3 relative w-full h-[106px] flip-card-container">
-                <div className={`flip-card-inner ${isRatingOpen ? 'is-flipped' : ''}`}>
-                  {/* Cara A (Front): Medallón de Conducta */}
-                  <div
-                    className={`flip-card-front p-3.5 border-2 rounded-2xl flex items-center justify-between gap-2.5 ${conduct.containerClass} ${
-                      isRatingOpen ? 'pointer-events-none' : ''
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="shrink-0 drop-shadow-xs">
-                        <RatingFaceIcon
-                          sentiment={conduct.sentiment}
-                          size="md"
-                          isDarkTheme={isEmergency}
-                          showLabel={false}
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className={`text-xl font-black tabular leading-none ${conduct.scoreClass}`}>
-                            {srv.weightedScore}%
-                          </span>
-                          <span
-                            className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border ${conduct.badgeClass}`}
-                          >
-                            {conduct.label}
-                          </span>
-                        </div>
-                        <p className={`text-[11px] font-bold truncate mt-1 ${conduct.subtitleClass}`}>
-                          {srv.ratings.length > 0
-                            ? `Avalado por ${topReviewers} (${totalOpinions} ${totalOpinions === 1 ? 'opinión' : 'opiniones'})`
-                            : 'Vecino nuevo · Sin observaciones'}
-                        </p>
-                      </div>
+              {/* Medallón de Reputación / Estado de Publicación */}
+              {isOwnPost ? (
+                <div className="mt-3 p-3.5 border-2 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-emerald-50/70 border-emerald-300 text-emerald-950 shadow-2xs">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="shrink-0 drop-shadow-xs">
+                      <RatingFaceIcon
+                        sentiment={conduct.sentiment}
+                        size="md"
+                        isDarkTheme={isEmergency}
+                        showLabel={false}
+                      />
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setOpenRatingServiceId(srv.id)}
-                      aria-label={`Calificar trato de ${srv.providerName}`}
-                      className={`shrink-0 inline-flex items-center justify-center rounded-xl px-3.5 py-2 text-xs font-black transition active:scale-95 shadow-xs ${conduct.buttonClass}`}
-                    >
-                      <span>{srv.userVote ? 'Mi voto' : 'Calificar trato'}</span>
-                    </button>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider bg-emerald-700 text-white border border-emerald-800">
+                          Tu publicación activa
+                        </span>
+                        <span className="text-[11px] font-bold text-emerald-900">
+                          {totalOpinions > 0 ? `${srv.weightedScore}% respaldo vecinal` : 'Visible en tu cuadra'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-emerald-950/80 font-medium truncate mt-0.5">
+                        {totalOpinions > 0
+                          ? `Avalado por ${topReviewers} (${totalOpinions} ${totalOpinions === 1 ? 'opinión' : 'opiniones'}).`
+                          : 'Aún no tiene opiniones de vecinos (publicación reciente).'}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Cara B (Back): Selector de Caritas */}
-                  <div
-                    className={`flip-card-back p-3 border-2 rounded-2xl flex flex-col justify-between ${
-                      isEmergency
-                        ? 'bg-slate-900 border-slate-700 text-white'
-                        : 'bg-white border-slate-200/90 text-slate-950 shadow-xs'
-                    } ${!isRatingOpen ? 'pointer-events-none' : ''}`}
-                  >
-                    <div className="flex items-center justify-between px-1">
-                      <span className={`text-[10.5px] font-black uppercase tracking-wider ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
-                        Calificar trato
-                      </span>
+                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm(`¿Retirar "${srv.tradeTitle}" del directorio de la cuadra?`)) {
+                          deleteService(srv.id);
+                          setToastNotice(`Aviso "${srv.tradeTitle}" eliminado con éxito.`);
+                          setTimeout(() => setToastNotice(null), 3500);
+                        }
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 transition active:scale-95 shadow-2xs"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span>Eliminar aviso</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Medallón de Reputación y Calificación 3D con Caritas (Anthony UI Polish) */
+                <div className="mt-3 relative w-full h-[106px] flip-card-container">
+                  <div className={`flip-card-inner ${isRatingOpen ? 'is-flipped' : ''}`}>
+                    {/* Cara A (Front): Medallón de Conducta */}
+                    <div
+                      className={`flip-card-front p-3.5 border-2 rounded-2xl flex items-center justify-between gap-2.5 ${conduct.containerClass} ${
+                        isRatingOpen ? 'pointer-events-none' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="shrink-0 drop-shadow-xs">
+                          <RatingFaceIcon
+                            sentiment={conduct.sentiment}
+                            size="md"
+                            isDarkTheme={isEmergency}
+                            showLabel={false}
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className={`text-xl font-black tabular leading-none ${conduct.scoreClass}`}>
+                              {srv.weightedScore}%
+                            </span>
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border ${conduct.badgeClass}`}
+                            >
+                              {conduct.label}
+                            </span>
+                          </div>
+                          <p className={`text-[11px] font-bold truncate mt-1 ${conduct.subtitleClass}`}>
+                            {srv.ratings.length > 0
+                              ? `Avalado por ${topReviewers} (${totalOpinions} ${totalOpinions === 1 ? 'opinión' : 'opiniones'})`
+                              : 'Vecino nuevo · Sin observaciones'}
+                          </p>
+                        </div>
+                      </div>
+
                       <button
                         type="button"
-                        onClick={() => setOpenRatingServiceId(null)}
-                        aria-label="Cerrar calificación"
-                        className={`h-5 w-5 flex items-center justify-center rounded-full transition-all active:scale-90 ${
-                          isEmergency
-                            ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
-                            : 'bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-950'
-                        }`}
+                        onClick={() => setOpenRatingServiceId(srv.id)}
+                        aria-label={`Calificar trato de ${srv.providerName}`}
+                        className={`shrink-0 inline-flex items-center justify-center rounded-xl px-3.5 py-2 text-xs font-black transition active:scale-95 shadow-xs ${conduct.buttonClass}`}
                       >
-                        <X className="h-3 w-3 stroke-[2.5]" aria-hidden="true" />
+                        <span>{srv.userVote ? 'Mi voto' : 'Calificar trato'}</span>
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 w-full mt-1.5">
-                      <button
-                        type="button"
-                        aria-pressed={srv.userVote === 'happy'}
-                        onClick={() => {
-                          handleVote(srv.id, 'happy');
-                          setTimeout(() => setOpenRatingServiceId(null), 500);
-                        }}
-                        className={`h-[52px] flex flex-col items-center justify-center py-1 px-1 rounded-xl border-2 transition-all active:scale-95 ${
-                          srv.userVote === 'happy'
-                            ? isEmergency
-                              ? 'bg-emerald-950/80 border-emerald-400 text-emerald-200 ring-2 ring-emerald-500/30'
-                              : 'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-xs ring-2 ring-emerald-500/20'
-                            : isEmergency
-                            ? 'bg-slate-800/90 border-slate-700 text-slate-200 hover:border-emerald-400 hover:bg-emerald-950/40'
-                            : 'bg-slate-50/90 hover:bg-emerald-50/60 border-slate-200 hover:border-emerald-400 text-slate-800 shadow-2xs'
-                        }`}
-                      >
-                        <RatingFaceIcon sentiment="happy" size="sm" bare={true} showLabel={false} isDarkTheme={isEmergency} />
-                        <span className="text-[10.5px] font-black mt-1 leading-none">Buen trato</span>
-                      </button>
+                    {/* Cara B (Back): Selector de Caritas */}
+                    <div
+                      className={`flip-card-back p-3 border-2 rounded-2xl flex flex-col justify-between ${
+                        isEmergency
+                          ? 'bg-slate-900 border-slate-700 text-white'
+                          : 'bg-white border-slate-200/90 text-slate-950 shadow-xs'
+                      } ${!isRatingOpen ? 'pointer-events-none' : ''}`}
+                    >
+                      <div className="flex items-center justify-between px-1">
+                        <span className={`text-[10.5px] font-black uppercase tracking-wider ${isEmergency ? 'text-slate-400' : 'text-slate-500'}`}>
+                          Calificar trato
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setOpenRatingServiceId(null)}
+                          aria-label="Cerrar calificación"
+                          className={`h-5 w-5 flex items-center justify-center rounded-full transition-all active:scale-90 ${
+                            isEmergency
+                              ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
+                              : 'bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-950'
+                          }`}
+                        >
+                          <X className="h-3 w-3 stroke-[2.5]" aria-hidden="true" />
+                        </button>
+                      </div>
 
-                      <button
-                        type="button"
-                        aria-pressed={srv.userVote === 'neutral'}
-                        onClick={() => {
-                          handleVote(srv.id, 'neutral');
-                          setTimeout(() => setOpenRatingServiceId(null), 500);
-                        }}
-                        className={`h-[52px] flex flex-col items-center justify-center py-1 px-1 rounded-xl border-2 transition-all active:scale-95 ${
-                          srv.userVote === 'neutral'
-                            ? isEmergency
-                              ? 'bg-amber-950/80 border-amber-400 text-amber-200 ring-2 ring-amber-500/30'
-                              : 'bg-amber-50 border-amber-500 text-amber-950 shadow-xs ring-2 ring-amber-500/20'
-                            : isEmergency
-                            ? 'bg-slate-800/90 border-slate-700 text-slate-200 hover:border-amber-400 hover:bg-amber-950/40'
-                            : 'bg-slate-50/90 hover:bg-amber-50/60 border-slate-200 hover:border-amber-400 text-slate-800 shadow-2xs'
-                        }`}
-                      >
-                        <RatingFaceIcon sentiment="neutral" size="sm" bare={true} showLabel={false} isDarkTheme={isEmergency} />
-                        <span className="text-[10.5px] font-black mt-1 leading-none">Regular</span>
-                      </button>
+                      <div className="grid grid-cols-3 gap-2 w-full mt-1.5">
+                        <button
+                          type="button"
+                          aria-pressed={srv.userVote === 'happy'}
+                          onClick={() => {
+                            handleVote(srv.id, 'happy');
+                            setTimeout(() => setOpenRatingServiceId(null), 500);
+                          }}
+                          className={`h-[52px] flex flex-col items-center justify-center py-1 px-1 rounded-xl border-2 transition-all active:scale-95 ${
+                            srv.userVote === 'happy'
+                              ? isEmergency
+                                ? 'bg-emerald-950/80 border-emerald-400 text-emerald-200 ring-2 ring-emerald-500/30'
+                                : 'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-xs ring-2 ring-emerald-500/20'
+                              : isEmergency
+                              ? 'bg-slate-800/90 border-slate-700 text-slate-200 hover:border-emerald-400 hover:bg-emerald-950/40'
+                              : 'bg-slate-50/90 hover:bg-emerald-50/60 border-slate-200 hover:border-emerald-400 text-slate-800 shadow-2xs'
+                          }`}
+                        >
+                          <RatingFaceIcon sentiment="happy" size="sm" bare={true} showLabel={false} isDarkTheme={isEmergency} />
+                          <span className="text-[10.5px] font-black mt-1 leading-none">Buen trato</span>
+                        </button>
 
-                      <button
-                        type="button"
-                        aria-pressed={srv.userVote === 'angry'}
-                        onClick={() => {
-                          handleVote(srv.id, 'angry');
-                          setTimeout(() => setOpenRatingServiceId(null), 500);
-                        }}
-                        className={`h-[52px] flex flex-col items-center justify-center py-1 px-1 rounded-xl border-2 transition-all active:scale-95 ${
-                          srv.userVote === 'angry'
-                            ? isEmergency
-                              ? 'bg-rose-950/80 border-rose-400 text-rose-200 ring-2 ring-rose-500/30'
-                              : 'bg-rose-50 border-rose-500 text-rose-950 shadow-xs ring-2 ring-rose-500/20'
-                            : isEmergency
-                            ? 'bg-slate-800/90 border-slate-700 text-slate-200 hover:border-rose-400 hover:bg-rose-950/40'
-                            : 'bg-slate-50/90 hover:bg-rose-50/60 border-slate-200 hover:border-rose-400 text-slate-800 shadow-2xs'
-                        }`}
-                      >
-                        <RatingFaceIcon sentiment="angry" size="sm" bare={true} showLabel={false} isDarkTheme={isEmergency} />
-                        <span className="text-[10.5px] font-black mt-1 leading-none">A mejorar</span>
-                      </button>
+                        <button
+                          type="button"
+                          aria-pressed={srv.userVote === 'neutral'}
+                          onClick={() => {
+                            handleVote(srv.id, 'neutral');
+                            setTimeout(() => setOpenRatingServiceId(null), 500);
+                          }}
+                          className={`h-[52px] flex flex-col items-center justify-center py-1 px-1 rounded-xl border-2 transition-all active:scale-95 ${
+                            srv.userVote === 'neutral'
+                              ? isEmergency
+                                ? 'bg-amber-950/80 border-amber-400 text-amber-200 ring-2 ring-amber-500/30'
+                                : 'bg-amber-50 border-amber-500 text-amber-950 shadow-xs ring-2 ring-amber-500/20'
+                              : isEmergency
+                              ? 'bg-slate-800/90 border-slate-700 text-slate-200 hover:border-amber-400 hover:bg-amber-950/40'
+                              : 'bg-slate-50/90 hover:bg-amber-50/60 border-slate-200 hover:border-amber-400 text-slate-800 shadow-2xs'
+                          }`}
+                        >
+                          <RatingFaceIcon sentiment="neutral" size="sm" bare={true} showLabel={false} isDarkTheme={isEmergency} />
+                          <span className="text-[10.5px] font-black mt-1 leading-none">Regular</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          aria-pressed={srv.userVote === 'angry'}
+                          onClick={() => {
+                            handleVote(srv.id, 'angry');
+                            setTimeout(() => setOpenRatingServiceId(null), 500);
+                          }}
+                          className={`h-[52px] flex flex-col items-center justify-center py-1 px-1 rounded-xl border-2 transition-all active:scale-95 ${
+                            srv.userVote === 'angry'
+                              ? isEmergency
+                                ? 'bg-rose-950/80 border-rose-400 text-rose-200 ring-2 ring-rose-500/30'
+                                : 'bg-rose-50 border-rose-500 text-rose-950 shadow-xs ring-2 ring-rose-500/20'
+                              : isEmergency
+                              ? 'bg-slate-800/90 border-slate-700 text-slate-200 hover:border-rose-400 hover:bg-rose-950/40'
+                              : 'bg-slate-50/90 hover:bg-rose-50/60 border-slate-200 hover:border-rose-400 text-slate-800 shadow-2xs'
+                          }`}
+                        >
+                          <RatingFaceIcon sentiment="angry" size="sm" bare={true} showLabel={false} isDarkTheme={isEmergency} />
+                          <span className="text-[10.5px] font-black mt-1 leading-none">A mejorar</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Acciones y opiniones */}
               <div className="mt-3.5 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -593,33 +670,57 @@ export const ServicesView: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {srv.paymentMethods.includes('trueque') && !isMinor && (
-                    <button
-                      type="button"
-                      onClick={() => setActiveBarterServiceId(isBarterActive ? null : srv.id)}
-                      className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-300 transition active:scale-95 shadow-2xs inline-flex items-center gap-1.5"
-                    >
-                      <ArrowLeftRight className="h-3.5 w-3.5 text-neutral-500" />
-                      <span>Proponer trueque</span>
-                    </button>
+                  {isOwnPost ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-bold text-neutral-500 italic">
+                        Tu aviso en el barrio
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`¿Retirar "${srv.tradeTitle}" del directorio de la cuadra?`)) {
+                            deleteService(srv.id);
+                            setToastNotice(`Aviso "${srv.tradeTitle}" eliminado.`);
+                            setTimeout(() => setToastNotice(null), 3500);
+                          }
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition active:scale-95"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        <span>Eliminar mi aviso</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      {srv.paymentMethods.includes('trueque') && !isMinor && (
+                        <button
+                          type="button"
+                          onClick={() => setActiveBarterServiceId(isBarterActive ? null : srv.id)}
+                          className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-300 transition active:scale-95 shadow-2xs inline-flex items-center gap-1.5"
+                        >
+                          <ArrowLeftRight className="h-3.5 w-3.5 text-neutral-500" />
+                          <span>Proponer trueque</span>
+                        </button>
+                      )}
+
+                      <a
+                        href={`tel:${srv.phone}`}
+                        className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition active:scale-95"
+                      >
+                        <Phone className="h-3.5 w-3.5" />
+                        <span>Llamar al vecino</span>
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={() => handleReport(srv.id)}
+                        title={isReported ? 'Reportado para moderación' : 'Reportar publicación'}
+                        className={`p-1.5 rounded-lg transition ${isReported ? 'text-amber-500' : 'text-slate-300 hover:text-slate-600'}`}
+                      >
+                        <Flag className="h-3.5 w-3.5" />
+                      </button>
+                    </>
                   )}
-
-                  <a
-                    href={`tel:${srv.phone}`}
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition active:scale-95"
-                  >
-                    <Phone className="h-3.5 w-3.5" />
-                    <span>Llamar al vecino</span>
-                  </a>
-
-                  <button
-                    type="button"
-                    onClick={() => handleReport(srv.id)}
-                    title={isReported ? 'Reportado para moderación' : 'Reportar publicación'}
-                    className={`p-1.5 rounded-lg transition ${isReported ? 'text-amber-500' : 'text-slate-300 hover:text-slate-600'}`}
-                  >
-                    <Flag className="h-3.5 w-3.5" />
-                  </button>
                 </div>
               </div>
 

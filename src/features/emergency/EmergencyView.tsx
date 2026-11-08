@@ -129,7 +129,7 @@ export const EmergencyView: React.FC = () => {
       )}
 
       {/* Segment tabs + category chip filters */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-1">
+      <div id="emergencia-feed" className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-1 scroll-mt-20">
         <div
           className={`inline-flex rounded-xl p-1 border ${
             isEmergency ? 'bg-slate-900 border-slate-800' : 'bg-slate-100/80 border-slate-200/80'
